@@ -1,0 +1,16 @@
+{
+  "name": "boochlin-blog",
+  "version": "1.0.0",
+  "description": "Boochlin Tech Blog (GitBook & GitHub Pages)",
+  "scripts": {
+    "start": "honkit serve",
+    "build": "honkit build",
+    "serve": "honkit serve --port 4000"
+  },
+  "keywords": ["android", "kotlin", "gitbook", "edge-ai", "compose", "blog"],
+  "author": "Boochlin",
+  "license": "MIT",
+  "devDependencies": {
+    "honkit": "^6.2.2"
+  }
+}

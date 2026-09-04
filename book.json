@@ -1,0 +1,12 @@
+{
+  "title": "Something Record - Boochlin's Tech Blog",
+  "author": "Boochlin",
+  "description": "Boochlin 個人技術部落格全集（2015-2026 十年技術隨筆與硬核破局實錄）",
+  "language": "zh-tw",
+  "plugins": [
+    "-sharing"
+  ],
+  "styles": {
+    "website": "styles/website.css"
+  }
+}
