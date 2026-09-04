@@ -73,15 +73,22 @@ Sony iToF 採用的是 **間接飛行時間法（Indirect ToF）**：
 
 精確將每幀點數控制在 2~5 萬點，既維持了人臉五官的立體精細度，又解放了 GPU 80% 的算力！
 
-### 工序 4：7-Float 頂點交錯排布（Stride = 28 bytes）
+### 工序 4：7-Float 頂點交錯排布（Stride = 28 bytes）與剛體座標變換
+
+工控門禁機大多為直立安裝（Portrait 豎屏，例如 8 吋 800x1280），然而 ToF 感測器（如 Sony IMX516）在 PCB 硬體佈局受限於邊框寬度，通常採用 90° 橫置安裝（Landscape）。因此從相機解算出的感測器局部座標 $(x_{sensor}, y_{sensor}, z_{sensor})$，必須經過正交剛體旋轉映射至螢幕的世界座標系 $(worldX, worldY, worldZ)$。
 
 為了讓 OpenGL 能夠以最高硬體頻寬連續讀取，每個點打包成 **7 個連續 Float（7 x 4 = 28 bytes）**：
 
 ```java
 // CameraFrameContainer.java
-outDepthResult[pointsCount * 7]     = y; // X, Y, Z 空間坐標
-outDepthResult[pointsCount * 7 + 1] = x;
-outDepthResult[pointsCount * 7 + 2] = z;
+// 90° 剛體安裝映射：橫置感測器的 Y 軸對應為螢幕直立視角的 X 軸，X 軸對應為 Y 軸
+float worldX = y; 
+float worldY = x;
+float worldZ = z;
+
+outDepthResult[pointsCount * 7]     = worldX; // 世界空間坐標 X
+outDepthResult[pointsCount * 7 + 1] = worldY; // 世界空間坐標 Y
+outDepthResult[pointsCount * 7 + 2] = worldZ; // 世界空間坐標 Z
 outDepthResult[pointsCount * 7 + 3] = colorArray[0]; // R, G, B, A 顏色 (霓虹青藍)
 outDepthResult[pointsCount * 7 + 4] = colorArray[1];
 outDepthResult[pointsCount * 7 + 5] = colorArray[2];

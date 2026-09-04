@@ -125,21 +125,70 @@ public class WebSocketWorkerManager {
 
 在工廠現場，網路斷線三天是家常便飯。人臉辨識必須能離線刷臉開門，並在網路恢復後「零遺失、依序補上傳」。
 
-我們在本地 SQLite 中設計了 `pass_records` 資料表，使用 **雙指針游標（Double-Cursor）** 機制：
+初學者最容易踩的致命暗礁，就是把抓拍照片直接以 `BLOB` 塞進 SQLite：
 
 ```sql
+-- 錯誤反面教材：引爆 CursorWindow 2MB 崩潰的寫法
 CREATE TABLE pass_records (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id TEXT NOT NULL,
     pass_time INTEGER NOT NULL,
-    photo_blob BLOB,
+    photo_blob BLOB, -- 致命地雷：單張抓拍照 150KB
+    sync_status INTEGER DEFAULT 0
+);
+```
+
+### 致命的 CursorWindow 2MB 硬上限
+
+在 Android 9/10 中，SQLite 查詢依靠 Binder 共享記憶體傳輸，底層 `CursorWindow` 存在 **2048KB（2MB）的硬上限**。
+
+當斷網 3 天恢復連線，系統觸發批次同步一次拉取 20 筆未同步紀錄時：
+
+> 20 筆 x 150KB (JPEG) = 3,000KB (3MB) > 2,048KB
+
+`CursorWindow` 瞬間被灌爆，系統無情噴出 `android.database.CursorWindowAllocationException: Row too big to fit into CursorWindow`！
+
+同步進程當場崩潰引發事務回滾，重連後再次拉取 20 筆再次崩潰，設備陷入「永久無法上傳離線紀錄」的死鎖；且大型 BLOB 頻繁寫入會讓 SQLite 檔案嚴重碎片化，WAL 日誌大量寫入放大更會提早損耗 Flash 晶片壽命。
+
+### 工業級唯一解：磁碟流式存儲 + 資料庫路徑指標
+
+工控系統的合規架構是：**「大二進位檔案走私有檔案系統，資料庫僅存路徑指標」**。
+
+```sql
+-- 正確架構：資料庫只存路徑指標，單行僅幾十 bytes
+CREATE TABLE pass_records (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT NOT NULL,
+    pass_time INTEGER NOT NULL,
+    photo_path TEXT NOT NULL, -- 內部絕對路徑，如 /data/user/0/.../snapshots/uuid.jpg
     sync_status INTEGER DEFAULT 0 -- 0: 未同步, 1: 同步中, 2: 已確認
 );
 ```
 
-1. **離線寫入**：刷臉成功當場開門，紀錄寫入 SQLite（`sync_status = 0`），耗時 < 2ms。
-2. **連線重啟**：WebSocket 重連成功後，啟動批次同步任務，一次拉取 20 筆未同步紀錄。
-3. **ACK 確認機制**：雲端伺服器回覆帶有 `record_id` 的 ACK 封包後，才更新為 `sync_status = 2`。超時未收到 ACK 則自動回滾重送。
+```java
+// 1. 抓拍當下：流式寫入私有磁碟（0 SQLite 事務日誌負擔）
+File snapshotFile = new File(getSnapshotDir(), UUID.randomUUID().toString() + ".jpg");
+saveImageToDisk(snapshotFile, jpegBytes);
+
+// 2. 離線寫入：SQLite 僅記錄路徑指標（20 筆查詢僅 1KB，絕無 CursorWindow 超限風險）
+ContentValues cv = new ContentValues();
+cv.put("user_id", userId);
+cv.put("pass_time", System.currentTimeMillis());
+cv.put("photo_path", snapshotFile.getAbsolutePath());
+cv.put("sync_status", 0);
+db.insert("pass_records", null, cv);
+
+// 3. 連線恢復：分段流式上傳，收到 ACK 確認後自動物理刪除圖檔
+List<PassRecord> records = queryPendingRecords(20);
+for (PassRecord record : records) {
+    byte[] photoData = readFileToByteArray(record.getPhotoPath());
+    sendOverWebSocket(record, photoData);
+}
+
+// 收到雲端伺服器 ACK 後：
+// db.update("pass_records", sync_status = 2)
+// new File(record.getPhotoPath()).delete(); // 釋放本地磁碟
+```
 
 ---
 
@@ -147,7 +196,8 @@ CREATE TABLE pass_records (
 
 1. **通道分離**：信令走 WebSocket，大檔走 HTTP REST，嚴防隊頭阻塞。
 2. **二進位壓榨**：用 Protobuf 幹掉 JSON 與 Base64，拯救 Java Heap 與頻寬。
-3. **離線優先**：地端先行，開門不依賴網路，雲端同步永遠走非同步 ACK 閉環。
+3. **CursorWindow 絕緣**：大二進位圖片嚴禁進 SQLite，磁碟落檔 + 資料庫記錄指標是唯一的生存法則。
+4. **離線優先**：地端先行，開門不依賴網路，雲端同步永遠走非同步 ACK 閉環。
 
 下一篇，我們聊聊一個為了幾乎不會用到的功能，卻需要大改特改系統底層的終極大坑：**WebRTC 視訊對講與相機爭搶！**
 

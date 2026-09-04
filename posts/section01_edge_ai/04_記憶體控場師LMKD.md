@@ -66,10 +66,34 @@ Linux 3.14 引入的機制。它不是看 Free Memory，而是觀察內核在回
 
 ### 2. 新世代的 PSI（Pressure Stall Information，精確脈搏）
 
-Linux 4.20 引入的神級特性。PSI 透過在內核追蹤所有任務因等待記憶體而被阻塞的時間比例：
+Linux 4.20 引入（Android 9 實驗性支援、Android 10 正式成為標配，高通 Kernel 4.14+ 全面 backport）。PSI 透過在內核追蹤所有任務因等待記憶體而被阻塞的時間比例：
 
 * **some**：至少有一個執行緒因為缺記憶體被卡住的時間佔比。
 * **full**：所有非閒置執行緒全部被卡死、系統徹底失去響應的時間佔比。
+
+在 Userspace LMKD 中，這套機制透過 `/proc/pressure/memory` 檔案節點與 `epoll` 達成微秒級事件通知，徹底取代了傳統定時輪詢或遲鈍的 `cgroup.event_control`：
+
+```c
+// lmkd.c 內部的 PSI 監聽模型
+int psi_fd = open("/proc/pressure/memory", O_RDWR | O_NONBLOCK);
+// 註冊閥值：1000ms 窗口內若有線程 stall 超過 150ms 即觸發警報
+const char *trigger = "some 150 1000"; 
+write(psi_fd, trigger, strlen(trigger) + 1);
+
+struct epoll_event ev;
+ev.events = EPOLLPRI;
+ev.data.fd = psi_fd;
+epoll_ctl(epollfd, EPOLL_CTL_ADD, psi_fd, &ev);
+
+// 主迴圈中阻塞等待內核硬體級脈搏事件，零 CPU 輪詢開銷
+while (1) {
+    int nevents = epoll_wait(epollfd, events, MAX_EPOLL_EVENTS, -1);
+    if (nevents > 0) {
+        // 瞬間喚醒，直接依據 oom_score_adj 倒序處決肥貓進程！
+        mp_event_common(KILL_HEAVIEST_TASK);
+    }
+}
+```
 
 PSI 就像直接在心臟裝上壓力感測器，不需要等記憶體崩潰，只要系統開始出現微小的排隊延遲，LMKD 就能在微秒級瞬間察覺！
 

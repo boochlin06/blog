@@ -36,14 +36,33 @@
 
 但在 2GB 爛板子上，當 AI 模型吃滿記憶體時，LMKD 一旦發起 OOM 秒殺，依附在進程裡的 `Service` 會當場跟著陪葬，連個遺言都留不下來。
 
-我們的解法是：**`AlarmManager` + 顯式靜態註冊 `SystemEventReceiver`**。
+我們的解法是：**`AlarmManager`（`setExactAndAllowWhileIdle` 鏈式調度）+ 顯式靜態註冊 `SystemEventReceiver`**。
 
 ```java
-// MainActivity.java
-Intent intent = new Intent(this, SystemEventReceiver.class);
-PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(), 15 * 1000, pIntent);
+// SystemWatchdog.java
+public static void scheduleNextHeartbeat(Context context) {
+    AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+    Intent intent = new Intent(context, SystemEventReceiver.class);
+    PendingIntent pi = PendingIntent.getBroadcast(
+        context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+    );
+
+    long triggerAtMillis = SystemClock.elapsedRealtime() + 15 * 1000;
+
+    // 穿透 Android 9/10 Doze Mode 的核心防禦：
+    // 普通 setInexactRepeating 會在夜間待機時被系統對齊延遲數十分鐘！
+    // 必須使用 setExactAndAllowWhileIdle 確保低功耗期準時觸發：
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        am.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtMillis, pi);
+    } else {
+        am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtMillis, pi);
+    }
+}
 ```
+
+配套工控系統配置：
+1. **遞迴鏈式預約**：在 `SystemEventReceiver.onReceive()` 處理完餵狗邏輯後，末尾立刻再次調用 `scheduleNextHeartbeat(context)`，形成永不中斷的 15 秒精確脈衝。
+2. **ROM 級電池白名單**：工控機韌體在出廠時，於 `/etc/sysconfig/whitelist.xml` 加入 `<allow-in-power-save package="com.edge.ai.gate" />`，徹底豁免 Doze Mode 休眠限制。
 
 ### 為什麼進程死光了，系統真的能把它拉活？
 
