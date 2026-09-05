@@ -32,7 +32,7 @@ Compose 將 UI 的生成與更新拆解為三個依序執行的獨立階段，�
 
 2. **Final Pass:** 父元件根據查詢結果決定自身尺寸後，再執行標準的測量與放置流程。
 
-wrapContentSize 等修飾符的背後，正是利用此機制。然而，這種兩趟式 (two-pass) 測量必然比單趟測量成本更高，因此框架僅在必要時才啟用它。
+IntrinsicSize 修飾符（如 Modifier.height(IntrinsicSize.Min)）的背後，正是利用此機制。值得注意的是，Intrinsic Measurements 屬於獨立的『尺寸查詢（Query）』階段，並不違反 Compose 嚴格的單趟測量（Single-pass）原則，但額外的查詢開銷仍需謹慎使用。
 
 ---
 

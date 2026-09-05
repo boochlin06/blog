@@ -84,6 +84,8 @@ public class NameThreadFactory implements ThreadFactory {
 }
 ```
 
+注意：此處的 lazy initialization 並非線程安全。在多執行緒併發呼叫 getExecutorPool() 時，可能會建立多個 ThreadPool 實例。正確做法是使用 Double-checked Locking 搭配 volatile，或直接在變數宣告時初始化（eager initialization）。
+
 或者更簡單的使用已有的車輪 guava , [google common lib](http://search.maven.org/#artifactdetails%7Ccom.google.guava%7Cguava%7C18.0%7Cbundle)
 
 先必須在 gradle 加上

@@ -81,8 +81,8 @@ Sony iToF 採用的是 **間接飛行時間法（Indirect ToF）**：
 
 ```java
 // CameraFrameContainer.java
-// 90° 剛體安裝映射：橫置感測器的 Y 軸對應為螢幕直立視角的 X 軸，X 軸對應為 Y 軸
-float worldX = y; 
+// 90° 逆時針剛體旋轉映射：(x,y) → (-y, x)，修正橫置感測器與直立螢幕的座標正交關係
+float worldX = -y; 
 float worldY = x;
 float worldZ = z;
 
@@ -123,9 +123,10 @@ pointsCount++;
 ```cpp
 // TofRawToDepthNeon.cpp: 牛頓-拉弗森逼近開方
 inline static float32x4_t vsqrt(float32x4_t v) {
-    float32x4_t r = vrsqrteq_f32(v);        // 1 個時脈：硬體求平方根倒數初始估計
-    r = vmulq_f32(vrsqrtsq_f32(v, r), r);   // 1 個時脈：牛頓疊代逼近
-    return vmulq_f32(v, r);                // 1 個時脈：轉為開方
+    float32x4_t r = vrsqrteq_f32(v);                    // 硬體求平方根倒數初始估計
+    float32x4_t step = vrsqrtsq_f32(vmulq_f32(r, r), v); // 牛頓疊代：(3.0 - r^2 * v) / 2.0
+    r = vmulq_f32(r, step);                              // 精煉估計值
+    return vmulq_f32(v, r);                              // 倒數轉正：v * (1/sqrt(v)) = sqrt(v)
 }
 ```
 

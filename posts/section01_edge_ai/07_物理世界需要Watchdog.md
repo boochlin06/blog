@@ -64,6 +64,9 @@ public static void scheduleNextHeartbeat(Context context) {
 1. **遞迴鏈式預約**：在 `SystemEventReceiver.onReceive()` 處理完餵狗邏輯後，末尾立刻再次調用 `scheduleNextHeartbeat(context)`，形成永不中斷的 15 秒精確脈衝。
 2. **ROM 級電池白名單**：工控機韌體在出廠時，於 `/etc/sysconfig/whitelist.xml` 加入 `<allow-in-power-save package="com.edge.ai.gate" />`，徹底豁免 Doze Mode 休眠限制。
 
+> [!WARNING]
+> 注意：在標準 Android 系統上，setExactAndAllowWhileIdle 在 Doze 模式下存在最短 9 分鐘的觸發間隔限制。本方案能達成 15 秒級精確觸發，是因為我們的門禁終端為自控 ROM，已在系統層面徹底關閉 Doze Mode（透過 DeviceIdleController 白名單或直接在 Framework 中 disable idle mode），一般消費級 App 無法複製此行為。
+
 ### 為什麼進程死光了，系統真的能把它拉活？
 
 1. **定時器活在系統層**：`PendingIntent` 是註冊並保存在 `system_server` 的 `AlarmManagerService` 中。App 進程被 LMKD 砍掉時，系統定時器依然完好無損。

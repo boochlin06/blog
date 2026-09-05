@@ -26,7 +26,7 @@ Compose 的自訂繪圖是效能殺手。每次畫面重組，你的繪圖邏輯
 
 #### 3. Modifier.drawWithCache
 
-這是前兩者的效能進化版。只要元件尺寸或你指定的狀態沒變，它就會直接用**快取**好的繪圖結果，而不是傻傻地重算一次。
+這是前兩者的效能進化版。只要元件尺寸或你指定的狀態沒變，它就會重用快取好的高成本繪圖物件（如 Path、Shader、Brush），省去每幀重新建構這些物件的開銷。但注意，onDrawBehind / onDrawWithContent 內的繪圖指令在每個 Draw phase 仍會被完整執行。
 
 * **比喻：** 餐廳預先做好一道功夫菜，客人點了直接上，不用等廚師現做。
 
@@ -192,6 +192,6 @@ fun PerformantPieChartWithDrawWithCache(data: List<PieSlice>, modifier: Modifier
 }
 ```
 
-將繪圖邏輯包在 `onDrawWithContent` 中。只要尺寸不變，Compose 就會直接使用上次畫好的結果，避免了不必要的重算，效能最佳。
+將繪圖邏輯包在 `onDrawWithContent` 中。只要元件尺寸或你指定的狀態沒變，它就會重用快取好的高成本繪圖物件（如 Path、Shader、Brush），省去每幀重新建構這些物件的開銷。但注意，onDrawBehind / onDrawWithContent 內的繪圖指令在每個 Draw phase 仍會被完整執行。
 
 ###

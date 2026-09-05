@@ -66,16 +66,19 @@ launcher 去準備存取 ，這樣就是一個簡單的d/c分離了，雖然你�
 
 上code啦：
 
-```
+跨 Package 存取資源時，絕對不能使用當前 App 的 R class 常數，因為不同 APK 在編譯期生成的資源 ID 數值不一致。必須透過 getIdentifier() 動態查詢目標 Package 的資源 ID。
+
+```java
 static boolean FEATURE_UI_CUSTOMIZE;
 Context context;
 try {
-     context = createPackageContext("com.android.customize", Context.CONTEXT_INCLUDE_CODE
-         | Context.CONTEXT_IGNORE_SECURITY);
-     FEATURE_UI_CUSTOMIZE = context.getResources().getBoolean(R.bool.feature_ui_customize);
+     Context targetContext = createPackageContext("com.android.customize", Context.CONTEXT_INCLUDE_CODE);
+     int resId = targetContext.getResources().getIdentifier("feature_ui_customize", "bool", "com.android.customize");
+     boolean featureEnabled = targetContext.getResources().getBoolean(resId);
+     FEATURE_UI_CUSTOMIZE = featureEnabled;
 } catch (NameNotFoundException e) {
      // If not found , you can assign default value here.
-     Feature_UI_CUSTOMIZE  = false;
+     FEATURE_UI_CUSTOMIZE  = false;
      e.printStackTrace();
  }
 ```

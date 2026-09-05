@@ -35,9 +35,9 @@
 ```
 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
     try {
-        // FastScroller.mThumbDrawable 為 fast scroll bar 的畫面，首先必須要透過 AbstractList.mFastScroller
+        // FastScroller.mThumbDrawable 為 fast scroll bar 的畫面，首先必須要透過 AbsListView.mFastScroller
         // 取得 FastScroller obj.
-        Field field = AbstractList.class.getDeclaredField("mFastScroller");
+        Field field = AbsListView.class.getDeclaredField("mFastScroller");
         // 設定可以存取
         field.setAccessible(true);
         Object obj = field.get(mContentListView);
@@ -81,8 +81,9 @@ try {
     // myapk.apk 是我們想要載入的對象，myapk_temp.apk 為系統最佳化臨時產生的檔案
     DexFile dexFile = DexFile.loadDex("sdcard/myapk.apk","/sdcard/myapk_temp.apk",0);
     //or 使用dexclassloader , 並利用官方指令直接拿到路徑，達到上述的效果
+    // DexClassLoader 的 optimizedDirectory 必須指向 App 私有的內部儲存空間。指向外部存儲（SD 卡）會造成嚴重的 Code Injection 安全漏洞，且 Android 5.0+ 會直接拋出 IllegalArgumentException 拒絕執行。
     DexClassLoader cl = new DexClassLoader(optimizedDexOutputPath.getAbsolutePath(),
-                    Environment.getExternalStorageDirectory().toString(), null, getClassLoader());
+                    context.getDir("dex", Context.MODE_PRIVATE).getAbsolutePath(), null, getClassLoader());
     //下述兩具效果是一樣的， 利用 java reflection 技術取得 getHigh 方法的物件，
     Object obj = dexFile.loadClass("com.android.acer.home",null).newInstance();
     cl.loadClass("com.android.acer.home")

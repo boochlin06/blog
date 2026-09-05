@@ -57,7 +57,7 @@ Resources in Android consist of three parts:
 在android裡開發中常常用到的語法
 
 ```
-context.getresources().getdrawable(r.id.hello_world);
+context.getResources().getDrawable(R.id.hello_world);
 ```
 
 這就是指定 resources 去取資料

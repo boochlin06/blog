@@ -76,8 +76,8 @@ Linux 4.20 引入（Android 9 實驗性支援、Android 10 正式成為標配，
 ```c
 // lmkd.c 內部的 PSI 監聽模型
 int psi_fd = open("/proc/pressure/memory", O_RDWR | O_NONBLOCK);
-// 註冊閥值：1000ms 窗口內若有線程 stall 超過 150ms 即觸發警報
-const char *trigger = "some 150 1000"; 
+// 註冊閥值：1000ms（1000000 微秒）窗口內若有線程 stall 超過 150ms（150000 微秒）即觸發警報
+const char *trigger = "some 150000 1000000"; 
 write(psi_fd, trigger, strlen(trigger) + 1);
 
 struct epoll_event ev;
@@ -119,6 +119,8 @@ ro.lmk.psi_partial_stall_ms=200
 ro.lmk.psi_complete_stall_ms=700
 
 # 階梯式處決閾值（數值越低越兇狠）
+# 以下配置為針對特定 BSP 廠商定製的 LMKD 擴展屬性，非 AOSP 原生標準。
+# 不同 SoC 廠商（高通、聯發科）的 LMKD 魔改版本可能有不同的屬性命名與行為，請以你的 BSP 文件為準。
 # 低壓力時立刻清理快取進程（oom_adj >= 900）
 ro.lmk.low=900
 # 中壓力時清理無用背景服務（oom_adj >= 500）

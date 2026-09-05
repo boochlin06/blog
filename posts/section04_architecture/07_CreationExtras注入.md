@@ -101,6 +101,6 @@ val application = extras[AndroidViewModelFactory.APPLICATION_KEY] as InventoryAp
 
 > 
 
-其實viewModel 的constructor本身應該是要被設定為private constructor才對，
+ViewModel 的建構子不能設為 private。ViewModelProvider.Factory（無論是手寫的還是 Hilt 生成的）需要透過反射或生成的程式碼存取建構子來實例化 ViewModel。若要限制外部直接 new，可考慮設為 internal 可見性（在同一模組內），或透過 Hilt 的 @HiltViewModel 完全託管建構過程。
 
 [https://blog.csdn.net/vitaviva/article/details/123321254](https://blog.csdn.net/vitaviva/article/details/123321254)

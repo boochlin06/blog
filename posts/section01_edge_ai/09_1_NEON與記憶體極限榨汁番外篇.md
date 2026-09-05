@@ -39,7 +39,7 @@ Cortex-A53 讀 L1 快取只要 **1 ~ 3 時脈**，讀 DRAM 要等 **150 ~ 200 �
 ### 3. QM215（Cortex-A53）四大微架構榨汁術
 
 1. **32KB L1 行級算子融合（Fused Kernel）**：一行 640 點（2.5KB）全在 L1 快取跑完「讀入 -> 查表 -> 開方 -> 3D 投影」，消滅 3 次 4.9MB DRAM 沖刷。
-2. **A53 雙發射指令交錯（Dual-Issue）**：將 `vld4q`（Load）與 `vmulq`（Math）交錯編排，觸發 Slot 0 + Slot 1 並行，IPC 翻倍。
+2. **A53 延遲隱藏（Latency Hiding）**：透過指令交錯排程，讓 NEON 載入指令（`vld4q`）的記憶體延遲期間被運算指令（`vmulq`）填充，有效隱藏記憶體等待時間，提升指令級並行度（ILP）。
 3. **展開步長 2x ~ 4x**：活躍暫存器控制在 20 個以內，杜絕 Stack 溢出（Register Spilling）。
 4. **4 核心專核綁定（CPU Affinity）**：Core 0（UI/系統）、Core 1（RGB/FastCV）、Core 2（ToF/NEON）、Core 3（AI/ACL）。
 

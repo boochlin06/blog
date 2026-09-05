@@ -125,11 +125,7 @@ BOARD_HAVE_BLUETOOTH := true  # 藍牙必須保留（BLE 近場配網維護專�
 
 但原生 Android 預設會一直監控電池健康度，`PowerUI` 會定時跳通知、彈警告、維護 battery status log。
 
-直接在 `build.prop` 設定：
-
-```properties
-ro.boot.charger=0
-```
+在 Kernel Command Line（BoardConfig.mk 或 device tree 的 bootargs）中加入 `androidboot.charger=0`，或直接在 Kernel defconfig 中移除電池監控相關驅動（注意：`ro.boot.*` 屬性是由 Kernel Command Line 解析而來的唯讀屬性，直接寫在 `build.prop` 中是無效的）。
 
 並在 frameworks 中關閉低電量彈窗，省下背景執行緒無謂的輪詢與日誌寫入。
 

@@ -64,7 +64,8 @@ featureDet.put(0, 0, inputFeature);
 featureCmp.put(0, 0, authFace.getRgbFeature());
 
 // 呼叫 OpenCV 底層算單次內積分數
-Core.gemm(featureDet, featureCmp, 1.0, new Mat(), 0.0, cvResult);
+// 第二矩陣需轉置為 512x1 才能與 1x512 相乘，結果為 1x1 餘弦相似度純量
+Core.gemm(featureDet, featureCmp, 1.0, new Mat(), 0.0, cvResult, Core.GEMM_2_T);
 ```
 
 在 1:1 模式下，這段代碼只執行一次，耗時不到 0.5ms，爽快得很。

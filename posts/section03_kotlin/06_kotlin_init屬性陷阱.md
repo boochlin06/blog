@@ -45,5 +45,5 @@ init {
 private val itemId: Int = checkNotNull(savedStateHandle[ItemEditDestination.itemIdArg])
 
 可以編譯過，但是會有問題
-getItemStream 會永遠是只讀取到０．主要是因為 Int 的預設值就是0
+由於 viewModelScope.launch 預設派發至 Dispatchers.Main，協程會被排入 Main Looper 的事件佇列。在大多數情況下，當協程真正被調度執行時，類別建構過程（包含後續的 itemId 初始化）已經完成，因此 itemId 通常能讀到正確值。然而，這種依賴執行時序的寫法本質上是脆弱的——若 Dispatcher 改為 Dispatchers.Unconfined 或在測試環境中使用 UnconfinedTestDispatcher，協程會立即內聯執行，此時 itemId 尚未初始化，確實會讀到預設值 0。正確做法是將 itemId 宣告在 init 區塊之前，或透過建構子參數直接傳入。
 ```

@@ -260,4 +260,4 @@ class LoginActivity : AppCompatActivity() {
 
 * **api(project(“:…”))**: 依賴會向上傳遞。在上述情況下，若 :feature api :core，則 :app 也能存取 :core 的內容。
 
-**Hilt 規則**：如果一個模組 A 提供了希望被模組 C (C -> B -> A) 注入的 Hilt 綁定，那麼在 B 的 build.gradle 中，對 A 的依賴必須使用 api。在多數情況下，底層 core 模組建議使用 api 來暴露其提供的共享依賴。
+**Hilt 規則**：如果一個模組 A 提供了希望被模組 C (C -> B -> A) 注入的 Hilt 綁定，那麼在 B 的 build.gradle 中，對 A 的依賴必須使用 api。Hilt 利用 AGP plugin 與 Dagger 的 Aggregating Processor，能穿透專案依賴圖自動收集所有標記 @Module + @InstallIn 的類別（即使是透過 implementation 傳遞的間接依賴）。因此，在多模組專案中，不需要為了讓頂層模組抓到 Hilt 綁定而刻意將依賴改為 api。使用 api 的決定應基於是否需要暴露該模組的公開 API 型別，而非 Hilt 注入需求。

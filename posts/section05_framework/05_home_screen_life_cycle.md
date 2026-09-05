@@ -73,3 +73,5 @@ home screen 已經在onResume 階段，顯示在 foreground
  也要同時考慮 onPause 和 onresume 的觸發關係，而不能單純考慮 onNewIntent 的 handle.
 
  算是home screen的特殊案例，與一般 ap 不同的地方
+
+補充：onPause → onNewIntent → onResume 的生命週期流程並非 Home Screen 獨有的特殊行為，而是所有 LaunchMode 設定為 singleTop、singleTask 或 singleInstance 的 Activity 在 Foreground 時接收新 Intent 的標準生命週期。Home Screen 之所以呈現此行為，正是因為其通常被設定為 singleTask。

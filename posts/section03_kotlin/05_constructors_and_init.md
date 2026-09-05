@@ -16,9 +16,7 @@
 
 1. **Primary Constructor**
 
-2. **Property Initializers**
-
-3. **init blocks** (按宣告順序)
+2. **Property Initializers 與 init blocks**（兩者按照在類別中的宣告順序由上至下交替執行，並非先後關係）
 
 4. **Secondary Constructor** (次要建構函式) 的主體 (如果有，且在呼叫 Primary Constructor 之後)
 

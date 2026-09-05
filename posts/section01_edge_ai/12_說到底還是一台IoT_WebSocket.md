@@ -142,11 +142,11 @@ CREATE TABLE pass_records (
 
 在 Android 9/10 中，SQLite 查詢依靠 Binder 共享記憶體傳輸，底層 `CursorWindow` 存在 **2048KB（2MB）的硬上限**。
 
-當斷網 3 天恢復連線，系統觸發批次同步一次拉取 20 筆未同步紀錄時：
+當斷網 3 天恢復連線，即使單筆 150KB 未超限，將二進位大檔案直接存在 SQLite BLOB 欄位本身就是嚴重的反模式：查詢效能劇降、WAL 日誌膨脹、資料庫損毀風險大增。更致命的是，當相機解析度提升或 JPEG 品質調高時，單筆 BLOB 輕易突破 2MB 硬上限，引爆 `CursorWindowAllocationException`！
 
-> 20 筆 x 150KB (JPEG) = 3,000KB (3MB) > 2,048KB
+> 單筆照片 BLOB (> 2,048KB) > CursorWindow 單行硬上限
 
-`CursorWindow` 瞬間被灌爆，系統無情噴出 `android.database.CursorWindowAllocationException: Row too big to fit into CursorWindow`！
+（註：如果只是多筆總和超過 2MB，Cursor 其實會自動分頁，只有「單筆資料」超過 2MB 才會直接引發崩潰。）
 
 同步進程當場崩潰引發事務回滾，重連後再次拉取 20 筆再次崩潰，設備陷入「永久無法上傳離線紀錄」的死鎖；且大型 BLOB 頻繁寫入會讓 SQLite 檔案嚴重碎片化，WAL 日誌大量寫入放大更會提早損耗 Flash 晶片壽命。
 

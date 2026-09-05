@@ -97,8 +97,9 @@ if (characteristic.getUuid().toString().startsWith(STR_CHAR_READ_DEVICE_ID_CHUNK
 ```java
 // File: BleUtils.java
 public static boolean multipleBytesToString(byte[] bytes, StringBuffer sb) {
-    byte index = bytes[0];
-    byte length = bytes[1];
+    // 前 2 bytes 為自定義協定標頭：byte[0]=分包序號, byte[1]=總預期長度
+    int index = bytes[0] & 0xFF;
+    int length = bytes[1] & 0xFF;
 
     int expectedLen = index * 10;
     if (expectedLen < sb.length()) {
@@ -107,7 +108,9 @@ public static boolean multipleBytesToString(byte[] bytes, StringBuffer sb) {
         return false;              // 掉包了：丟掉等待重傳
     }
 
-    sb.append(bytesToString(bytes));
+    // 從 byte[2] 開始才是實際的 payload 資料
+    String payload = new String(bytes, 2, bytes.length - 2, StandardCharsets.UTF_8);
+    sb.append(payload);
     return length == sb.length();  // 收滿預期長度才算完工
 }
 ```
@@ -126,8 +129,11 @@ public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId,
             if (!wifiSSID.isEmpty() && wifiPSW != null && !wifiPSW.isEmpty()) connectToWifi(wifiSSID, wifiPSW);
         }
     }
-    // 關鍵：收到寫入必須無條件回覆 ACK，不然手機端的藍牙驅動會直接卡死逾時
-    mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, requestBytes);
+    // 關鍵：只有當 BLE 規範要求回覆（Write Request）時才送 ACK
+    // Write Command (WRITE_TYPE_NO_RESPONSE) 不需回覆，強行回覆會導致協議棧狀態機錯亂
+    if (responseNeeded) {
+        mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, requestBytes);
+    }
 }
 ```
 

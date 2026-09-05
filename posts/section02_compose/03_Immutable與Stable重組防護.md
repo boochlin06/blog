@@ -60,7 +60,7 @@ fun UserList(users: List<String>) {
 
 kotlinx.collections.immutable.ImmutableList 從類型層面就向編譯器立下了一個「保證書」：**我一旦被創建，就永遠不會改變**。
 
-有了這個保證，Compose 就可以放心地進行優化。當父層重組時，Compose 檢查傳給 UserList 的 ImmutableList，只需做一次高效的參考比對 (===)。如果物件參考沒變，Compose 就知道內容也一定沒變，於是**直接跳過** UserList 的整個重組過程。
+有了這個保證，Compose 就可以放心地進行優化。當父層重組時，Compose 檢查傳給 UserList 的 ImmutableList，只需做一次結構相等性比較（equals()）。若物件的內容沒變（equals() 返回 true），Compose 就知道不需要觸發重組。
 
 你只需將 listOf(…) 改為 persistentListOf(…) 或 .toImmutableList()，上面範例中的效能問題就迎刃而解。
 
