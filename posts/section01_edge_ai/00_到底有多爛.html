@@ -1,0 +1,1695 @@
+
+<!DOCTYPE HTML>
+<html lang="zh-tw" >
+    <head>
+        <meta charset="UTF-8">
+        <title>00 篇：到底有多爛？算力深淵與硬體現狀評估 · Something Record - Boochlin's Tech Blog</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 6.2.2">
+        <meta name="author" content="Boochlin">
+        
+        
+    
+    <link rel="stylesheet" href="../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="../../styles/website.css">
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="01_評估第一.html" />
+    
+    
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="輸入並搜尋" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    全站導讀：十年隨筆與工程破局心法
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷首：工程哲學與代碼整潔之道（5 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="../section10_philosophy/01_Clean_code_書摘心得一.html">
+            
+                <a href="../section10_philosophy/01_Clean_code_書摘心得一.html">
+            
+                    
+                    代碼整潔：Clean Code 無瑕的程式碼（一）：命名、函式與職責精準
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="../section10_philosophy/02_Clean_code_書摘心得二.html">
+            
+                <a href="../section10_philosophy/02_Clean_code_書摘心得二.html">
+            
+                    
+                    代碼整潔：Clean Code 無瑕的程式碼（二）：錯誤處理、邊界與單元測試
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="../section10_philosophy/03_The_Clean_coder_番外篇.html">
+            
+                <a href="../section10_philosophy/03_The_Clean_coder_番外篇.html">
+            
+                    
+                    工程師素養：The Clean Coder 專業程式設計師的生存與承諾法則
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="../section10_philosophy/04_約爾趣談軟體筆記.html">
+            
+                <a href="../section10_philosophy/04_約爾趣談軟體筆記.html">
+            
+                    
+                    產品哲學：約爾趣談軟體（Joel on Software）經典研讀筆記
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="../section10_philosophy/05_Android好文整理.html">
+            
+                <a href="../section10_philosophy/05_Android好文整理.html">
+            
+                    
+                    早期拓荒：Android 核心架構技術精選與歷史記憶（2015）
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷一：邊緣 AI 與低階硬體極限榨汁（旗艦專案 18 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="00_全系列架構對照導覽.html">
+            
+                <a href="00_全系列架構對照導覽.html">
+            
+                    
+                    架構導讀：全篇演進與防坑總對照
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" >
+            
+                <span>
+            
+                    
+                    階段一：硬體現狀評估與系統裁剪
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter active" data-level="3.2.1" data-path="00_到底有多爛.html">
+            
+                <a href="00_到底有多爛.html">
+            
+                    
+                    00 篇：到底有多爛？算力深淵與硬體現狀評估
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.2" data-path="01_評估第一.html">
+            
+                <a href="01_評估第一.html">
+            
+                    
+                    01 篇：評估第一：硬體瓶頸與選型考量
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.3" data-path="02_無用系統服務out.html">
+            
+                <a href="02_無用系統服務out.html">
+            
+                    
+                    02 篇：系統裁剪：無用系統服務徹底剔除
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" >
+            
+                <span>
+            
+                    
+                    階段二：Linux 核心調校與記憶體控場
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.3.1" data-path="03_ZRAM_SWAP_KSM.html">
+            
+                <a href="03_ZRAM_SWAP_KSM.html">
+            
+                    
+                    03 篇：核心擴張：ZRAM、SWAP 與 KSM 調校
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.2" data-path="04_記憶體控場師LMKD.html">
+            
+                <a href="04_記憶體控場師LMKD.html">
+            
+                    
+                    04 篇：記憶體控場：LMKD 策略與防 OOM 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.3" data-path="05_GC是唯一關心你OOM的好人.html">
+            
+                <a href="05_GC是唯一關心你OOM的好人.html">
+            
+                    
+                    05 篇：記憶體哲學：GC 是唯一關心你 OOM 的好人
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" >
+            
+                <span>
+            
+                    
+                    階段三：影像零拷貝、NEON 加速與保活
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.4.1" data-path="06_三路高頻影像流零拷貝.html">
+            
+                <a href="06_三路高頻影像流零拷貝.html">
+            
+                    
+                    06 篇：影像零拷貝：三路高頻影像流記憶體防護
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.2" data-path="07_物理世界需要Watchdog.html">
+            
+                <a href="07_物理世界需要Watchdog.html">
+            
+                    
+                    07 篇：硬體保活：物理世界需要 Watchdog
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.3" data-path="07_1_GC_Thrashing思路補充.html">
+            
+                <a href="07_1_GC_Thrashing思路補充.html">
+            
+                    
+                    07.1 篇：進程調度：GC Thrashing 調校思路補充
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.4" data-path="08_YUV加速QFastCV.html">
+            
+                <a href="08_YUV加速QFastCV.html">
+            
+                    
+                    08 篇：色彩加速：YUV420 888 與 QFastCV 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.5" data-path="09_兄弟齊心ACL_SGEMM.html">
+            
+                <a href="09_兄弟齊心ACL_SGEMM.html">
+            
+                    
+                    09 篇：矩陣加速：ARM Compute Library SGEMM 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.6" data-path="09_1_NEON與記憶體極限榨汁番外篇.html">
+            
+                <a href="09_1_NEON與記憶體極限榨汁番外篇.html">
+            
+                    
+                    番外篇：效能榨汁：ARM NEON 與 DirectBuffer 終極調優
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" >
+            
+                <span>
+            
+                    
+                    階段四：3D 視覺光學與邊緣 IoT 通訊
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.5.1" data-path="10_雙鏡頭時空同步.html">
+            
+                <a href="10_雙鏡頭時空同步.html">
+            
+                    
+                    10 篇：時空對齊：RGB 與 ToF 雙鏡頭同步
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.2" data-path="11_ToF_RAW12轉3D點雲.html">
+            
+                <a href="11_ToF_RAW12轉3D點雲.html">
+            
+                    
+                    11 篇：點雲解算：ToF RAW12 轉 3D 空間點雲
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.3" data-path="12_說到底還是一台IoT_WebSocket.html">
+            
+                <a href="12_說到底還是一台IoT_WebSocket.html">
+            
+                    
+                    12 篇：長連線架構：WebSocket 離線雙寫同步機制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.4" data-path="13_為了極少用功能大改的WebRTC.html">
+            
+                <a href="13_為了極少用功能大改的WebRTC.html">
+            
+                    
+                    13 篇：即時通訊：WebRTC 視訊對講底層魔改
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.5" data-path="14_門禁機當BLE_Peripheral現場踩坑記.html">
+            
+                <a href="14_門禁機當BLE_Peripheral現場踩坑記.html">
+            
+                    
+                    14 篇：近場配網：門禁機當 BLE Peripheral 現場踩坑記
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷二：現代 Android 架構、語言與渲染引擎（18 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" >
+            
+                <span>
+            
+                    
+                    Jetpack Compose 渲染機制與效能調校
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1.1" data-path="../section02_compose/01_Compose三階段渲染管線.html">
+            
+                <a href="../section02_compose/01_Compose三階段渲染管線.html">
+            
+                    
+                    渲染管線：Compose 三階段渲染（Composition / Layout / Draw）深度剖析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.2" data-path="../section02_compose/02_何時該用derivedStateOf.html">
+            
+                <a href="../section02_compose/02_何時該用derivedStateOf.html">
+            
+                    
+                    狀態衍生：derivedStateOf 的精確使用時機與底層機制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.3" data-path="../section02_compose/03_Immutable與Stable重組防護.html">
+            
+                <a href="../section02_compose/03_Immutable與Stable重組防護.html">
+            
+                    
+                    重組防護：@Immutable 與 @Stable 包含集合時的 Recomposition 機制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.4" data-path="../section02_compose/04_Modifier繪製效能比較.html">
+            
+                <a href="../section02_compose/04_Modifier繪製效能比較.html">
+            
+                    
+                    繪製優化：Modifier 繪製效能抉擇：drawBehind vs drawWithCache
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" >
+            
+                <span>
+            
+                    
+                    Kotlin 語言深水區與非同步併發
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.2.1" data-path="../section03_kotlin/01_Thread與Coroutine理解.html">
+            
+                <a href="../section03_kotlin/01_Thread與Coroutine理解.html">
+            
+                    
+                    併發模型：Thread 與 Coroutine 的底層機制與上下文切換成本
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.2" data-path="../section03_kotlin/02_Kotlin預防Launch連發防抖.html">
+            
+                <a href="../section03_kotlin/02_Kotlin預防Launch連發防抖.html">
+            
+                    
+                    併發防抖：協程防連發、搜尋任務防抖與競態消除
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.3" data-path="../section03_kotlin/03_inline_noinline_crossinline.html">
+            
+                <a href="../section03_kotlin/03_inline_noinline_crossinline.html">
+            
+                    
+                    內聯機制：inline、noinline、crossinline 的本質與存在意義
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.4" data-path="../section03_kotlin/04_lateinit_vs_lazy.html">
+            
+                <a href="../section03_kotlin/04_lateinit_vs_lazy.html">
+            
+                    
+                    延遲載入：lateinit 與 lazy 的位元組碼實現與執行期差異
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.5" data-path="../section03_kotlin/05_constructors_and_init.html">
+            
+                <a href="../section03_kotlin/05_constructors_and_init.html">
+            
+                    
+                    物件建構：次級建構子（Constructor）與 init 程式碼區塊的執行順序
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.6" data-path="../section03_kotlin/06_kotlin_init屬性陷阱.html">
+            
+                <a href="../section03_kotlin/06_kotlin_init屬性陷阱.html">
+            
+                    
+                    屬性初始化：init 區塊與屬性初始化的順序地雷
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.7" data-path="../section03_kotlin/07_gradle_kotlin_plugins.html">
+            
+                <a href="../section03_kotlin/07_gradle_kotlin_plugins.html">
+            
+                    
+                    構建腳本：Gradle Plugin Management 中 apply false 的深層原因
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" >
+            
+                <span>
+            
+                    
+                    現代架構模式與依賴注入實戰
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.3.1" data-path="../section04_architecture/01_viewModelScope_vs_rememberCoroutineScope.html">
+            
+                <a href="../section04_architecture/01_viewModelScope_vs_rememberCoroutineScope.html">
+            
+                    
+                    職責劃分：viewModelScope 與 rememberCoroutineScope 的職責分離
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.2" data-path="../section04_architecture/02_SupervisorJob與viewModelScope.html">
+            
+                <a href="../section04_architecture/02_SupervisorJob與viewModelScope.html">
+            
+                    
+                    異常處理：SupervisorJob 與 viewModelScope 的生命週期綁定機制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.3" data-path="../section04_architecture/03_Hilt指南組內分享.html">
+            
+                <a href="../section04_architecture/03_Hilt指南組內分享.html">
+            
+                    
+                    依賴注入：Hilt 實戰架構指南與工程實踐
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.4" data-path="../section04_architecture/04_ViewModelProviderFactory.html">
+            
+                <a href="../section04_architecture/04_ViewModelProviderFactory.html">
+            
+                    
+                    實例工廠：ViewModelProvider.Factory 的設計必要性與自訂實例化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.5" data-path="../section04_architecture/05_預設參數注入陷阱.html">
+            
+                <a href="../section04_architecture/05_預設參數注入陷阱.html">
+            
+                    
+                    注入陷阱：Composable 預設參數直接實例化 ViewModel 的架構反模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.6" data-path="../section04_architecture/06_RepositoryScope架構邊界.html">
+            
+                <a href="../section04_architecture/06_RepositoryScope架構邊界.html">
+            
+                    
+                    架構邊界：超出 ComposableViewModel 生命週期的 Repository 任務邊界
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.7" data-path="../section04_architecture/07_CreationExtras注入.html">
+            
+                <a href="../section04_architecture/07_CreationExtras注入.html">
+            
+                    
+                    動態參數：CreationExtras 與自訂 Application 依賴提取
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷三：系統核心機制、相機驅動與效能排障（25 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" >
+            
+                <span>
+            
+                    
+                    Android Framework 原理與執行緒池演進
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.1.1" data-path="../section05_framework/01_ThreadPoolManager的原罪.html">
+            
+                <a href="../section05_framework/01_ThreadPoolManager的原罪.html">
+            
+                    
+                    執行緒池演進：全域單例 ThreadPoolManager 的歷史原罪與現代化重構
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.2" data-path="../section05_framework/02_Naming_threads_and_thread_pools.html">
+            
+                <a href="../section05_framework/02_Naming_threads_and_thread_pools.html">
+            
+                    
+                    併發診斷：ExecutorService 執行緒與執行緒池的規範命名實踐
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.3" data-path="../section05_framework/03_runtime_resource_overlay.html">
+            
+                <a href="../section05_framework/03_runtime_resource_overlay.html">
+            
+                    
+                    系統自訂：Runtime Resource Overlay (RRO) 運行期資源替換原理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.4" data-path="../section05_framework/04_datacontrol分離_createPackageContext.html">
+            
+                <a href="../section05_framework/04_datacontrol分離_createPackageContext.html">
+            
+                    
+                    沙盒隔離：跨應用存取與資料隔離：createPackageContext() 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.5" data-path="../section05_framework/05_home_screen_life_cycle.html">
+            
+                <a href="../section05_framework/05_home_screen_life_cycle.html">
+            
+                    
+                    系統生命週期：Android Home Screen 與 Launcher 生命週期深度解析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.6" data-path="../section05_framework/06_Java_reflection_dynamic_load.html">
+            
+                <a href="../section05_framework/06_Java_reflection_dynamic_load.html">
+            
+                    
+                    動態載入：Java 反射黑魔法：FastScrollBar 動態載入外部 APK
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.7" data-path="../section05_framework/07_Android_Nougat_introduction.html">
+            
+                <a href="../section05_framework/07_Android_Nougat_introduction.html">
+            
+                    
+                    系統演進：Android Nougat (Android 7.0) 核心新特性與架構變革
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" >
+            
+                <span>
+            
+                    
+                    相機 HAL 與原生多媒體驅動框架
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.2.1" data-path="../section07_camera_multimedia/01_Camera1_Architecture.html">
+            
+                <a href="../section07_camera_multimedia/01_Camera1_Architecture.html">
+            
+                    
+                    Camera 架構（一）：Camera 1 經典架構與驅動層資料流
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.2" data-path="../section07_camera_multimedia/02_Camera2_Introduction.html">
+            
+                <a href="../section07_camera_multimedia/02_Camera2_Introduction.html">
+            
+                    
+                    Camera 架構（二）：Camera 2 HAL3 管道化模型與核心概念
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.3" data-path="../section07_camera_multimedia/03_How_to_create_Camera2.html">
+            
+                <a href="../section07_camera_multimedia/03_How_to_create_Camera2.html">
+            
+                    
+                    Camera 架構（三）：Camera 2 Session 建立與 CaptureRequest 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.4" data-path="../section07_camera_multimedia/04_FMRadio_概論.html">
+            
+                <a href="../section07_camera_multimedia/04_FMRadio_概論.html">
+            
+                    
+                    FMRadio 開發（一）：系統架構概論與硬體中介層通訊
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.5" data-path="../section07_camera_multimedia/05_FMRadio_FMRadioMain.html">
+            
+                <a href="../section07_camera_multimedia/05_FMRadio_FMRadioMain.html">
+            
+                    
+                    FMRadio 開發（二）：FMRadioMain 前端介面與硬體狀態同步
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.6" data-path="../section07_camera_multimedia/06_FMRadio_FMRadioService.html">
+            
+                <a href="../section07_camera_multimedia/06_FMRadio_FMRadioService.html">
+            
+                    
+                    FMRadio 開發（三）：FMRadioService 背景常駐服務與音訊焦點
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.7" data-path="../section07_camera_multimedia/07_FMRadio_AlterActivity.html">
+            
+                <a href="../section07_camera_multimedia/07_FMRadio_AlterActivity.html">
+            
+                    
+                    FMRadio 開發（四）：AlertActivity 系統中斷與彈出視窗處理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.8" data-path="../section07_camera_multimedia/08_FMRadio_Other.html">
+            
+                <a href="../section07_camera_multimedia/08_FMRadio_Other.html">
+            
+                    
+                    FMRadio 開發（五）：特殊情境例外排障與全系列收官
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" >
+            
+                <span>
+            
+                    
+                    效能診斷、除錯工具與 UI 排障實錄
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.3.1" data-path="../section06_performance/01_Analyzing_UI_Performance_Systrace.html">
+            
+                <a href="../section06_performance/01_Analyzing_UI_Performance_Systrace.html">
+            
+                    
+                    卡頓診斷：使用 Systrace 深度分析 UI 幀率與掉幀瓶頸
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.2" data-path="../section06_performance/02_Chrome_dev_tool_stetho.html">
+            
+                <a href="../section06_performance/02_Chrome_dev_tool_stetho.html">
+            
+                    
+                    除錯工具：Facebook Stetho 結合 Chrome DevTools 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.3" data-path="../section06_performance/03_Android_Intents_with_Chrome.html">
+            
+                <a href="../section06_performance/03_Android_Intents_with_Chrome.html">
+            
+                    
+                    跨進程通訊：Chrome 深度連結與 Android Intent 協議交互實作
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.4" data-path="../section06_performance/04_Communicate_with_fragments.html">
+            
+                <a href="../section06_performance/04_Communicate_with_fragments.html">
+            
+                    
+                    元件通訊：Fragment 之間高內聚、低耦合的通訊模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.5" data-path="../section06_performance/05_Avoid_non-default_constructors_fragments.html">
+            
+                <a href="../section06_performance/05_Avoid_non-default_constructors_fragments.html">
+            
+                    
+                    生命週期地雷：Fragment 為何絕對嚴禁非預設無參建構子？
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.6" data-path="../section06_performance/06_UI佈局被鍵盤擋住.html">
+            
+                <a href="../section06_performance/06_UI佈局被鍵盤擋住.html">
+            
+                    
+                    軟鍵盤遮擋：adjustResize、adjustPan 與沉浸式輸入框遮擋排障
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.7" data-path="../section06_performance/07_RecyclerView_inside_NestedScrollView.html">
+            
+                <a href="../section06_performance/07_RecyclerView_inside_NestedScrollView.html">
+            
+                    
+                    滾動衝突解決：NestedScrollView 內部巢狀 RecyclerView 的滑動與尺寸修復
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.8" data-path="../section06_performance/08_AppIntro_Proguard_issue.html">
+            
+                <a href="../section06_performance/08_AppIntro_Proguard_issue.html">
+            
+                    
+                    程式碼混淆：AppIntro 開源庫引發的 ProGuard 規則踩坑記錄
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.9" data-path="../section06_performance/09_Local_build_third_parity_lib.html">
+            
+                <a href="../section06_performance/09_Local_build_third_parity_lib.html">
+            
+                    
+                    模組化依賴：本機構建引入第三方二進制依賴庫的配置策略
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.10" data-path="../section06_performance/10_Android_CTS_Fail.html">
+            
+                <a href="../section06_performance/10_Android_CTS_Fail.html">
+            
+                    
+                    CTS 認證排障：Android CTS 測試失敗 — 外部儲存目錄無法刪除診斷
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷四：工程專案實踐與生態拓荒史（16 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" >
+            
+                <span>
+            
+                    
+                    獨立產品實戰、機器人定位與跨平台
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.1.1" data-path="../section08_projects_iot/01_Funny_Vote_開發雜記.html">
+            
+                <a href="../section08_projects_iot/01_Funny_Vote_開發雜記.html">
+            
+                    
+                    獨立產品：Funny Vote 投票 App 從零架構與開發雜記
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.2" data-path="../section08_projects_iot/02_Funny_vote_MVP更新雜記.html">
+            
+                <a href="../section08_projects_iot/02_Funny_vote_MVP更新雜記.html">
+            
+                    
+                    架構演進：Funny Vote 引入 MVP 架構模式與模組化重構
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.3" data-path="../section08_projects_iot/03_Funny_vote_Kotlin改版雜記.html">
+            
+                <a href="../section08_projects_iot/03_Funny_vote_Kotlin改版雜記.html">
+            
+                    
+                    語言遷移：Funny Vote 全專案 Kotlin 改版遷移紀錄
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.4" data-path="../section08_projects_iot/04_SLAM_Note_NDT_TKU.html">
+            
+                <a href="../section08_projects_iot/04_SLAM_Note_NDT_TKU.html">
+            
+                    
+                    機器人定位：雷達 SLAM 演算法與 NDT 點雲匹配筆記
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.5" data-path="../section08_projects_iot/05_React_Native_學習筆記.html">
+            
+                <a href="../section08_projects_iot/05_React_Native_學習筆記.html">
+            
+                    
+                    跨平台技術：React Native 早期架構與混合開發實踐
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.6" data-path="../section08_projects_iot/06_React_native_Native_android_module.html">
+            
+                <a href="../section08_projects_iot/06_React_native_Native_android_module.html">
+            
+                    
+                    原生模組互通：React Native 與 Android 原生 Native Module 互通踩坑
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2" >
+            
+                <span>
+            
+                    
+                    經典網路庫、資料庫 ORM 與工具演進
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.2.1" data-path="../section09_orm_tools/01_Retrofit2_Upload_Files.html">
+            
+                <a href="../section09_orm_tools/01_Retrofit2_Upload_Files.html">
+            
+                    
+                    網路庫演進：Retrofit 2 檔案上傳與 Multipart 參數列表實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.2" data-path="../section09_orm_tools/02_Volley_gzip_gson.html">
+            
+                <a href="../section09_orm_tools/02_Volley_gzip_gson.html">
+            
+                    
+                    網路庫演進：Google Volley 自訂 Request：整合 Gzip 壓縮與 Gson 解析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.3" data-path="../section09_orm_tools/03_GreenDao3_Introduction.html">
+            
+                <a href="../section09_orm_tools/03_GreenDao3_Introduction.html">
+            
+                    
+                    ORM 資料庫：GreenDAO 3 註解架構與效能機制入門
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.4" data-path="../section09_orm_tools/04_GreenDAO_introduction.html">
+            
+                <a href="../section09_orm_tools/04_GreenDAO_introduction.html">
+            
+                    
+                    ORM 資料庫：GreenDAO 核心架構、資料表關聯與 Session 管理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.5" data-path="../section09_orm_tools/05_GreenDAO_default_value.html">
+            
+                <a href="../section09_orm_tools/05_GreenDAO_default_value.html">
+            
+                    
+                    ORM 資料庫：GreenDAO 欄位預設值無效之底層原始碼追蹤
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.6" data-path="../section09_orm_tools/06_ButterKnife_introduction.html">
+            
+                <a href="../section09_orm_tools/06_ButterKnife_introduction.html">
+            
+                    
+                    視圖綁定：ButterKnife 註解綁定原理與 View 編譯期生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.7" data-path="../section09_orm_tools/07_Facebook_api_Login.html">
+            
+                <a href="../section09_orm_tools/07_Facebook_api_Login.html">
+            
+                    
+                    社群整合：Facebook SDK 登入授權與原生 App 交互接入
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.8" data-path="../section09_orm_tools/08_GAIQ_GET.html">
+            
+                <a href="../section09_orm_tools/08_GAIQ_GET.html">
+            
+                    
+                    數據分析認證：Google Analytics 個人認證（GAIQ）備考與技術心得
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.9" data-path="../section09_orm_tools/09_Google_Analytics_初始化.html">
+            
+                <a href="../section09_orm_tools/09_Google_Analytics_初始化.html">
+            
+                    
+                    數據埋點：Google Analytics for Android SDK 整合與初始化指南
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.10" data-path="../section09_orm_tools/10_Release_jar_by_gradle.html">
+            
+                <a href="../section09_orm_tools/10_Release_jar_by_gradle.html">
+            
+                    
+                    構建發布：使用 Gradle 腳本打包與發布獨立 JAR 庫
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            本書使用 HonKit 釋出
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../.." >00 篇：到底有多爛？算力深淵與硬體現狀評估</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="android-爛裝置想跑人臉辨識0-–-到底有多爛？">Android 爛裝置想跑人臉辨識0 – 到底有多爛？</h1>
+<blockquote>
+<p>原文網址：<a href="https://boochlin.com/?p=401" target="_blank">https://boochlin.com/?p=401</a>
+發布日期：2025-02-15
+文章編號：401</p>
+</blockquote>
+<hr></hr>
+<p><img src="../../assets/images/qm215_hardware_spec.png" alt=""></img></p>
+<h2 id="爛裝置是什麼？">爛裝置是什麼？</h2>
+<p>這次的主角是：<strong>Qualcomm Snapdragon QM215</strong>，搭配 <strong>2GB RAM</strong>，架構為 <strong>ARMv8-A</strong>。</p>
+<p>這顆 SoC 是高通在 <strong>2019 年發售</strong>的超入門處理器，設計初衷就是給低價 Android 手機或 IoT 設備使用。雖然它支援 64bit 架構、雙鏡頭、功耗低，
+但同時也有幾個硬傷：</p>
+<ul>
+<li><p>沒有 NPU，AI 要靠 CPU/GPU 硬扛</p>
+</li>
+<li><p>RAM 上限 3GB，實際只裝了 2GB（為了省錢）</p>
+</li>
+<li><p>四核心 Cortex-A53，最高只有 1.3GHz</p>
+</li>
+</ul>
+<p>你是公司請來的技術負責人，2024 年收到這顆晶片，要在它上面做臉部辨識。你不能翻桌，也不能罵老闆，因為創業公司改硬體是禁忌，只能想辦法把爛機救活。</p>
+<hr></hr>
+<h2 id="應用場景">應用場景</h2>
+<p>任務需求不是簡單的開個鏡頭而已，而是：</p>
+<blockquote>
+</blockquote>
+<p><strong>臉部辨識設備，通過 BCTC 增強級認證（金融等級）</strong></p>
+<p>要求包含：</p>
+<ul>
+<li><p><strong>辨識時間 &lt; 1 秒</strong></p>
+</li>
+<li><p><strong>辨識精度 99.99%</strong></p>
+</li>
+<li><p><strong>活體安全認證（增強級）</strong></p>
+</li>
+</ul>
+<hr></hr>
+<h2 id="系統環境與初步評估">系統環境與初步評估</h2>
+<h3 id="作業系統：android-10">作業系統：Android 10</h3>
+<p>雖然 QM215 官方只提供 Android 9 的 BSP，但我們選擇升級到 Android 10，目的是希望減少非預期錯誤。代價是：Android 9~10 的系統服務預設就非常肥，<strong>光是開機就吃掉了 1.3GB RAM</strong>。</p>
+<h3 id="鏡頭需求：rgb--tof-雙鏡頭串流">鏡頭需求：RGB + TOF 雙鏡頭串流</h3>
+<ul>
+<li><p><strong>TOF（Time of Flight）是活體辨識的關鍵</strong></p>
+</li>
+<li><p>我們採用的是 <strong>iToF（間接飛行時間）實作</strong></p>
+</li>
+<li><p>雙鏡頭串流 + Frame buffer 處理，經測試約佔 <strong>950MB 記憶體</strong></p>
+</li>
+</ul>
+<h3 id="ai-model-推論架構">AI Model 推論架構</h3>
+<p>完整臉部辨識流程包含：</p>
+<pre><code>Face Detect → Face Align → Liveness Detection → Image Quality Check
+→ Feature Extraction → Feature Matching
+</code></pre><p>其中 Image Quality Check 又細分為：</p>
+<ul>
+<li><p>head_pose_model</p>
+</li>
+<li><p>expression_model</p>
+</li>
+<li><p>blurriness_model</p>
+</li>
+<li><p>occlusion_model</p>
+</li>
+<li><p>cv_over_exposure</p>
+</li>
+</ul>
+<p>這些模組大多用 TensorFlow Lite / NCNN 實作，也有些用影像處理簡化掉，但仍然要吃掉 <strong>約 300MB 記憶體</strong>。</p>
+<hr></hr>
+<h2 id="問題馬上浮現">問題馬上浮現</h2>
+<blockquote>
+</blockquote>
+<p><strong>鏡頭 950 MB + AI 模型 300 MB + System 1300 MB = 3180 MB &gt; 2000 MB</strong></p>
+<p>RAM 直接炸裂。</p>
+<blockquote>
+</blockquote>
+<p><strong>CPU 幾乎長期 90% 滿載</strong>（A53 x4 核心）</p>
+<p>AI 推論 + 影像處理壓力極大。</p>
+<blockquote>
+</blockquote>
+<p><strong>目前推論 + 鏡頭總處理時間 = 1.5 秒</strong></p>
+<p>距離 &lt;1 秒有點距離。</p>
+<hr></hr>
+<h2 id="我們的方向">我們的方向</h2>
+<ul>
+<li><p><strong>記憶體節省是第一要務</strong></p>
+</li>
+<li><p><strong>運算速度優化必須同步進行</strong></p>
+</li>
+</ul>
+<p>因為我們有修改 AOSP 的權限，第一步可以從砍掉沒用的 system service 開始。</p>
+<p>但在那之前，請記得：</p>
+<blockquote>
+</blockquote>
+<p>飛機起飛前，先裝好儀表板。</p>
+<p>沒有記憶體使用監控、沒有效能監控工具，一切都是瞎忙。</p>
+<h2 id=""> </h2>
+<p>QM215是一款高通於 2019年發售的低效能CPU，主要針對低價智慧型手機和物聯網設備，優點是功耗較低，支援雙鏡頭，為 64bit 架構，但缺點是最多只支援 ３GB ram，甚至為了省錢，老闆只願意裝2GB，此外 QM215 沒有NPU 但具有 GPU and CPU(1.3G)</p>
+<p>以上是你身爲技術負責人於２０２４年拿到的一個裝置，要想想這是一個4年前發售的入門級處理器，但是身為專業的你不能馬上開始找老闆算帳，畢竟公司找你來是解決問題，而在新創公司，要花錢改硬體通常是老闆最不願意做的事情。重點是不管是啥爛裝置，只要應用的情況適當，就是可以用</p>
+<p><strong>應用場景-人臉辨識裝置且能通過 BCTC 增強級認證（辨識時間&lt;1秒，辨識精度高達99.99%，活體安全認證（增強級），達到金融級支付標準）</strong></p>
+<p><strong>Android 10 </strong>– 主要是因為 QM215 官方只針對 android 9 提供BSP，為了降低可能出現的非預期情況，然而代價就是 android 9 system service 跑起來就會消耗 1.3 GB memory used</p>
+<p>雙鏡頭 RGB and TOF Streaming – 人臉辨識只靠單個 RGB 鏡頭是無法達到活體辨識 Liveness Check，所以必須利用TOF（Time of Flight），這部分有好幾種實作方式，但我們是採用IR，這部分我們等同於需要同時處理兩個鏡頭的資料流，這意味者 cpu 運算資源跟 memory 都會高速消耗．這部分經過測試約使用950mb</p>
+<p>人臉辨識 AI Model – 在大部分的情況下，就算針對 EDGE device 去優化模型，也只是相對大型server上的差異，沒辦法真的壓到很低的運算資源去跑，經過多方評估採用 tensorflow lite, ncnn （想當年還用 caffe2），加上一個完整的人臉識別流程，並非一個單一模型就可以完成，以下是最基本的流程</p>
+<p><strong>Face Detect → Face Align → Liveness Detection → Image Quality Check（head_pose_model</strong>，expression_model，blurriness_model，occlusion_model，cv_over_exposure<strong>） → Feature Extraction → Feature Matching</strong>.</p>
+<p>可能並非每個都需要ai infer，有些使用傳統影像處理方始就很夠了，但綜合評估下來約化使用 300 MB 的記憶體，以及大量的 CPU 運算資源</p>
+<p>背景交代完畢了，接下我們馬上就發現</p>
+<p>memory爆炸 -&gt; 鏡頭 950 mb + ai model 300 mb + system 1300 mb &gt; 2000 mb RAM</p>
+<p>CPU 負荷幾乎隨時都在 90%，主要來自於 AI 推理與影像處理（4x Cortex-A53 全核心幾乎都滿載）。，目前整個人臉辨識流程（包含影像處理 + AI 推理）約需 1.5s。</p>
+<p>節省記憶體＋優化計算速度變成我們的第一項工作，針對記憶體可以先從系統下手，畢竟我們擁有整個 AOSP 的修改權利，但在這之前可能大家需要先知道怎麼評估記憶體使用，畢竟沒有儀表板的飛機，沒人敢開，沒有評估機制，怎知道成效好壞</p>
+<pre><code>
+
+</code></pre><hr></hr>
+<h2 id="">#</h2>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                
+                <a href="01_評估第一.html" class="navigation navigation-next navigation-unique" aria-label="Next page: 01 篇：評估第一：硬體瓶頸與選型考量">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"00 篇：到底有多爛？算力深淵與硬體現狀評估","level":"3.2.1","depth":2,"next":{"title":"01 篇：評估第一：硬體瓶頸與選型考量","level":"3.2.2","depth":2,"path":"posts/section01_edge_ai/01_評估第一.md","ref":"posts/section01_edge_ai/01_評估第一.md","articles":[]},"previous":{"title":"階段一：硬體現狀評估與系統裁剪","level":"3.2","depth":1,"ref":"","articles":[{"title":"00 篇：到底有多爛？算力深淵與硬體現狀評估","level":"3.2.1","depth":2,"path":"posts/section01_edge_ai/00_到底有多爛.md","ref":"posts/section01_edge_ai/00_到底有多爛.md","articles":[]},{"title":"01 篇：評估第一：硬體瓶頸與選型考量","level":"3.2.2","depth":2,"path":"posts/section01_edge_ai/01_評估第一.md","ref":"posts/section01_edge_ai/01_評估第一.md","articles":[]},{"title":"02 篇：系統裁剪：無用系統服務徹底剔除","level":"3.2.3","depth":2,"path":"posts/section01_edge_ai/02_無用系統服務out.md","ref":"posts/section01_edge_ai/02_無用系統服務out.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["-sharing"],"styles":{"website":"styles/website.css"},"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"Boochlin","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Something Record - Boochlin's Tech Blog","language":"zh-tw","gitbook":"*","description":"Boochlin 個人技術部落格全集（2015-2026 十年技術隨筆與硬核破局實錄）"},"file":{"path":"posts/section01_edge_ai/00_到底有多爛.md","mtime":"2026-09-05T08:57:30.529Z","type":"markdown"},"gitbook":{"version":"6.2.2","time":"2026-09-05T08:58:32.284Z"},"basePath":"../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="../../gitbook/gitbook.js"></script>
+    <script src="../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../../gitbook/@honkit/honkit-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

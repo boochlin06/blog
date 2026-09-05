@@ -1,0 +1,1756 @@
+
+<!DOCTYPE HTML>
+<html lang="zh-tw" >
+    <head>
+        <meta charset="UTF-8">
+        <title>代碼整潔：Clean Code 無瑕的程式碼（二）：錯誤處理、邊界與單元測試 · Something Record - Boochlin's Tech Blog</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 6.2.2">
+        <meta name="author" content="Boochlin">
+        
+        
+    
+    <link rel="stylesheet" href="../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="../../styles/website.css">
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="03_The_Clean_coder_番外篇.html" />
+    
+    
+    <link rel="prev" href="01_Clean_code_書摘心得一.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="輸入並搜尋" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    全站導讀：十年隨筆與工程破局心法
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷首：工程哲學與代碼整潔之道（5 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="01_Clean_code_書摘心得一.html">
+            
+                <a href="01_Clean_code_書摘心得一.html">
+            
+                    
+                    代碼整潔：Clean Code 無瑕的程式碼（一）：命名、函式與職責精準
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.2" data-path="02_Clean_code_書摘心得二.html">
+            
+                <a href="02_Clean_code_書摘心得二.html">
+            
+                    
+                    代碼整潔：Clean Code 無瑕的程式碼（二）：錯誤處理、邊界與單元測試
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="03_The_Clean_coder_番外篇.html">
+            
+                <a href="03_The_Clean_coder_番外篇.html">
+            
+                    
+                    工程師素養：The Clean Coder 專業程式設計師的生存與承諾法則
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="04_約爾趣談軟體筆記.html">
+            
+                <a href="04_約爾趣談軟體筆記.html">
+            
+                    
+                    產品哲學：約爾趣談軟體（Joel on Software）經典研讀筆記
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="05_Android好文整理.html">
+            
+                <a href="05_Android好文整理.html">
+            
+                    
+                    早期拓荒：Android 核心架構技術精選與歷史記憶（2015）
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷一：邊緣 AI 與低階硬體極限榨汁（旗艦專案 18 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="../section01_edge_ai/00_全系列架構對照導覽.html">
+            
+                <a href="../section01_edge_ai/00_全系列架構對照導覽.html">
+            
+                    
+                    架構導讀：全篇演進與防坑總對照
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" >
+            
+                <span>
+            
+                    
+                    階段一：硬體現狀評估與系統裁剪
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.2.1" data-path="../section01_edge_ai/00_到底有多爛.html">
+            
+                <a href="../section01_edge_ai/00_到底有多爛.html">
+            
+                    
+                    00 篇：到底有多爛？算力深淵與硬體現狀評估
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.2" data-path="../section01_edge_ai/01_評估第一.html">
+            
+                <a href="../section01_edge_ai/01_評估第一.html">
+            
+                    
+                    01 篇：評估第一：硬體瓶頸與選型考量
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.3" data-path="../section01_edge_ai/02_無用系統服務out.html">
+            
+                <a href="../section01_edge_ai/02_無用系統服務out.html">
+            
+                    
+                    02 篇：系統裁剪：無用系統服務徹底剔除
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" >
+            
+                <span>
+            
+                    
+                    階段二：Linux 核心調校與記憶體控場
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.3.1" data-path="../section01_edge_ai/03_ZRAM_SWAP_KSM.html">
+            
+                <a href="../section01_edge_ai/03_ZRAM_SWAP_KSM.html">
+            
+                    
+                    03 篇：核心擴張：ZRAM、SWAP 與 KSM 調校
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.2" data-path="../section01_edge_ai/04_記憶體控場師LMKD.html">
+            
+                <a href="../section01_edge_ai/04_記憶體控場師LMKD.html">
+            
+                    
+                    04 篇：記憶體控場：LMKD 策略與防 OOM 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.3" data-path="../section01_edge_ai/05_GC是唯一關心你OOM的好人.html">
+            
+                <a href="../section01_edge_ai/05_GC是唯一關心你OOM的好人.html">
+            
+                    
+                    05 篇：記憶體哲學：GC 是唯一關心你 OOM 的好人
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" >
+            
+                <span>
+            
+                    
+                    階段三：影像零拷貝、NEON 加速與保活
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.4.1" data-path="../section01_edge_ai/06_三路高頻影像流零拷貝.html">
+            
+                <a href="../section01_edge_ai/06_三路高頻影像流零拷貝.html">
+            
+                    
+                    06 篇：影像零拷貝：三路高頻影像流記憶體防護
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.2" data-path="../section01_edge_ai/07_物理世界需要Watchdog.html">
+            
+                <a href="../section01_edge_ai/07_物理世界需要Watchdog.html">
+            
+                    
+                    07 篇：硬體保活：物理世界需要 Watchdog
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.3" data-path="../section01_edge_ai/07_1_GC_Thrashing思路補充.html">
+            
+                <a href="../section01_edge_ai/07_1_GC_Thrashing思路補充.html">
+            
+                    
+                    07.1 篇：進程調度：GC Thrashing 調校思路補充
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.4" data-path="../section01_edge_ai/08_YUV加速QFastCV.html">
+            
+                <a href="../section01_edge_ai/08_YUV加速QFastCV.html">
+            
+                    
+                    08 篇：色彩加速：YUV420 888 與 QFastCV 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.5" data-path="../section01_edge_ai/09_兄弟齊心ACL_SGEMM.html">
+            
+                <a href="../section01_edge_ai/09_兄弟齊心ACL_SGEMM.html">
+            
+                    
+                    09 篇：矩陣加速：ARM Compute Library SGEMM 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.6" data-path="../section01_edge_ai/09_1_NEON與記憶體極限榨汁番外篇.html">
+            
+                <a href="../section01_edge_ai/09_1_NEON與記憶體極限榨汁番外篇.html">
+            
+                    
+                    番外篇：效能榨汁：ARM NEON 與 DirectBuffer 終極調優
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" >
+            
+                <span>
+            
+                    
+                    階段四：3D 視覺光學與邊緣 IoT 通訊
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.5.1" data-path="../section01_edge_ai/10_雙鏡頭時空同步.html">
+            
+                <a href="../section01_edge_ai/10_雙鏡頭時空同步.html">
+            
+                    
+                    10 篇：時空對齊：RGB 與 ToF 雙鏡頭同步
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.2" data-path="../section01_edge_ai/11_ToF_RAW12轉3D點雲.html">
+            
+                <a href="../section01_edge_ai/11_ToF_RAW12轉3D點雲.html">
+            
+                    
+                    11 篇：點雲解算：ToF RAW12 轉 3D 空間點雲
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.3" data-path="../section01_edge_ai/12_說到底還是一台IoT_WebSocket.html">
+            
+                <a href="../section01_edge_ai/12_說到底還是一台IoT_WebSocket.html">
+            
+                    
+                    12 篇：長連線架構：WebSocket 離線雙寫同步機制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.4" data-path="../section01_edge_ai/13_為了極少用功能大改的WebRTC.html">
+            
+                <a href="../section01_edge_ai/13_為了極少用功能大改的WebRTC.html">
+            
+                    
+                    13 篇：即時通訊：WebRTC 視訊對講底層魔改
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.5" data-path="../section01_edge_ai/14_門禁機當BLE_Peripheral現場踩坑記.html">
+            
+                <a href="../section01_edge_ai/14_門禁機當BLE_Peripheral現場踩坑記.html">
+            
+                    
+                    14 篇：近場配網：門禁機當 BLE Peripheral 現場踩坑記
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷二：現代 Android 架構、語言與渲染引擎（18 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" >
+            
+                <span>
+            
+                    
+                    Jetpack Compose 渲染機制與效能調校
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1.1" data-path="../section02_compose/01_Compose三階段渲染管線.html">
+            
+                <a href="../section02_compose/01_Compose三階段渲染管線.html">
+            
+                    
+                    渲染管線：Compose 三階段渲染（Composition / Layout / Draw）深度剖析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.2" data-path="../section02_compose/02_何時該用derivedStateOf.html">
+            
+                <a href="../section02_compose/02_何時該用derivedStateOf.html">
+            
+                    
+                    狀態衍生：derivedStateOf 的精確使用時機與底層機制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.3" data-path="../section02_compose/03_Immutable與Stable重組防護.html">
+            
+                <a href="../section02_compose/03_Immutable與Stable重組防護.html">
+            
+                    
+                    重組防護：@Immutable 與 @Stable 包含集合時的 Recomposition 機制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.4" data-path="../section02_compose/04_Modifier繪製效能比較.html">
+            
+                <a href="../section02_compose/04_Modifier繪製效能比較.html">
+            
+                    
+                    繪製優化：Modifier 繪製效能抉擇：drawBehind vs drawWithCache
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" >
+            
+                <span>
+            
+                    
+                    Kotlin 語言深水區與非同步併發
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.2.1" data-path="../section03_kotlin/01_Thread與Coroutine理解.html">
+            
+                <a href="../section03_kotlin/01_Thread與Coroutine理解.html">
+            
+                    
+                    併發模型：Thread 與 Coroutine 的底層機制與上下文切換成本
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.2" data-path="../section03_kotlin/02_Kotlin預防Launch連發防抖.html">
+            
+                <a href="../section03_kotlin/02_Kotlin預防Launch連發防抖.html">
+            
+                    
+                    併發防抖：協程防連發、搜尋任務防抖與競態消除
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.3" data-path="../section03_kotlin/03_inline_noinline_crossinline.html">
+            
+                <a href="../section03_kotlin/03_inline_noinline_crossinline.html">
+            
+                    
+                    內聯機制：inline、noinline、crossinline 的本質與存在意義
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.4" data-path="../section03_kotlin/04_lateinit_vs_lazy.html">
+            
+                <a href="../section03_kotlin/04_lateinit_vs_lazy.html">
+            
+                    
+                    延遲載入：lateinit 與 lazy 的位元組碼實現與執行期差異
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.5" data-path="../section03_kotlin/05_constructors_and_init.html">
+            
+                <a href="../section03_kotlin/05_constructors_and_init.html">
+            
+                    
+                    物件建構：次級建構子（Constructor）與 init 程式碼區塊的執行順序
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.6" data-path="../section03_kotlin/06_kotlin_init屬性陷阱.html">
+            
+                <a href="../section03_kotlin/06_kotlin_init屬性陷阱.html">
+            
+                    
+                    屬性初始化：init 區塊與屬性初始化的順序地雷
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.7" data-path="../section03_kotlin/07_gradle_kotlin_plugins.html">
+            
+                <a href="../section03_kotlin/07_gradle_kotlin_plugins.html">
+            
+                    
+                    構建腳本：Gradle Plugin Management 中 apply false 的深層原因
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" >
+            
+                <span>
+            
+                    
+                    現代架構模式與依賴注入實戰
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.3.1" data-path="../section04_architecture/01_viewModelScope_vs_rememberCoroutineScope.html">
+            
+                <a href="../section04_architecture/01_viewModelScope_vs_rememberCoroutineScope.html">
+            
+                    
+                    職責劃分：viewModelScope 與 rememberCoroutineScope 的職責分離
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.2" data-path="../section04_architecture/02_SupervisorJob與viewModelScope.html">
+            
+                <a href="../section04_architecture/02_SupervisorJob與viewModelScope.html">
+            
+                    
+                    異常處理：SupervisorJob 與 viewModelScope 的生命週期綁定機制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.3" data-path="../section04_architecture/03_Hilt指南組內分享.html">
+            
+                <a href="../section04_architecture/03_Hilt指南組內分享.html">
+            
+                    
+                    依賴注入：Hilt 實戰架構指南與工程實踐
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.4" data-path="../section04_architecture/04_ViewModelProviderFactory.html">
+            
+                <a href="../section04_architecture/04_ViewModelProviderFactory.html">
+            
+                    
+                    實例工廠：ViewModelProvider.Factory 的設計必要性與自訂實例化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.5" data-path="../section04_architecture/05_預設參數注入陷阱.html">
+            
+                <a href="../section04_architecture/05_預設參數注入陷阱.html">
+            
+                    
+                    注入陷阱：Composable 預設參數直接實例化 ViewModel 的架構反模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.6" data-path="../section04_architecture/06_RepositoryScope架構邊界.html">
+            
+                <a href="../section04_architecture/06_RepositoryScope架構邊界.html">
+            
+                    
+                    架構邊界：超出 ComposableViewModel 生命週期的 Repository 任務邊界
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.7" data-path="../section04_architecture/07_CreationExtras注入.html">
+            
+                <a href="../section04_architecture/07_CreationExtras注入.html">
+            
+                    
+                    動態參數：CreationExtras 與自訂 Application 依賴提取
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷三：系統核心機制、相機驅動與效能排障（25 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" >
+            
+                <span>
+            
+                    
+                    Android Framework 原理與執行緒池演進
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.1.1" data-path="../section05_framework/01_ThreadPoolManager的原罪.html">
+            
+                <a href="../section05_framework/01_ThreadPoolManager的原罪.html">
+            
+                    
+                    執行緒池演進：全域單例 ThreadPoolManager 的歷史原罪與現代化重構
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.2" data-path="../section05_framework/02_Naming_threads_and_thread_pools.html">
+            
+                <a href="../section05_framework/02_Naming_threads_and_thread_pools.html">
+            
+                    
+                    併發診斷：ExecutorService 執行緒與執行緒池的規範命名實踐
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.3" data-path="../section05_framework/03_runtime_resource_overlay.html">
+            
+                <a href="../section05_framework/03_runtime_resource_overlay.html">
+            
+                    
+                    系統自訂：Runtime Resource Overlay (RRO) 運行期資源替換原理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.4" data-path="../section05_framework/04_datacontrol分離_createPackageContext.html">
+            
+                <a href="../section05_framework/04_datacontrol分離_createPackageContext.html">
+            
+                    
+                    沙盒隔離：跨應用存取與資料隔離：createPackageContext() 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.5" data-path="../section05_framework/05_home_screen_life_cycle.html">
+            
+                <a href="../section05_framework/05_home_screen_life_cycle.html">
+            
+                    
+                    系統生命週期：Android Home Screen 與 Launcher 生命週期深度解析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.6" data-path="../section05_framework/06_Java_reflection_dynamic_load.html">
+            
+                <a href="../section05_framework/06_Java_reflection_dynamic_load.html">
+            
+                    
+                    動態載入：Java 反射黑魔法：FastScrollBar 動態載入外部 APK
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.7" data-path="../section05_framework/07_Android_Nougat_introduction.html">
+            
+                <a href="../section05_framework/07_Android_Nougat_introduction.html">
+            
+                    
+                    系統演進：Android Nougat (Android 7.0) 核心新特性與架構變革
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" >
+            
+                <span>
+            
+                    
+                    相機 HAL 與原生多媒體驅動框架
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.2.1" data-path="../section07_camera_multimedia/01_Camera1_Architecture.html">
+            
+                <a href="../section07_camera_multimedia/01_Camera1_Architecture.html">
+            
+                    
+                    Camera 架構（一）：Camera 1 經典架構與驅動層資料流
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.2" data-path="../section07_camera_multimedia/02_Camera2_Introduction.html">
+            
+                <a href="../section07_camera_multimedia/02_Camera2_Introduction.html">
+            
+                    
+                    Camera 架構（二）：Camera 2 HAL3 管道化模型與核心概念
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.3" data-path="../section07_camera_multimedia/03_How_to_create_Camera2.html">
+            
+                <a href="../section07_camera_multimedia/03_How_to_create_Camera2.html">
+            
+                    
+                    Camera 架構（三）：Camera 2 Session 建立與 CaptureRequest 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.4" data-path="../section07_camera_multimedia/04_FMRadio_概論.html">
+            
+                <a href="../section07_camera_multimedia/04_FMRadio_概論.html">
+            
+                    
+                    FMRadio 開發（一）：系統架構概論與硬體中介層通訊
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.5" data-path="../section07_camera_multimedia/05_FMRadio_FMRadioMain.html">
+            
+                <a href="../section07_camera_multimedia/05_FMRadio_FMRadioMain.html">
+            
+                    
+                    FMRadio 開發（二）：FMRadioMain 前端介面與硬體狀態同步
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.6" data-path="../section07_camera_multimedia/06_FMRadio_FMRadioService.html">
+            
+                <a href="../section07_camera_multimedia/06_FMRadio_FMRadioService.html">
+            
+                    
+                    FMRadio 開發（三）：FMRadioService 背景常駐服務與音訊焦點
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.7" data-path="../section07_camera_multimedia/07_FMRadio_AlterActivity.html">
+            
+                <a href="../section07_camera_multimedia/07_FMRadio_AlterActivity.html">
+            
+                    
+                    FMRadio 開發（四）：AlertActivity 系統中斷與彈出視窗處理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.8" data-path="../section07_camera_multimedia/08_FMRadio_Other.html">
+            
+                <a href="../section07_camera_multimedia/08_FMRadio_Other.html">
+            
+                    
+                    FMRadio 開發（五）：特殊情境例外排障與全系列收官
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" >
+            
+                <span>
+            
+                    
+                    效能診斷、除錯工具與 UI 排障實錄
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.3.1" data-path="../section06_performance/01_Analyzing_UI_Performance_Systrace.html">
+            
+                <a href="../section06_performance/01_Analyzing_UI_Performance_Systrace.html">
+            
+                    
+                    卡頓診斷：使用 Systrace 深度分析 UI 幀率與掉幀瓶頸
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.2" data-path="../section06_performance/02_Chrome_dev_tool_stetho.html">
+            
+                <a href="../section06_performance/02_Chrome_dev_tool_stetho.html">
+            
+                    
+                    除錯工具：Facebook Stetho 結合 Chrome DevTools 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.3" data-path="../section06_performance/03_Android_Intents_with_Chrome.html">
+            
+                <a href="../section06_performance/03_Android_Intents_with_Chrome.html">
+            
+                    
+                    跨進程通訊：Chrome 深度連結與 Android Intent 協議交互實作
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.4" data-path="../section06_performance/04_Communicate_with_fragments.html">
+            
+                <a href="../section06_performance/04_Communicate_with_fragments.html">
+            
+                    
+                    元件通訊：Fragment 之間高內聚、低耦合的通訊模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.5" data-path="../section06_performance/05_Avoid_non-default_constructors_fragments.html">
+            
+                <a href="../section06_performance/05_Avoid_non-default_constructors_fragments.html">
+            
+                    
+                    生命週期地雷：Fragment 為何絕對嚴禁非預設無參建構子？
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.6" data-path="../section06_performance/06_UI佈局被鍵盤擋住.html">
+            
+                <a href="../section06_performance/06_UI佈局被鍵盤擋住.html">
+            
+                    
+                    軟鍵盤遮擋：adjustResize、adjustPan 與沉浸式輸入框遮擋排障
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.7" data-path="../section06_performance/07_RecyclerView_inside_NestedScrollView.html">
+            
+                <a href="../section06_performance/07_RecyclerView_inside_NestedScrollView.html">
+            
+                    
+                    滾動衝突解決：NestedScrollView 內部巢狀 RecyclerView 的滑動與尺寸修復
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.8" data-path="../section06_performance/08_AppIntro_Proguard_issue.html">
+            
+                <a href="../section06_performance/08_AppIntro_Proguard_issue.html">
+            
+                    
+                    程式碼混淆：AppIntro 開源庫引發的 ProGuard 規則踩坑記錄
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.9" data-path="../section06_performance/09_Local_build_third_parity_lib.html">
+            
+                <a href="../section06_performance/09_Local_build_third_parity_lib.html">
+            
+                    
+                    模組化依賴：本機構建引入第三方二進制依賴庫的配置策略
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.10" data-path="../section06_performance/10_Android_CTS_Fail.html">
+            
+                <a href="../section06_performance/10_Android_CTS_Fail.html">
+            
+                    
+                    CTS 認證排障：Android CTS 測試失敗 — 外部儲存目錄無法刪除診斷
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷四：工程專案實踐與生態拓荒史（16 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" >
+            
+                <span>
+            
+                    
+                    獨立產品實戰、機器人定位與跨平台
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.1.1" data-path="../section08_projects_iot/01_Funny_Vote_開發雜記.html">
+            
+                <a href="../section08_projects_iot/01_Funny_Vote_開發雜記.html">
+            
+                    
+                    獨立產品：Funny Vote 投票 App 從零架構與開發雜記
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.2" data-path="../section08_projects_iot/02_Funny_vote_MVP更新雜記.html">
+            
+                <a href="../section08_projects_iot/02_Funny_vote_MVP更新雜記.html">
+            
+                    
+                    架構演進：Funny Vote 引入 MVP 架構模式與模組化重構
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.3" data-path="../section08_projects_iot/03_Funny_vote_Kotlin改版雜記.html">
+            
+                <a href="../section08_projects_iot/03_Funny_vote_Kotlin改版雜記.html">
+            
+                    
+                    語言遷移：Funny Vote 全專案 Kotlin 改版遷移紀錄
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.4" data-path="../section08_projects_iot/04_SLAM_Note_NDT_TKU.html">
+            
+                <a href="../section08_projects_iot/04_SLAM_Note_NDT_TKU.html">
+            
+                    
+                    機器人定位：雷達 SLAM 演算法與 NDT 點雲匹配筆記
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.5" data-path="../section08_projects_iot/05_React_Native_學習筆記.html">
+            
+                <a href="../section08_projects_iot/05_React_Native_學習筆記.html">
+            
+                    
+                    跨平台技術：React Native 早期架構與混合開發實踐
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.6" data-path="../section08_projects_iot/06_React_native_Native_android_module.html">
+            
+                <a href="../section08_projects_iot/06_React_native_Native_android_module.html">
+            
+                    
+                    原生模組互通：React Native 與 Android 原生 Native Module 互通踩坑
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2" >
+            
+                <span>
+            
+                    
+                    經典網路庫、資料庫 ORM 與工具演進
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.2.1" data-path="../section09_orm_tools/01_Retrofit2_Upload_Files.html">
+            
+                <a href="../section09_orm_tools/01_Retrofit2_Upload_Files.html">
+            
+                    
+                    網路庫演進：Retrofit 2 檔案上傳與 Multipart 參數列表實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.2" data-path="../section09_orm_tools/02_Volley_gzip_gson.html">
+            
+                <a href="../section09_orm_tools/02_Volley_gzip_gson.html">
+            
+                    
+                    網路庫演進：Google Volley 自訂 Request：整合 Gzip 壓縮與 Gson 解析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.3" data-path="../section09_orm_tools/03_GreenDao3_Introduction.html">
+            
+                <a href="../section09_orm_tools/03_GreenDao3_Introduction.html">
+            
+                    
+                    ORM 資料庫：GreenDAO 3 註解架構與效能機制入門
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.4" data-path="../section09_orm_tools/04_GreenDAO_introduction.html">
+            
+                <a href="../section09_orm_tools/04_GreenDAO_introduction.html">
+            
+                    
+                    ORM 資料庫：GreenDAO 核心架構、資料表關聯與 Session 管理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.5" data-path="../section09_orm_tools/05_GreenDAO_default_value.html">
+            
+                <a href="../section09_orm_tools/05_GreenDAO_default_value.html">
+            
+                    
+                    ORM 資料庫：GreenDAO 欄位預設值無效之底層原始碼追蹤
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.6" data-path="../section09_orm_tools/06_ButterKnife_introduction.html">
+            
+                <a href="../section09_orm_tools/06_ButterKnife_introduction.html">
+            
+                    
+                    視圖綁定：ButterKnife 註解綁定原理與 View 編譯期生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.7" data-path="../section09_orm_tools/07_Facebook_api_Login.html">
+            
+                <a href="../section09_orm_tools/07_Facebook_api_Login.html">
+            
+                    
+                    社群整合：Facebook SDK 登入授權與原生 App 交互接入
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.8" data-path="../section09_orm_tools/08_GAIQ_GET.html">
+            
+                <a href="../section09_orm_tools/08_GAIQ_GET.html">
+            
+                    
+                    數據分析認證：Google Analytics 個人認證（GAIQ）備考與技術心得
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.9" data-path="../section09_orm_tools/09_Google_Analytics_初始化.html">
+            
+                <a href="../section09_orm_tools/09_Google_Analytics_初始化.html">
+            
+                    
+                    數據埋點：Google Analytics for Android SDK 整合與初始化指南
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.10" data-path="../section09_orm_tools/10_Release_jar_by_gradle.html">
+            
+                <a href="../section09_orm_tools/10_Release_jar_by_gradle.html">
+            
+                    
+                    構建發布：使用 Gradle 腳本打包與發布獨立 JAR 庫
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            本書使用 HonKit 釋出
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../.." >代碼整潔：Clean Code 無瑕的程式碼（二）：錯誤處理、邊界與單元測試</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="clean-code-無瑕的程式碼-–-書摘心得（二）">Clean code: 無瑕的程式碼 – 書摘心得（二）</h1>
+<blockquote>
+<p>原文網址：<a href="https://boochlin.com/?p=101" target="_blank">https://boochlin.com/?p=101</a>
+發布日期：2025-04-16
+文章編號：101</p>
+</blockquote>
+<hr></hr>
+<p><img src="../../assets/images/ChatGPT-Image-May-22-2025-06_04_15-AM.png" alt=""></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2025/05/ChatGPT-Image-May-22-2025-06_04_15-AM.png" target="_blank">https://boochlin.com/wp-content/uploads/2025/05/ChatGPT-Image-May-22-2025-06_04_15-AM.png</a></p>
+<p>程式與程式的邊界，第三方函式庫總是希望功能越強，但是總要有個邊界，才不會無限延伸。進而反被控制</p>
+<p>承 <a href="https://boochlin.com/?p=98" target="_blank">Clean code: 無暇的程式碼 – 書摘心得（一）</a></p>
+<h2 id="第八章-邊界">第八章 邊界</h2>
+<p>大部分的開發情況，都會使用第三方的函式庫，在整齊的邊界上，如何漂亮的整進來。這是個大齋問</p>
+<h3 id="81-學習式測試">8.1 學習式測試</h3>
+<p>這件事本身並沒有多花太多工，因為不管怎某樣，我們都要學會這api的使用方式，而寫這些測試可以幫助獲得相關知識，是一個簡單又無不良影響的方式，確認api有沒有問題，且增進暸解。撰寫這樣的測試可以保證每次函式庫升級時，確保不會帶來新的風險</p>
+<p>不管你是不是想靠測試學習api，還是必須要有一套『與生產程式碼採用相同方式的邊界測試』 來支援以往整潔的介面，如果沒有邊界測試，來減輕升級整合所造成的風險，停留在舊版程式的時間，可能比解bug 還要久
+（p.133）</p>
+<h2 id=""> </h2>
+<h2 id="第九章-單元測試">第九章 單元測試</h2>
+<p>寫測試程式讓我們免於寫錯程式的恐懼</p>
+<h3 id="91-tdd-三大法則">9.1 TDD 三大法則</h3>
+<p>１．在撰寫一個單元測試前（測試失敗的單元測試），不可撰寫任何產品程式。
+ ２．只撰寫剛好無法通過的單元測試，不能編譯也算無法通過
+ ３．只撰寫剛好能通過當前測試失敗的產品程式
+ （p.139）</p>
+<p>按照上述的方式來寫程式，最後測試程式數量理應跟產品程式差不多，那某老樣子要回到如何管理這一堆程式碼？
+如果在撰寫測試程式時沒有保持『整潔』，那最後維護測試程式的時間可能就會比產品程式還要麻煩，最慘最慘就是回到原點，沒有測試的境界，結論很簡單『測試程式跟產品程式一樣重要』。</p>
+<p>這樣聽起來測試似乎變成一種沈重的工作，儘管如此，他帶來的好處還是遠大於『修改產品程式帶來的失誤』的恐懼。在這基礎上，你將可以肆無忌譚的修改程式，達到不斷精練的效果。(p.140)</p>
+<h3 id="92-整潔的測試">9.2 整潔的測試</h3>
+<p>三個重點『可讀性，可讀性，還是可讀性』
+（p.141）</p>
+<h4 id="921-特定領域的測試語言">9.2.1 特定領域的測試語言</h4>
+<p>直接使用特定的api，可能一開始會造成理解上的困難，那這時候寫測試程式可以加上許多細節的提點，幫助未來的使用者加速理解。
+(p.144)</p>
+<h4 id="921-一個測試一個斷言（assert）">9.2.1 一個測試一個斷言（assert）</h4>
+<p>斷言數量越少，可以更精確地鎖定要測試的對象。那某可以更加精鍊成『一個測試一個概念』
+（p.148）</p>
+<p>整潔的測試原則 F.I.R.S.T
+ Fast: 要能快速的被運行，緩慢只會讓你增加不耐煩。
+ Independent: 測試程式不該相互依賴。一個測試程式不應該被建立在另一個測試程式執行完的結果。
+ Repeatable: 應該要可以再任何環境重複執行，不要出現『我機子上可以啊』這種無意義的解釋。
+ Self-Validating: 測試程式應該輸出boolean。你不該手動比較兩個檔案才知道有沒有通過測試，或是看log才能知道。
+ Timely: 單元測試要在恰好能使其通過的產品程式之前不久撰寫，太久會忘記當初產品程式的設計理念。
+（p.149）</p>
+<p>整潔的單元測試可以完整個寫一大本，這只是個開頭</p>
+<h2 id="第十章-類別">第十章 類別</h2>
+<p>簡短再簡短</p>
+<p>根據Java的慣例，一個類別的開頭為一連串變數做開頭
+ １．公用靜態常數
+ ２．私有靜態常數
+ ３．私有實體變數
+ ４．公有實體變數</p>
+<p>封裝上並不要求絕對私有，為了讓測試能方便測試，開放成protected是能接受的</p>
+<p>在上述前提上
+竟量的保持簡短，不應該出現數千行的萬能類別，命名上也要避免模糊地帶
+（p.152）</p>
+<h3 id="101-單一職責原則">10.1 單一職責原則</h3>
+<p>主張一個類別應該只有一項任務或值職責『一個修改的理由』</p>
+<p>一個類別裡可能有多個函式或變數，此時我們在意的並非行數，而是職責的數量，最完美的就是只有一個職責，維持這件事情並不容易，大多數人還是維持在『讓軟體能運作』而非『讓軟體整潔』，因此三不五時回去檢視過去寫的程式是必要的。
+（p.155）</p>
+<p>一個優秀的系統是由許多小類別組成，而不是由少數大類別組成，每個小類別『封裝單一的職責』『維持單一的修改理由』『由竟量少的類別組合完成系統的要求』
+（p.156）</p>
+<h3 id="10-2-凝聚性">10. 2 凝聚性</h3>
+<p>類別應該只有少量的實體變數，類別的每個函式都應該操作一個或更多的這類別的變數，這代表者這個函式更加凝聚於該類別。
+ (不過實際上不太可能，這方面還是簡短的完成功能就好。)</p>
+<p>為了保持凝聚性，就會達到上一小節的單一職責原則，形成許多量的類別。
+(p.157)</p>
+<h3 id="103-隔離修改">10.3 隔離修改</h3>
+<p>在修改類別以達到凝聚性時，勢必會拆解大型的類別，這是一個不斷的修改過程，因此最好達到『隔離修改』的方式，利用『具體類別』和『抽象類別』的分別，如果修改在具體類別則有風險，因此建築在抽象類別則可以達到隔離修改的效果。</p>
+<p>這樣的重構可以更加確立以下兩個原則
+開放閉合原則，類別應該要對擴充有開放性，對修改有封閉性
+ 相依性反向原則，類別應該要相依於抽象概念，而不是相依在具體細節
+（p.167）</p>
+<h2 id="第十一章-系統">第十一章 系統</h2>
+<p>這章可不是開玩笑，完全看不懂</p>
+<h2 id="第十二章-羽化">第十二章 羽化</h2>
+<p>透過羽化設計來達到簡潔，或許有個準則可以讓你檢視程式碼是否整潔</p>
+<h3 id="121-簡單設計準則">12.1 簡單設計準則</h3>
+<ol>
+<li>執行完所有的測試：為了讓系統達到能夠被測試的需求，所有函式或類別的設計都會朝向『單一職責原則』並以最小耦合設計完成<ol>
+<li>沒有重複的部份：多餘的程式碼只會造成多餘的麻煩，重構的要件之一</li>
+<li>表達程式設計師的本意：前幾章的總結，簡單且易懂</li>
+<li>最小化類別和方法的數量：同上，維持強大表達力</li>
+</ol>
+</li>
+</ol>
+<p>(p.190)</p>
+<h2 id="第十三章-平行化">第十三章 平行化</h2>
+<p>『物件是處理過程的抽象化，執行緒是排程的抽象化』
+ 這是個大問題，足以另外出一本書來談談『作啥事？』和『何時做』</p>
+<h3 id="131-迷失及誤解">13.1 迷失及誤解</h3>
+<p>平行化是件難事，請三思避免這個危機</p>
+<ol>
+<li>平行化可以改善效能：有時候是可以效能但僅限於有很多等待時間可以被多執行緒或多處理氣氛想的情況，兩種情況都不簡單。<ol>
+<li>撰寫平行化程式並不需要修改原有的設計：把『何時做』和『作何事』去耦合絕對是大工程。</li>
+<li>當利用web或EJB 等容器來處理平行化，會產生的問題不是那某重要：搞清楚狀況會比較好喔</li>
+</ol>
+</li>
+</ol>
+<p>(p.199)</p>
+<p>中肯版</p>
+<ol>
+<li>平行化會帶來某些額外負擔：效能處理及去耦合的程式碼<ol>
+<li>正確的平行化是複雜的：即便是簡單的問題</li>
+<li>平行化的錯誤通常不容易出現：很多情況組合在一起才會reproduce</li>
+<li>平行化會對設計策略上進行整體的修改</li>
+</ol>
+</li>
+</ol>
+<p>(p.200)</p>
+<h3 id="132--平行化的防禦原則">13.2  平行化的防禦原則</h3>
+<p>單一職責原則：保持你的平行化程式碼與其他程式碼有清楚的劃分。</p>
+<ol>
+<li>限制資料的視野：利用synchronized，保護共享物件的臨界區域。把資料封裝的原則謹記在心，並嚴格現職共享資料的存取次數。<ol>
+<li>使用資料的副本：多執行緒執行時存取時，可以盡可能讓共享物件複製多分，保持唯獨。CopyOnWriteArrayList 的機制是在每次寫入操作（add / set / remove）時，直接複製一份全新的內部陣列來保障讀取執行緒的安全性。它是一種『寫時複製（Copy-on-Write）』策略，適用於讀多寫少的場景，並非最後將多份資料合併的模式。</li>
+<li>執行緒盡可能的獨立執行：資料劃分清楚，平均分攤，讓重疊部份盡可能的少</li>
+</ol>
+</li>
+</ol>
+<p>(p.201)</p>
+<h3 id="133-理解你的函式庫">13.3 理解你的函式庫</h3>
+<ol>
+<li>使用函式庫提供的安全執行緒集合（java.util.concurrent）<ol>
+<li>使用executor框架來執行不相關的工作</li>
+<li>減少使用non blocking 的解法</li>
+</ol>
+</li>
+</ol>
+<p>(p.203)</p>
+<h3 id="134-測試執行緒程式碼">13.4 測試執行緒程式碼</h3>
+<p>不要把偶而發生的事情給忽略掉。</p>
+<ol>
+<li>把偽造的失敗當作是淺在的執行緒問題。</li>
+<li>先讓非執行緒的程式碼通過。</li>
+<li>在各種環境下都可以穩定運作。</li>
+<li>讓執行緒的數量比處理器還多。</li>
+<li>讓執行緒程式碼是可以調校的。</li>
+<li>調整程式碼，讓他故意失敗。</li>
+</ol>
+<p>(p.208)</p>
+<h2 id="第十四章-持續的精煉">第十四章 持續的精煉</h2>
+<p>不介紹，看書吧，指令列參數剖析器的範例展示</p>
+<h2 id="第十五章-junit-的內部結構">第十五章 JUnit 的內部結構</h2>
+<p>不介紹，看書吧，JUnit 的範例展示</p>
+<h2 id="第十六章-重構-serialdate">第十六章 重構 SerialDate</h2>
+<p>不介紹，看書吧，SerialDate 的範例展示</p>
+<h2 id="第十七章-程式碼的氣味和啟發">第十七章 程式碼的氣味和啟發</h2>
+<p>列出許多重構上的清單，很多前面幾章節都有提到，整理文
+topic: comment , environment , function , general , names , test</p>
+<p>這一張節我只寫下我注意的幾條，沒寫的不是不重要，可能是我看不懂，或是前面有提過</p>
+<p>g1: 同份文件存在多種語言
+g5: 重複的程式碼
+g7: 基底類別相依逾期衍生類別 base classes depending on their derivatives（被jar class 綁住）
+g9: 被遺棄的程式碼 （DEAD CODE）
+g13: 人為地耦合：不相依的程式碼，不需要耦合在一起，例如一般的enum不應該被榜定在特定的類別
+g15: 選擇型參數：加個boolean arg ，很醜，可以看前幾章
+g18: 不適當的靜態宣告
+g20: 函式名稱要說到做到
+g23: 用多型取代 if/else or switch/case
+g30: 函式應該只做一件事
+g36: 避免傳遞性導覽 a.getb().getc() 這是很不相關的連結</p>
+<p>j2: 不要繼承常數：這個讓人找資料找到想哭啊，傳來的類別要到處翻找。
+j3: 常數和列舉：這個我覺得有爭議，書中大推 enum</p>
+<p>感謝收看，這本書到這已經到一段落，剩下的就是不斷的在實戰中練習（持續的精練），並定期回來複習</p>
+<p>如果有任何違反著作權的情事發生，請主動告知，小弟會快速下架</p>
+<p>下一篇是
+<a href="https://boochlin.com/?p=140" target="_blank">The Clean coder: 無瑕的程式碼 番外篇 – 書摘心得</a></p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="01_Clean_code_書摘心得一.html" class="navigation navigation-prev " aria-label="Previous page: 代碼整潔：Clean Code 無瑕的程式碼（一）：命名、函式與職責精準">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="03_The_Clean_coder_番外篇.html" class="navigation navigation-next " aria-label="Next page: 工程師素養：The Clean Coder 專業程式設計師的生存與承諾法則">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"代碼整潔：Clean Code 無瑕的程式碼（二）：錯誤處理、邊界與單元測試","level":"2.2","depth":1,"next":{"title":"工程師素養：The Clean Coder 專業程式設計師的生存與承諾法則","level":"2.3","depth":1,"path":"posts/section10_philosophy/03_The_Clean_coder_番外篇.md","ref":"posts/section10_philosophy/03_The_Clean_coder_番外篇.md","articles":[]},"previous":{"title":"代碼整潔：Clean Code 無瑕的程式碼（一）：命名、函式與職責精準","level":"2.1","depth":1,"path":"posts/section10_philosophy/01_Clean_code_書摘心得一.md","ref":"posts/section10_philosophy/01_Clean_code_書摘心得一.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing"],"styles":{"website":"styles/website.css"},"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"Boochlin","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Something Record - Boochlin's Tech Blog","language":"zh-tw","gitbook":"*","description":"Boochlin 個人技術部落格全集（2015-2026 十年技術隨筆與硬核破局實錄）"},"file":{"path":"posts/section10_philosophy/02_Clean_code_書摘心得二.md","mtime":"2026-09-05T08:57:29.435Z","type":"markdown"},"gitbook":{"version":"6.2.2","time":"2026-09-05T08:58:32.284Z"},"basePath":"../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="../../gitbook/gitbook.js"></script>
+    <script src="../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../../gitbook/@honkit/honkit-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

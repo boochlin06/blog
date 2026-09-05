@@ -1,0 +1,1778 @@
+
+<!DOCTYPE HTML>
+<html lang="zh-tw" >
+    <head>
+        <meta charset="UTF-8">
+        <title>14 篇：近場配網：門禁機當 BLE Peripheral 現場踩坑記 · Something Record - Boochlin's Tech Blog</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 6.2.2">
+        <meta name="author" content="Boochlin">
+        
+        
+    
+    <link rel="stylesheet" href="../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="../../styles/website.css">
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    
+    <link rel="prev" href="13_為了極少用功能大改的WebRTC.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="輸入並搜尋" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    全站導讀：十年隨筆與工程破局心法
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷首：工程哲學與代碼整潔之道（5 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="../section10_philosophy/01_Clean_code_書摘心得一.html">
+            
+                <a href="../section10_philosophy/01_Clean_code_書摘心得一.html">
+            
+                    
+                    代碼整潔：Clean Code 無瑕的程式碼（一）：命名、函式與職責精準
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="../section10_philosophy/02_Clean_code_書摘心得二.html">
+            
+                <a href="../section10_philosophy/02_Clean_code_書摘心得二.html">
+            
+                    
+                    代碼整潔：Clean Code 無瑕的程式碼（二）：錯誤處理、邊界與單元測試
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="../section10_philosophy/03_The_Clean_coder_番外篇.html">
+            
+                <a href="../section10_philosophy/03_The_Clean_coder_番外篇.html">
+            
+                    
+                    工程師素養：The Clean Coder 專業程式設計師的生存與承諾法則
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="../section10_philosophy/04_約爾趣談軟體筆記.html">
+            
+                <a href="../section10_philosophy/04_約爾趣談軟體筆記.html">
+            
+                    
+                    產品哲學：約爾趣談軟體（Joel on Software）經典研讀筆記
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="../section10_philosophy/05_Android好文整理.html">
+            
+                <a href="../section10_philosophy/05_Android好文整理.html">
+            
+                    
+                    早期拓荒：Android 核心架構技術精選與歷史記憶（2015）
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷一：邊緣 AI 與低階硬體極限榨汁（旗艦專案 18 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="00_全系列架構對照導覽.html">
+            
+                <a href="00_全系列架構對照導覽.html">
+            
+                    
+                    架構導讀：全篇演進與防坑總對照
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" >
+            
+                <span>
+            
+                    
+                    階段一：硬體現狀評估與系統裁剪
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.2.1" data-path="00_到底有多爛.html">
+            
+                <a href="00_到底有多爛.html">
+            
+                    
+                    00 篇：到底有多爛？算力深淵與硬體現狀評估
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.2" data-path="01_評估第一.html">
+            
+                <a href="01_評估第一.html">
+            
+                    
+                    01 篇：評估第一：硬體瓶頸與選型考量
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.3" data-path="02_無用系統服務out.html">
+            
+                <a href="02_無用系統服務out.html">
+            
+                    
+                    02 篇：系統裁剪：無用系統服務徹底剔除
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" >
+            
+                <span>
+            
+                    
+                    階段二：Linux 核心調校與記憶體控場
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.3.1" data-path="03_ZRAM_SWAP_KSM.html">
+            
+                <a href="03_ZRAM_SWAP_KSM.html">
+            
+                    
+                    03 篇：核心擴張：ZRAM、SWAP 與 KSM 調校
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.2" data-path="04_記憶體控場師LMKD.html">
+            
+                <a href="04_記憶體控場師LMKD.html">
+            
+                    
+                    04 篇：記憶體控場：LMKD 策略與防 OOM 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.3" data-path="05_GC是唯一關心你OOM的好人.html">
+            
+                <a href="05_GC是唯一關心你OOM的好人.html">
+            
+                    
+                    05 篇：記憶體哲學：GC 是唯一關心你 OOM 的好人
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" >
+            
+                <span>
+            
+                    
+                    階段三：影像零拷貝、NEON 加速與保活
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.4.1" data-path="06_三路高頻影像流零拷貝.html">
+            
+                <a href="06_三路高頻影像流零拷貝.html">
+            
+                    
+                    06 篇：影像零拷貝：三路高頻影像流記憶體防護
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.2" data-path="07_物理世界需要Watchdog.html">
+            
+                <a href="07_物理世界需要Watchdog.html">
+            
+                    
+                    07 篇：硬體保活：物理世界需要 Watchdog
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.3" data-path="07_1_GC_Thrashing思路補充.html">
+            
+                <a href="07_1_GC_Thrashing思路補充.html">
+            
+                    
+                    07.1 篇：進程調度：GC Thrashing 調校思路補充
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.4" data-path="08_YUV加速QFastCV.html">
+            
+                <a href="08_YUV加速QFastCV.html">
+            
+                    
+                    08 篇：色彩加速：YUV420 888 與 QFastCV 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.5" data-path="09_兄弟齊心ACL_SGEMM.html">
+            
+                <a href="09_兄弟齊心ACL_SGEMM.html">
+            
+                    
+                    09 篇：矩陣加速：ARM Compute Library SGEMM 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.6" data-path="09_1_NEON與記憶體極限榨汁番外篇.html">
+            
+                <a href="09_1_NEON與記憶體極限榨汁番外篇.html">
+            
+                    
+                    番外篇：效能榨汁：ARM NEON 與 DirectBuffer 終極調優
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" >
+            
+                <span>
+            
+                    
+                    階段四：3D 視覺光學與邊緣 IoT 通訊
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.5.1" data-path="10_雙鏡頭時空同步.html">
+            
+                <a href="10_雙鏡頭時空同步.html">
+            
+                    
+                    10 篇：時空對齊：RGB 與 ToF 雙鏡頭同步
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.2" data-path="11_ToF_RAW12轉3D點雲.html">
+            
+                <a href="11_ToF_RAW12轉3D點雲.html">
+            
+                    
+                    11 篇：點雲解算：ToF RAW12 轉 3D 空間點雲
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.3" data-path="12_說到底還是一台IoT_WebSocket.html">
+            
+                <a href="12_說到底還是一台IoT_WebSocket.html">
+            
+                    
+                    12 篇：長連線架構：WebSocket 離線雙寫同步機制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.4" data-path="13_為了極少用功能大改的WebRTC.html">
+            
+                <a href="13_為了極少用功能大改的WebRTC.html">
+            
+                    
+                    13 篇：即時通訊：WebRTC 視訊對講底層魔改
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="3.5.5" data-path="14_門禁機當BLE_Peripheral現場踩坑記.html">
+            
+                <a href="14_門禁機當BLE_Peripheral現場踩坑記.html">
+            
+                    
+                    14 篇：近場配網：門禁機當 BLE Peripheral 現場踩坑記
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷二：現代 Android 架構、語言與渲染引擎（18 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" >
+            
+                <span>
+            
+                    
+                    Jetpack Compose 渲染機制與效能調校
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1.1" data-path="../section02_compose/01_Compose三階段渲染管線.html">
+            
+                <a href="../section02_compose/01_Compose三階段渲染管線.html">
+            
+                    
+                    渲染管線：Compose 三階段渲染（Composition / Layout / Draw）深度剖析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.2" data-path="../section02_compose/02_何時該用derivedStateOf.html">
+            
+                <a href="../section02_compose/02_何時該用derivedStateOf.html">
+            
+                    
+                    狀態衍生：derivedStateOf 的精確使用時機與底層機制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.3" data-path="../section02_compose/03_Immutable與Stable重組防護.html">
+            
+                <a href="../section02_compose/03_Immutable與Stable重組防護.html">
+            
+                    
+                    重組防護：@Immutable 與 @Stable 包含集合時的 Recomposition 機制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.4" data-path="../section02_compose/04_Modifier繪製效能比較.html">
+            
+                <a href="../section02_compose/04_Modifier繪製效能比較.html">
+            
+                    
+                    繪製優化：Modifier 繪製效能抉擇：drawBehind vs drawWithCache
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" >
+            
+                <span>
+            
+                    
+                    Kotlin 語言深水區與非同步併發
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.2.1" data-path="../section03_kotlin/01_Thread與Coroutine理解.html">
+            
+                <a href="../section03_kotlin/01_Thread與Coroutine理解.html">
+            
+                    
+                    併發模型：Thread 與 Coroutine 的底層機制與上下文切換成本
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.2" data-path="../section03_kotlin/02_Kotlin預防Launch連發防抖.html">
+            
+                <a href="../section03_kotlin/02_Kotlin預防Launch連發防抖.html">
+            
+                    
+                    併發防抖：協程防連發、搜尋任務防抖與競態消除
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.3" data-path="../section03_kotlin/03_inline_noinline_crossinline.html">
+            
+                <a href="../section03_kotlin/03_inline_noinline_crossinline.html">
+            
+                    
+                    內聯機制：inline、noinline、crossinline 的本質與存在意義
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.4" data-path="../section03_kotlin/04_lateinit_vs_lazy.html">
+            
+                <a href="../section03_kotlin/04_lateinit_vs_lazy.html">
+            
+                    
+                    延遲載入：lateinit 與 lazy 的位元組碼實現與執行期差異
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.5" data-path="../section03_kotlin/05_constructors_and_init.html">
+            
+                <a href="../section03_kotlin/05_constructors_and_init.html">
+            
+                    
+                    物件建構：次級建構子（Constructor）與 init 程式碼區塊的執行順序
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.6" data-path="../section03_kotlin/06_kotlin_init屬性陷阱.html">
+            
+                <a href="../section03_kotlin/06_kotlin_init屬性陷阱.html">
+            
+                    
+                    屬性初始化：init 區塊與屬性初始化的順序地雷
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.7" data-path="../section03_kotlin/07_gradle_kotlin_plugins.html">
+            
+                <a href="../section03_kotlin/07_gradle_kotlin_plugins.html">
+            
+                    
+                    構建腳本：Gradle Plugin Management 中 apply false 的深層原因
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" >
+            
+                <span>
+            
+                    
+                    現代架構模式與依賴注入實戰
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.3.1" data-path="../section04_architecture/01_viewModelScope_vs_rememberCoroutineScope.html">
+            
+                <a href="../section04_architecture/01_viewModelScope_vs_rememberCoroutineScope.html">
+            
+                    
+                    職責劃分：viewModelScope 與 rememberCoroutineScope 的職責分離
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.2" data-path="../section04_architecture/02_SupervisorJob與viewModelScope.html">
+            
+                <a href="../section04_architecture/02_SupervisorJob與viewModelScope.html">
+            
+                    
+                    異常處理：SupervisorJob 與 viewModelScope 的生命週期綁定機制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.3" data-path="../section04_architecture/03_Hilt指南組內分享.html">
+            
+                <a href="../section04_architecture/03_Hilt指南組內分享.html">
+            
+                    
+                    依賴注入：Hilt 實戰架構指南與工程實踐
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.4" data-path="../section04_architecture/04_ViewModelProviderFactory.html">
+            
+                <a href="../section04_architecture/04_ViewModelProviderFactory.html">
+            
+                    
+                    實例工廠：ViewModelProvider.Factory 的設計必要性與自訂實例化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.5" data-path="../section04_architecture/05_預設參數注入陷阱.html">
+            
+                <a href="../section04_architecture/05_預設參數注入陷阱.html">
+            
+                    
+                    注入陷阱：Composable 預設參數直接實例化 ViewModel 的架構反模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.6" data-path="../section04_architecture/06_RepositoryScope架構邊界.html">
+            
+                <a href="../section04_architecture/06_RepositoryScope架構邊界.html">
+            
+                    
+                    架構邊界：超出 ComposableViewModel 生命週期的 Repository 任務邊界
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.7" data-path="../section04_architecture/07_CreationExtras注入.html">
+            
+                <a href="../section04_architecture/07_CreationExtras注入.html">
+            
+                    
+                    動態參數：CreationExtras 與自訂 Application 依賴提取
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷三：系統核心機制、相機驅動與效能排障（25 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" >
+            
+                <span>
+            
+                    
+                    Android Framework 原理與執行緒池演進
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.1.1" data-path="../section05_framework/01_ThreadPoolManager的原罪.html">
+            
+                <a href="../section05_framework/01_ThreadPoolManager的原罪.html">
+            
+                    
+                    執行緒池演進：全域單例 ThreadPoolManager 的歷史原罪與現代化重構
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.2" data-path="../section05_framework/02_Naming_threads_and_thread_pools.html">
+            
+                <a href="../section05_framework/02_Naming_threads_and_thread_pools.html">
+            
+                    
+                    併發診斷：ExecutorService 執行緒與執行緒池的規範命名實踐
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.3" data-path="../section05_framework/03_runtime_resource_overlay.html">
+            
+                <a href="../section05_framework/03_runtime_resource_overlay.html">
+            
+                    
+                    系統自訂：Runtime Resource Overlay (RRO) 運行期資源替換原理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.4" data-path="../section05_framework/04_datacontrol分離_createPackageContext.html">
+            
+                <a href="../section05_framework/04_datacontrol分離_createPackageContext.html">
+            
+                    
+                    沙盒隔離：跨應用存取與資料隔離：createPackageContext() 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.5" data-path="../section05_framework/05_home_screen_life_cycle.html">
+            
+                <a href="../section05_framework/05_home_screen_life_cycle.html">
+            
+                    
+                    系統生命週期：Android Home Screen 與 Launcher 生命週期深度解析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.6" data-path="../section05_framework/06_Java_reflection_dynamic_load.html">
+            
+                <a href="../section05_framework/06_Java_reflection_dynamic_load.html">
+            
+                    
+                    動態載入：Java 反射黑魔法：FastScrollBar 動態載入外部 APK
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.7" data-path="../section05_framework/07_Android_Nougat_introduction.html">
+            
+                <a href="../section05_framework/07_Android_Nougat_introduction.html">
+            
+                    
+                    系統演進：Android Nougat (Android 7.0) 核心新特性與架構變革
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" >
+            
+                <span>
+            
+                    
+                    相機 HAL 與原生多媒體驅動框架
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.2.1" data-path="../section07_camera_multimedia/01_Camera1_Architecture.html">
+            
+                <a href="../section07_camera_multimedia/01_Camera1_Architecture.html">
+            
+                    
+                    Camera 架構（一）：Camera 1 經典架構與驅動層資料流
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.2" data-path="../section07_camera_multimedia/02_Camera2_Introduction.html">
+            
+                <a href="../section07_camera_multimedia/02_Camera2_Introduction.html">
+            
+                    
+                    Camera 架構（二）：Camera 2 HAL3 管道化模型與核心概念
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.3" data-path="../section07_camera_multimedia/03_How_to_create_Camera2.html">
+            
+                <a href="../section07_camera_multimedia/03_How_to_create_Camera2.html">
+            
+                    
+                    Camera 架構（三）：Camera 2 Session 建立與 CaptureRequest 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.4" data-path="../section07_camera_multimedia/04_FMRadio_概論.html">
+            
+                <a href="../section07_camera_multimedia/04_FMRadio_概論.html">
+            
+                    
+                    FMRadio 開發（一）：系統架構概論與硬體中介層通訊
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.5" data-path="../section07_camera_multimedia/05_FMRadio_FMRadioMain.html">
+            
+                <a href="../section07_camera_multimedia/05_FMRadio_FMRadioMain.html">
+            
+                    
+                    FMRadio 開發（二）：FMRadioMain 前端介面與硬體狀態同步
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.6" data-path="../section07_camera_multimedia/06_FMRadio_FMRadioService.html">
+            
+                <a href="../section07_camera_multimedia/06_FMRadio_FMRadioService.html">
+            
+                    
+                    FMRadio 開發（三）：FMRadioService 背景常駐服務與音訊焦點
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.7" data-path="../section07_camera_multimedia/07_FMRadio_AlterActivity.html">
+            
+                <a href="../section07_camera_multimedia/07_FMRadio_AlterActivity.html">
+            
+                    
+                    FMRadio 開發（四）：AlertActivity 系統中斷與彈出視窗處理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.8" data-path="../section07_camera_multimedia/08_FMRadio_Other.html">
+            
+                <a href="../section07_camera_multimedia/08_FMRadio_Other.html">
+            
+                    
+                    FMRadio 開發（五）：特殊情境例外排障與全系列收官
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" >
+            
+                <span>
+            
+                    
+                    效能診斷、除錯工具與 UI 排障實錄
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.3.1" data-path="../section06_performance/01_Analyzing_UI_Performance_Systrace.html">
+            
+                <a href="../section06_performance/01_Analyzing_UI_Performance_Systrace.html">
+            
+                    
+                    卡頓診斷：使用 Systrace 深度分析 UI 幀率與掉幀瓶頸
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.2" data-path="../section06_performance/02_Chrome_dev_tool_stetho.html">
+            
+                <a href="../section06_performance/02_Chrome_dev_tool_stetho.html">
+            
+                    
+                    除錯工具：Facebook Stetho 結合 Chrome DevTools 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.3" data-path="../section06_performance/03_Android_Intents_with_Chrome.html">
+            
+                <a href="../section06_performance/03_Android_Intents_with_Chrome.html">
+            
+                    
+                    跨進程通訊：Chrome 深度連結與 Android Intent 協議交互實作
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.4" data-path="../section06_performance/04_Communicate_with_fragments.html">
+            
+                <a href="../section06_performance/04_Communicate_with_fragments.html">
+            
+                    
+                    元件通訊：Fragment 之間高內聚、低耦合的通訊模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.5" data-path="../section06_performance/05_Avoid_non-default_constructors_fragments.html">
+            
+                <a href="../section06_performance/05_Avoid_non-default_constructors_fragments.html">
+            
+                    
+                    生命週期地雷：Fragment 為何絕對嚴禁非預設無參建構子？
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.6" data-path="../section06_performance/06_UI佈局被鍵盤擋住.html">
+            
+                <a href="../section06_performance/06_UI佈局被鍵盤擋住.html">
+            
+                    
+                    軟鍵盤遮擋：adjustResize、adjustPan 與沉浸式輸入框遮擋排障
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.7" data-path="../section06_performance/07_RecyclerView_inside_NestedScrollView.html">
+            
+                <a href="../section06_performance/07_RecyclerView_inside_NestedScrollView.html">
+            
+                    
+                    滾動衝突解決：NestedScrollView 內部巢狀 RecyclerView 的滑動與尺寸修復
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.8" data-path="../section06_performance/08_AppIntro_Proguard_issue.html">
+            
+                <a href="../section06_performance/08_AppIntro_Proguard_issue.html">
+            
+                    
+                    程式碼混淆：AppIntro 開源庫引發的 ProGuard 規則踩坑記錄
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.9" data-path="../section06_performance/09_Local_build_third_parity_lib.html">
+            
+                <a href="../section06_performance/09_Local_build_third_parity_lib.html">
+            
+                    
+                    模組化依賴：本機構建引入第三方二進制依賴庫的配置策略
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.10" data-path="../section06_performance/10_Android_CTS_Fail.html">
+            
+                <a href="../section06_performance/10_Android_CTS_Fail.html">
+            
+                    
+                    CTS 認證排障：Android CTS 測試失敗 — 外部儲存目錄無法刪除診斷
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷四：工程專案實踐與生態拓荒史（16 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" >
+            
+                <span>
+            
+                    
+                    獨立產品實戰、機器人定位與跨平台
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.1.1" data-path="../section08_projects_iot/01_Funny_Vote_開發雜記.html">
+            
+                <a href="../section08_projects_iot/01_Funny_Vote_開發雜記.html">
+            
+                    
+                    獨立產品：Funny Vote 投票 App 從零架構與開發雜記
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.2" data-path="../section08_projects_iot/02_Funny_vote_MVP更新雜記.html">
+            
+                <a href="../section08_projects_iot/02_Funny_vote_MVP更新雜記.html">
+            
+                    
+                    架構演進：Funny Vote 引入 MVP 架構模式與模組化重構
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.3" data-path="../section08_projects_iot/03_Funny_vote_Kotlin改版雜記.html">
+            
+                <a href="../section08_projects_iot/03_Funny_vote_Kotlin改版雜記.html">
+            
+                    
+                    語言遷移：Funny Vote 全專案 Kotlin 改版遷移紀錄
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.4" data-path="../section08_projects_iot/04_SLAM_Note_NDT_TKU.html">
+            
+                <a href="../section08_projects_iot/04_SLAM_Note_NDT_TKU.html">
+            
+                    
+                    機器人定位：雷達 SLAM 演算法與 NDT 點雲匹配筆記
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.5" data-path="../section08_projects_iot/05_React_Native_學習筆記.html">
+            
+                <a href="../section08_projects_iot/05_React_Native_學習筆記.html">
+            
+                    
+                    跨平台技術：React Native 早期架構與混合開發實踐
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.6" data-path="../section08_projects_iot/06_React_native_Native_android_module.html">
+            
+                <a href="../section08_projects_iot/06_React_native_Native_android_module.html">
+            
+                    
+                    原生模組互通：React Native 與 Android 原生 Native Module 互通踩坑
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2" >
+            
+                <span>
+            
+                    
+                    經典網路庫、資料庫 ORM 與工具演進
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.2.1" data-path="../section09_orm_tools/01_Retrofit2_Upload_Files.html">
+            
+                <a href="../section09_orm_tools/01_Retrofit2_Upload_Files.html">
+            
+                    
+                    網路庫演進：Retrofit 2 檔案上傳與 Multipart 參數列表實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.2" data-path="../section09_orm_tools/02_Volley_gzip_gson.html">
+            
+                <a href="../section09_orm_tools/02_Volley_gzip_gson.html">
+            
+                    
+                    網路庫演進：Google Volley 自訂 Request：整合 Gzip 壓縮與 Gson 解析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.3" data-path="../section09_orm_tools/03_GreenDao3_Introduction.html">
+            
+                <a href="../section09_orm_tools/03_GreenDao3_Introduction.html">
+            
+                    
+                    ORM 資料庫：GreenDAO 3 註解架構與效能機制入門
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.4" data-path="../section09_orm_tools/04_GreenDAO_introduction.html">
+            
+                <a href="../section09_orm_tools/04_GreenDAO_introduction.html">
+            
+                    
+                    ORM 資料庫：GreenDAO 核心架構、資料表關聯與 Session 管理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.5" data-path="../section09_orm_tools/05_GreenDAO_default_value.html">
+            
+                <a href="../section09_orm_tools/05_GreenDAO_default_value.html">
+            
+                    
+                    ORM 資料庫：GreenDAO 欄位預設值無效之底層原始碼追蹤
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.6" data-path="../section09_orm_tools/06_ButterKnife_introduction.html">
+            
+                <a href="../section09_orm_tools/06_ButterKnife_introduction.html">
+            
+                    
+                    視圖綁定：ButterKnife 註解綁定原理與 View 編譯期生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.7" data-path="../section09_orm_tools/07_Facebook_api_Login.html">
+            
+                <a href="../section09_orm_tools/07_Facebook_api_Login.html">
+            
+                    
+                    社群整合：Facebook SDK 登入授權與原生 App 交互接入
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.8" data-path="../section09_orm_tools/08_GAIQ_GET.html">
+            
+                <a href="../section09_orm_tools/08_GAIQ_GET.html">
+            
+                    
+                    數據分析認證：Google Analytics 個人認證（GAIQ）備考與技術心得
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.9" data-path="../section09_orm_tools/09_Google_Analytics_初始化.html">
+            
+                <a href="../section09_orm_tools/09_Google_Analytics_初始化.html">
+            
+                    
+                    數據埋點：Google Analytics for Android SDK 整合與初始化指南
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.10" data-path="../section09_orm_tools/10_Release_jar_by_gradle.html">
+            
+                <a href="../section09_orm_tools/10_Release_jar_by_gradle.html">
+            
+                    
+                    構建發布：使用 Gradle 腳本打包與發布獨立 JAR 庫
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            本書使用 HonKit 釋出
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../.." >14 篇：近場配網：門禁機當 BLE Peripheral 現場踩坑記</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="android-爛裝置想跑人臉辨識14-–-門禁機當-ble-peripheral-的現場踩坑記">Android 爛裝置想跑人臉辨識14 – 門禁機當 BLE Peripheral 的現場踩坑記</h1>
+<p>做邊緣工控或門禁設備，最讓人頭痛的往往不是演算法，而是現場環境：機器被四顆螺絲死死鎖在兩公尺高的金屬立柱上，沒有鍵盤、沒有滑鼠，很多室外機為了防暴甚至連觸控螢幕都沒有。就算螢幕能碰，叫工人站在鋁梯上頂著大太陽反光，用虛擬鍵盤慢慢戳 20 幾碼的 WiFi 密碼，戳錯一次就要摔手機。</p>
+<p>最合理的人性化作法，就是工人掏出自己的手機 App，走過去點幾下，透過近場藍牙把網路帳密和 IP 直接灌進去。</p>
+<p>這篇就拿高通 QM215（4 顆弱雞 A53）門禁機為例，聊聊我們怎麼用最簡單粗暴的 <strong>BLE Peripheral（GATT Server）</strong> 把現場配網搞定，以及當初留下了哪些讓人哭笑不得的技術債。</p>
+<hr></hr>
+<h2 id="先講結論：這套設計的五個核心決策">先講結論：這套設計的五個核心決策</h2>
+<p>面試或日後自己複盤，先看這五個核心取捨：</p>
+<ol>
+<li><strong>門禁機當被動方（Peripheral / GATT Server）</strong>：手機當主動發起方（Central）。廣播丟給藍牙晶片硬體自己去排程發射，主 CPU 負載直接是 0%，完全不搶相機人臉辨識的算力。</li>
+<li><strong>廣播封包拆兩層</strong>：31 Byte 空間太擠塞不下 128-bit UUID。第一層只放短機號，長 UUID 丟到第二層（ScanResponse），等手機主動要才給。</li>
+<li><strong>老老實實切 20 Byte</strong>：不搞動態 MTU 協商，自研極簡的 2-Byte 標頭狀態機和 7-Byte TLV，幾十行 code 搞定，任何爛手機都能通。</li>
+<li><strong>放棄推播，無腦輪詢</strong>：Notification 太容易被手機廠牌的省電機制吃掉，直接讓手機每秒主動 Read 一次狀態，讀到 1 亮綠燈收工。</li>
+<li><strong>開機常駐永不關閉</strong>：設備本來就是插市電的，哪天現場換路由器或改密碼，走過去隨時能重設，省得搬梯子拆外殼拔電源。</li>
+</ol>
+<p>下圖是整套系統現場跑通的完整時序：</p>
+<p><img src="../../assets/images/ble_provisioning_sequence_diagram_1788359237209.jpg" alt="現場配網時序與角色定義架構圖"></img></p>
+<hr></hr>
+<h2 id="一、-通訊選型：為什麼不能只靠廣播，非要建-gatt-連線？">一、 通訊選型：為什麼不能只靠廣播，非要建 GATT 連線？</h2>
+<p>剛碰藍牙的人常有一種天真的想法：「既然只是傳幾十個字元的帳密，設備直接對外發廣播、或者手機大喇叭發廣播讓設備抓，不就省事了？」</p>
+<p>在實際工程上，這純屬幻想：</p>
+<ul>
+<li><strong>純廣播（Advertising）</strong>：這東西本質就像里長廣播器，單向喊話、<strong>完全沒有收到確認（ACK）</strong>，而且有效空間被死死卡在 31 Bytes。配網是一連串有先後順序的動作（送帳號 $\rightarrow$ 送密碼 $\rightarrow$ 設定固定 IP $\rightarrow$ 確認連上後台）。廣播在空中漏掉一個字你毫無感知，長一點的密碼根本塞不下。</li>
+<li><strong>GATT Server 連線</strong>：走點對點通道，每一次 Characteristic 寫入都有底層協議層的 ACK（Write with Response），收到就是收到，沒收到手機會重試，這才能保證資料不會缺角。</li>
+</ul>
+<h3 id="11-角色為什麼必須倒轉？">1.1 角色為什麼必須倒轉？</h3>
+<p>很多安卓範例都在教你用手機去連手環，所以設備常常被寫成主動去掃描的手機端（Central）。
+但在工控機上千萬別這麼搞。現場大門每天幾百人進出，門禁機要是開掃描，藍牙晶片抓到幾百隻耳機手環的廣播，狂發中斷給 CPU，相機影像幀立刻掉得亂七八糟。
+讓門禁機乖乖當被動等待的 <strong>Peripheral（GATT Server）</strong>，開機把廣播資料丟給藍牙晶片後，主晶片完全不管它，CPU 開銷直接歸零。</p>
+<h3 id="12-31-byte-廣播太小怎麼破？">1.2 31-Byte 廣播太小怎麼破？</h3>
+<p>傳統廣播封包物理極限只有 31 Bytes。扣掉藍牙規範必帶的標頭和發射功率，剩下的空間少得可憐。如果硬要把 18 Bytes 的專屬 128-bit Service UUID 塞進去，設備名稱只剩幾個字元能用，開廣播直接報錯。</p>
+<p>解法很單純，直接拆成雙層廣播：</p>
+<ul>
+<li><strong>第一層主廣播</strong>：只放裁剪後的短機號與發射功率，讓手機在列表裡一眼能認出來；</li>
+<li><strong>第二層掃描回應（ScanResponse）</strong>：把長長的一串 Service UUID 塞在這裡，等手機點擊掃描時才回傳。</li>
+</ul>
+<pre><code class="lang-java"><span class="hljs-comment">// File: BleService.java</span>
+<span class="hljs-comment">// 裁剪固定前綴，保留唯一序號以符合長度限制</span>
+uniqueSerial = DeviceCodeUtils.getSerialNum().substring(<span class="hljs-number">4</span>);
+bluetoothAdapter.setName(deviceName + <span class="hljs-string">"-"</span> + uniqueSerial);
+
+<span class="hljs-comment">// 第一層：僅包含名稱與發射功率（31B 內）</span>
+<span class="hljs-type">AdvertiseData</span> <span class="hljs-variable">advertiseData</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AdvertiseData</span>.Builder()
+        .setIncludeDeviceName(<span class="hljs-literal">true</span>)
+        .setIncludeTxPowerLevel(<span class="hljs-literal">true</span>)
+        .build();
+
+<span class="hljs-comment">// 第二層：將 128-bit UUID 移至掃描回應</span>
+<span class="hljs-type">AdvertiseData</span> <span class="hljs-variable">scanResponse</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AdvertiseData</span>.Builder()
+        .addServiceUuid(<span class="hljs-keyword">new</span> <span class="hljs-title class_">ParcelUuid</span>(UUID_SERVICE))
+        .build();
+</code></pre>
+<hr></hr>
+<h2 id="二、-預設-20-byte-限制下的長資料分包實作">二、 預設 20-Byte 限制下的長資料分包實作</h2>
+<p>藍牙規範預設的單包淨載（Payload）只有 <strong>20 Bytes</strong>。</p>
+<p>但我們配網要傳 60 幾 Byte 的加密設備序號、二三十 Byte 的 WiFi 帳密和一整組 IP 設定。面對超過 20 Bytes 的資料，我們沒有去搞什麼動態 MTU 協商（各家白牌手機對 MTU 回調的相容性極差），而是用最直接的二進制分包搞定：</p>
+<p><img src="../../assets/images/ble_binary_packet_layouts_1788423952069.jpg" alt="BLE 三大二進制通訊封包佈局圖"></img></p>
+<h3 id="21-讀取-device-id：特徵值分片讀取">2.1 讀取 Device ID：特徵值分片讀取</h3>
+<p>設備序號太長，Server 就動態註冊多個虛擬特徵值，讓手機像翻書一樣一片一片讀走：</p>
+<pre><code class="lang-java"><span class="hljs-comment">// File: BleService.java</span>
+<span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">DEVICE_ID_CHUNK_SIZE</span> <span class="hljs-operator">=</span> <span class="hljs-number">20</span>;
+
+<span class="hljs-keyword">if</span> (characteristic.getUuid().toString().startsWith(STR_CHAR_READ_DEVICE_ID_CHUNK_PREFIX)) {
+    <span class="hljs-type">char</span>[] <span class="hljs-variable">uuid</span> <span class="hljs-operator">=</span> characteristic.getUuid().toString().toCharArray();
+    <span class="hljs-type">int</span> <span class="hljs-variable">shift</span> <span class="hljs-operator">=</span> DEVICE_ID_CHUNK_SIZE * (uuid[uuid.length - <span class="hljs-number">1</span>] - <span class="hljs-string">'0'</span>);
+    mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, <span class="hljs-number">0</span>,
+        Arrays.copyOfRange(DeviceCodeUtils.getCode().getBytes(), shift, shift + DEVICE_ID_CHUNK_SIZE));
+    <span class="hljs-keyword">return</span>;
+}
+</code></pre>
+<blockquote>
+<p><strong>老代碼的技術債</strong>：注意看這行 <code>uuid[uuid.length - 1] - '0'</code>。當初偷懶用單一字元減法算索引，代表這套寫法最多只能切 0 到 9 共 10 個分片（上限 200 Bytes）。如果未來憑證長度超過 200 Bytes，這段直接翻車。</p>
+</blockquote>
+<h3 id="22-寫入-wifi-帳密：2-byte-header-分包">2.2 寫入 WiFi 帳密：2-Byte Header 分包</h3>
+<p>手機寫入長字串時，封包帶上 <code>[Index(1B), TotalLength(1B), Payload(10B)]</code>：</p>
+<pre><code class="lang-java"><span class="hljs-comment">// File: BleUtils.java</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">multipleBytesToString</span><span class="hljs-params">(<span class="hljs-type">byte</span>[] bytes, StringBuffer sb)</span> {
+    <span class="hljs-comment">// 前 2 bytes 為自定義協定標頭：byte[0]=分包序號, byte[1]=總預期長度</span>
+    <span class="hljs-type">int</span> <span class="hljs-variable">index</span> <span class="hljs-operator">=</span> bytes[<span class="hljs-number">0</span>] &amp; <span class="hljs-number">0xFF</span>;
+    <span class="hljs-type">int</span> <span class="hljs-variable">length</span> <span class="hljs-operator">=</span> bytes[<span class="hljs-number">1</span>] &amp; <span class="hljs-number">0xFF</span>;
+
+    <span class="hljs-type">int</span> <span class="hljs-variable">expectedLen</span> <span class="hljs-operator">=</span> index * <span class="hljs-number">10</span>;
+    <span class="hljs-keyword">if</span> (expectedLen &lt; sb.length()) {
+        sb.delete(<span class="hljs-number">0</span>, sb.length()); <span class="hljs-comment">// 序號變小：代表重傳了，清空重收</span>
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (expectedLen != sb.length()) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;              <span class="hljs-comment">// 掉包了：丟掉等待重傳</span>
+    }
+
+    <span class="hljs-comment">// 從 byte[2] 開始才是實際的 payload 資料</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">payload</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>(bytes, <span class="hljs-number">2</span>, bytes.length - <span class="hljs-number">2</span>, StandardCharsets.UTF_8);
+    sb.append(payload);
+    <span class="hljs-keyword">return</span> length == sb.length();  <span class="hljs-comment">// 收滿預期長度才算完工</span>
+}
+</code></pre>
+<pre><code class="lang-java"><span class="hljs-comment">// File: BleService.java</span>
+<span class="hljs-meta">@Override</span>
+<span class="hljs-keyword">public</span> <span class="hljs-type">void</span> <span class="hljs-title function_">onCharacteristicWriteRequest</span><span class="hljs-params">(BluetoothDevice device, <span class="hljs-type">int</span> requestId,
+                                        BluetoothGattCharacteristic characteristic,
+                                        <span class="hljs-type">boolean</span> preparedWrite, <span class="hljs-type">boolean</span> responseNeeded,
+                                        <span class="hljs-type">int</span> offset, <span class="hljs-type">byte</span>[] requestBytes)</span> {
+    <span class="hljs-type">BleUUID</span> <span class="hljs-variable">bleUUID</span> <span class="hljs-operator">=</span> BleUUID.getEnum(characteristic.getUuid());
+    <span class="hljs-keyword">if</span> (bleUUID == BleUUID.CHAR_WRITE_WIFI_SSID) {
+        <span class="hljs-keyword">if</span> (BleUtils.multipleBytesToString(requestBytes, sbWifiSsid)) {
+            wifiSSID = sbWifiSsid.toString();
+            <span class="hljs-keyword">if</span> (!wifiSSID.isEmpty() &amp;&amp; wifiPSW != <span class="hljs-literal">null</span> &amp;&amp; !wifiPSW.isEmpty()) connectToWifi(wifiSSID, wifiPSW);
+        }
+    }
+    <span class="hljs-comment">// 關鍵：只有當 BLE 規範要求回覆（Write Request）時才送 ACK</span>
+    <span class="hljs-comment">// Write Command (WRITE_TYPE_NO_RESPONSE) 不需回覆，強行回覆會導致協議棧狀態機錯亂</span>
+    <span class="hljs-keyword">if</span> (responseNeeded) {
+        mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, requestBytes);
+    }
+}
+</code></pre>
+<h3 id="23-寫入乙太網路靜態-ip：7-byte-tlv-與隱式-commit">2.3 寫入乙太網路靜態 IP：7-Byte TLV 與隱式 Commit</h3>
+<p>工廠大多走固定 IP。我們直接用 7 個 Byte 的二進制解決：<code>[Type(1B), Ver(1B), Key(1B), IPv4(4B)]</code>。</p>
+<p>手機依序寫入 IP、Mask、Gateway、DNS1、DNS2。我們把 DNS2 當成「隱式 Commit」——寫入最後一筆時，直接觸發網卡重啟生效，省去再來回確認一次：</p>
+<pre><code class="lang-java"><span class="hljs-comment">// File: BleService.java</span>
+<span class="hljs-keyword">case</span> <span class="hljs-number">0x05</span>: <span class="hljs-comment">// Key=0x05 (DNS2) 觸發隱式 Commit</span>
+    staticIpConfig.dns2 = BleUtils.ipv4ToString(Arrays.copyOfRange(requestBytes, <span class="hljs-number">3</span>, requestBytes.length));
+    <span class="hljs-keyword">if</span> (ethernetManager == <span class="hljs-literal">null</span>) ethernetManager = <span class="hljs-keyword">new</span> <span class="hljs-title class_">EthernetManager</span>(context);
+    ethernetManager.setStaticIp(staticIpConfig); <span class="hljs-comment">// 生效設定並重啟網卡</span>
+    staticIpConfig = <span class="hljs-literal">null</span>; ethernetManager = <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">break</span>;
+</code></pre>
+<hr></hr>
+<h2 id="三、-狀態同步：放棄-notification，無腦輪詢最穩">三、 狀態同步：放棄 Notification，無腦輪詢最穩</h2>
+<p>照官方標準做法，連網成功應該用 GATT Notification 推播給手機。</p>
+<p>但在現場實測時，很多白牌手機寫入 CCCD（0x2902 描述符）常因自帶的省電策略或權限問題把回調吞掉，手機端永遠等不到「已連線」推播。</p>
+<p>門禁機本來就插著市電，根本沒差這點電。最穩的辦法，就是讓手機連上後，每秒主動發一次 Read 來問狀態特徵值（回傳 6 個 Byte）：</p>
+<pre><code class="lang-java"><span class="hljs-comment">// File: BleService.java</span>
+<span class="hljs-keyword">case</span> CHAR_READ_NOTIFY_SERVER_CONNECTED:
+    <span class="hljs-type">byte</span> <span class="hljs-variable">status</span> <span class="hljs-operator">=</span> BleUtils.IDLE;
+    <span class="hljs-keyword">if</span> (SyncDataService.getInstance().isConnected()) {
+        status = BleUtils.CONNECTED; <span class="hljs-comment">// 0x01</span>
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (SyncDataService.getInstance().getWebSocketConnecter().isConnecting()) {
+        status = BleUtils.CONNECTING; <span class="hljs-comment">// 0x02</span>
+    }
+    <span class="hljs-type">byte</span>[] <span class="hljs-variable">bytes</span> <span class="hljs-operator">=</span> BleUtils.deviceIpv4ToBytes(status, DeviceServ.getDeviceDBItem().getIpAddress());
+    mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, bytes);
+</code></pre>
+<p>手機讀到 <code>status == 0x01</code> 亮綠燈，收工斷線。無狀態、不靠回調，現場 100% 穩定收斂。</p>
+<hr></hr>
+<h2 id="四、-程式碼裡的真實技術債">四、 程式碼裡的真實技術債</h2>
+<p>回頭客觀審視這套代碼，裡面有兩個實打實的地雷：</p>
+<ol>
+<li><strong>資安裸奔</strong>：WiFi 帳密跟後台網址在空中全是明文。在封閉的廠區還能勉強混過去，但只要面對正規資安稽核，這條絕對直接吃缺失；</li>
+<li><strong>JMM 跨執行緒可見性災難（現場偶發逾時的真兇）</strong>：</li>
+</ol>
+<p>看這段代碼：</p>
+<pre><code class="lang-java"><span class="hljs-comment">// File: BleService.java</span>
+<span class="hljs-keyword">private</span> <span class="hljs-type">boolean</span> serverHostDone; <span class="hljs-comment">// 致命錯誤：缺少 volatile 修飾！</span>
+
+ThreadPoolManager.getInstance().execute(() -&gt; {
+    <span class="hljs-type">int</span> <span class="hljs-variable">count</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">while</span> (count &lt; <span class="hljs-number">10</span>) {
+        <span class="hljs-keyword">if</span> (serverHostDone) { <span class="hljs-comment">// 跨執行緒讀取，很容易一直讀到 CPU 快取舊值</span>
+            <span class="hljs-type">String</span> <span class="hljs-variable">fullAddress</span> <span class="hljs-operator">=</span> sbServerHost.toString().replaceFirst(<span class="hljs-string">"^(http[s]?://)"</span>, <span class="hljs-string">""</span>);
+            SettingServ.setSyncServerIp(fullAddress);
+            serverHostDone = <span class="hljs-literal">false</span>;
+            <span class="hljs-keyword">return</span>;
+        }
+        Thread.sleep(<span class="hljs-number">2000</span>);
+        count++;
+    }
+    <span class="hljs-comment">// 20 秒一到直接退出，後台網址永遠沒寫進去</span>
+});
+</code></pre>
+<p>變數 <code>serverHostDone</code> 是在 Binder 執行緒被修改，但輪詢是在執行緒池的另一條 Worker 執行緒。因為沒加 <code>volatile</code>，Worker 執行緒完全可能一直讀到舊的 <code>false</code>。20 秒盲等結束直接放棄，這正是現場偶發「明明配了網，機器卻死活連不上後台」的罪魁禍首。</p>
+<hr></hr>
+<h2 id="五、-現場排查速查清單-troubleshooting-cheat-sheet">五、 現場排查速查清單 (Troubleshooting Cheat Sheet)</h2>
+<p>日後維護或面試被問到現場排障，看這三點：</p>
+<ul>
+<li><strong>現象 1：手機搜得到廣播，但連線時一直卡住或秒斷</strong><ul>
+<li>排查點：確認 <code>BleService.java</code> 的 <code>onCharacteristicWriteRequest</code> 結尾有沒有無條件呼叫 <code>sendResponse()</code> 回覆 ACK。漏掉這行，手機藍牙 Stack 會一直等直到逾時。</li>
+</ul>
+</li>
+<li><strong>現象 2：WiFi 配網成功，但一直顯示未連上後台</strong><ul>
+<li>排查點：檢查 <code>serverHostDone</code> 有沒有加 <code>volatile</code>；檢查那段 20 秒的盲等迴圈是不是比手機寫入網址的時間還早結束。</li>
+</ul>
+</li>
+<li><strong>現象 3：廣播名稱在手機列表被切斷，或廣播拋出 Code 1 錯誤</strong><ul>
+<li>排查點：第一層主廣播資料有沒有超過 31 Bytes；確認 128-bit Service UUID 有沒有乖乖待在第二層 ScanResponse。</li>
+</ul>
+</li>
+</ul>
+<hr></hr>
+<h2 id="結語：為什麼連上網路後不把藍牙關掉？">結語：為什麼連上網路後不把藍牙關掉？</h2>
+<p>很多人第一反應都是：「既然 WiFi 都配好了，為什麼不呼叫 <code>stopBleService()</code> 關掉藍牙省電？」</p>
+<p>但你想想現場維護情境：</p>
+<ul>
+<li>門禁機插著電，待機功耗根本不用省；</li>
+<li>機器掛在兩公尺高處，哪天現場總務改了 WiFi 密碼或換了路由器，機器一斷線就失聯。如果藍牙被關了，工人就得搬鋁梯拆機拔插頭重開機；</li>
+<li><strong>維持 7x24 常駐廣播</strong>，後續維修人員隨時拿手機走過去，點一下就能重新配網。</li>
+</ul>
+<p>在工程現場，能活下來的往往不是教科書上最漂亮的架構，而是最懂現場限制、最省維護成本的土砲實作。</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="13_為了極少用功能大改的WebRTC.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: 13 篇：即時通訊：WebRTC 視訊對講底層魔改">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"14 篇：近場配網：門禁機當 BLE Peripheral 現場踩坑記","level":"3.5.5","depth":2,"next":{"title":"Jetpack Compose 渲染機制與效能調校","level":"4.1","depth":1,"ref":"","articles":[{"title":"渲染管線：Compose 三階段渲染（Composition / Layout / Draw）深度剖析","level":"4.1.1","depth":2,"path":"posts/section02_compose/01_Compose三階段渲染管線.md","ref":"posts/section02_compose/01_Compose三階段渲染管線.md","articles":[]},{"title":"狀態衍生：derivedStateOf 的精確使用時機與底層機制","level":"4.1.2","depth":2,"path":"posts/section02_compose/02_何時該用derivedStateOf.md","ref":"posts/section02_compose/02_何時該用derivedStateOf.md","articles":[]},{"title":"重組防護：@Immutable 與 @Stable 包含集合時的 Recomposition 機制","level":"4.1.3","depth":2,"path":"posts/section02_compose/03_Immutable與Stable重組防護.md","ref":"posts/section02_compose/03_Immutable與Stable重組防護.md","articles":[]},{"title":"繪製優化：Modifier 繪製效能抉擇：drawBehind vs drawWithCache","level":"4.1.4","depth":2,"path":"posts/section02_compose/04_Modifier繪製效能比較.md","ref":"posts/section02_compose/04_Modifier繪製效能比較.md","articles":[]}]},"previous":{"title":"13 篇：即時通訊：WebRTC 視訊對講底層魔改","level":"3.5.4","depth":2,"path":"posts/section01_edge_ai/13_為了極少用功能大改的WebRTC.md","ref":"posts/section01_edge_ai/13_為了極少用功能大改的WebRTC.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing"],"styles":{"website":"styles/website.css"},"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"Boochlin","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Something Record - Boochlin's Tech Blog","language":"zh-tw","gitbook":"*","description":"Boochlin 個人技術部落格全集（2015-2026 十年技術隨筆與硬核破局實錄）"},"file":{"path":"posts/section01_edge_ai/14_門禁機當BLE_Peripheral現場踩坑記.md","mtime":"2026-09-05T08:57:13.174Z","type":"markdown"},"gitbook":{"version":"6.2.2","time":"2026-09-05T08:58:32.284Z"},"basePath":"../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="../../gitbook/gitbook.js"></script>
+    <script src="../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../../gitbook/@honkit/honkit-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

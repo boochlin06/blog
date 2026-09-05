@@ -1,0 +1,2117 @@
+
+<!DOCTYPE HTML>
+<html lang="zh-tw" >
+    <head>
+        <meta charset="UTF-8">
+        <title>系統演進：Android Nougat (Android 7.0) 核心新特性與架構變革 · Something Record - Boochlin's Tech Blog</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 6.2.2">
+        <meta name="author" content="Boochlin">
+        
+        
+    
+    <link rel="stylesheet" href="../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/@honkit/honkit-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="../../styles/website.css">
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    
+    <link rel="prev" href="06_Java_reflection_dynamic_load.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book honkit-cloak">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="輸入並搜尋" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    全站導讀：十年隨筆與工程破局心法
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷首：工程哲學與代碼整潔之道（5 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="../section10_philosophy/01_Clean_code_書摘心得一.html">
+            
+                <a href="../section10_philosophy/01_Clean_code_書摘心得一.html">
+            
+                    
+                    代碼整潔：Clean Code 無瑕的程式碼（一）：命名、函式與職責精準
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="../section10_philosophy/02_Clean_code_書摘心得二.html">
+            
+                <a href="../section10_philosophy/02_Clean_code_書摘心得二.html">
+            
+                    
+                    代碼整潔：Clean Code 無瑕的程式碼（二）：錯誤處理、邊界與單元測試
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="../section10_philosophy/03_The_Clean_coder_番外篇.html">
+            
+                <a href="../section10_philosophy/03_The_Clean_coder_番外篇.html">
+            
+                    
+                    工程師素養：The Clean Coder 專業程式設計師的生存與承諾法則
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="../section10_philosophy/04_約爾趣談軟體筆記.html">
+            
+                <a href="../section10_philosophy/04_約爾趣談軟體筆記.html">
+            
+                    
+                    產品哲學：約爾趣談軟體（Joel on Software）經典研讀筆記
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="../section10_philosophy/05_Android好文整理.html">
+            
+                <a href="../section10_philosophy/05_Android好文整理.html">
+            
+                    
+                    早期拓荒：Android 核心架構技術精選與歷史記憶（2015）
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷一：邊緣 AI 與低階硬體極限榨汁（旗艦專案 18 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="../section01_edge_ai/00_全系列架構對照導覽.html">
+            
+                <a href="../section01_edge_ai/00_全系列架構對照導覽.html">
+            
+                    
+                    架構導讀：全篇演進與防坑總對照
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" >
+            
+                <span>
+            
+                    
+                    階段一：硬體現狀評估與系統裁剪
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.2.1" data-path="../section01_edge_ai/00_到底有多爛.html">
+            
+                <a href="../section01_edge_ai/00_到底有多爛.html">
+            
+                    
+                    00 篇：到底有多爛？算力深淵與硬體現狀評估
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.2" data-path="../section01_edge_ai/01_評估第一.html">
+            
+                <a href="../section01_edge_ai/01_評估第一.html">
+            
+                    
+                    01 篇：評估第一：硬體瓶頸與選型考量
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.3" data-path="../section01_edge_ai/02_無用系統服務out.html">
+            
+                <a href="../section01_edge_ai/02_無用系統服務out.html">
+            
+                    
+                    02 篇：系統裁剪：無用系統服務徹底剔除
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" >
+            
+                <span>
+            
+                    
+                    階段二：Linux 核心調校與記憶體控場
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.3.1" data-path="../section01_edge_ai/03_ZRAM_SWAP_KSM.html">
+            
+                <a href="../section01_edge_ai/03_ZRAM_SWAP_KSM.html">
+            
+                    
+                    03 篇：核心擴張：ZRAM、SWAP 與 KSM 調校
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.2" data-path="../section01_edge_ai/04_記憶體控場師LMKD.html">
+            
+                <a href="../section01_edge_ai/04_記憶體控場師LMKD.html">
+            
+                    
+                    04 篇：記憶體控場：LMKD 策略與防 OOM 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.3" data-path="../section01_edge_ai/05_GC是唯一關心你OOM的好人.html">
+            
+                <a href="../section01_edge_ai/05_GC是唯一關心你OOM的好人.html">
+            
+                    
+                    05 篇：記憶體哲學：GC 是唯一關心你 OOM 的好人
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" >
+            
+                <span>
+            
+                    
+                    階段三：影像零拷貝、NEON 加速與保活
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.4.1" data-path="../section01_edge_ai/06_三路高頻影像流零拷貝.html">
+            
+                <a href="../section01_edge_ai/06_三路高頻影像流零拷貝.html">
+            
+                    
+                    06 篇：影像零拷貝：三路高頻影像流記憶體防護
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.2" data-path="../section01_edge_ai/07_物理世界需要Watchdog.html">
+            
+                <a href="../section01_edge_ai/07_物理世界需要Watchdog.html">
+            
+                    
+                    07 篇：硬體保活：物理世界需要 Watchdog
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.3" data-path="../section01_edge_ai/07_1_GC_Thrashing思路補充.html">
+            
+                <a href="../section01_edge_ai/07_1_GC_Thrashing思路補充.html">
+            
+                    
+                    07.1 篇：進程調度：GC Thrashing 調校思路補充
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.4" data-path="../section01_edge_ai/08_YUV加速QFastCV.html">
+            
+                <a href="../section01_edge_ai/08_YUV加速QFastCV.html">
+            
+                    
+                    08 篇：色彩加速：YUV420 888 與 QFastCV 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.5" data-path="../section01_edge_ai/09_兄弟齊心ACL_SGEMM.html">
+            
+                <a href="../section01_edge_ai/09_兄弟齊心ACL_SGEMM.html">
+            
+                    
+                    09 篇：矩陣加速：ARM Compute Library SGEMM 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.6" data-path="../section01_edge_ai/09_1_NEON與記憶體極限榨汁番外篇.html">
+            
+                <a href="../section01_edge_ai/09_1_NEON與記憶體極限榨汁番外篇.html">
+            
+                    
+                    番外篇：效能榨汁：ARM NEON 與 DirectBuffer 終極調優
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" >
+            
+                <span>
+            
+                    
+                    階段四：3D 視覺光學與邊緣 IoT 通訊
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.5.1" data-path="../section01_edge_ai/10_雙鏡頭時空同步.html">
+            
+                <a href="../section01_edge_ai/10_雙鏡頭時空同步.html">
+            
+                    
+                    10 篇：時空對齊：RGB 與 ToF 雙鏡頭同步
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.2" data-path="../section01_edge_ai/11_ToF_RAW12轉3D點雲.html">
+            
+                <a href="../section01_edge_ai/11_ToF_RAW12轉3D點雲.html">
+            
+                    
+                    11 篇：點雲解算：ToF RAW12 轉 3D 空間點雲
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.3" data-path="../section01_edge_ai/12_說到底還是一台IoT_WebSocket.html">
+            
+                <a href="../section01_edge_ai/12_說到底還是一台IoT_WebSocket.html">
+            
+                    
+                    12 篇：長連線架構：WebSocket 離線雙寫同步機制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.4" data-path="../section01_edge_ai/13_為了極少用功能大改的WebRTC.html">
+            
+                <a href="../section01_edge_ai/13_為了極少用功能大改的WebRTC.html">
+            
+                    
+                    13 篇：即時通訊：WebRTC 視訊對講底層魔改
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.5" data-path="../section01_edge_ai/14_門禁機當BLE_Peripheral現場踩坑記.html">
+            
+                <a href="../section01_edge_ai/14_門禁機當BLE_Peripheral現場踩坑記.html">
+            
+                    
+                    14 篇：近場配網：門禁機當 BLE Peripheral 現場踩坑記
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷二：現代 Android 架構、語言與渲染引擎（18 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" >
+            
+                <span>
+            
+                    
+                    Jetpack Compose 渲染機制與效能調校
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1.1" data-path="../section02_compose/01_Compose三階段渲染管線.html">
+            
+                <a href="../section02_compose/01_Compose三階段渲染管線.html">
+            
+                    
+                    渲染管線：Compose 三階段渲染（Composition / Layout / Draw）深度剖析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.2" data-path="../section02_compose/02_何時該用derivedStateOf.html">
+            
+                <a href="../section02_compose/02_何時該用derivedStateOf.html">
+            
+                    
+                    狀態衍生：derivedStateOf 的精確使用時機與底層機制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.3" data-path="../section02_compose/03_Immutable與Stable重組防護.html">
+            
+                <a href="../section02_compose/03_Immutable與Stable重組防護.html">
+            
+                    
+                    重組防護：@Immutable 與 @Stable 包含集合時的 Recomposition 機制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.1.4" data-path="../section02_compose/04_Modifier繪製效能比較.html">
+            
+                <a href="../section02_compose/04_Modifier繪製效能比較.html">
+            
+                    
+                    繪製優化：Modifier 繪製效能抉擇：drawBehind vs drawWithCache
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" >
+            
+                <span>
+            
+                    
+                    Kotlin 語言深水區與非同步併發
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.2.1" data-path="../section03_kotlin/01_Thread與Coroutine理解.html">
+            
+                <a href="../section03_kotlin/01_Thread與Coroutine理解.html">
+            
+                    
+                    併發模型：Thread 與 Coroutine 的底層機制與上下文切換成本
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.2" data-path="../section03_kotlin/02_Kotlin預防Launch連發防抖.html">
+            
+                <a href="../section03_kotlin/02_Kotlin預防Launch連發防抖.html">
+            
+                    
+                    併發防抖：協程防連發、搜尋任務防抖與競態消除
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.3" data-path="../section03_kotlin/03_inline_noinline_crossinline.html">
+            
+                <a href="../section03_kotlin/03_inline_noinline_crossinline.html">
+            
+                    
+                    內聯機制：inline、noinline、crossinline 的本質與存在意義
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.4" data-path="../section03_kotlin/04_lateinit_vs_lazy.html">
+            
+                <a href="../section03_kotlin/04_lateinit_vs_lazy.html">
+            
+                    
+                    延遲載入：lateinit 與 lazy 的位元組碼實現與執行期差異
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.5" data-path="../section03_kotlin/05_constructors_and_init.html">
+            
+                <a href="../section03_kotlin/05_constructors_and_init.html">
+            
+                    
+                    物件建構：次級建構子（Constructor）與 init 程式碼區塊的執行順序
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.6" data-path="../section03_kotlin/06_kotlin_init屬性陷阱.html">
+            
+                <a href="../section03_kotlin/06_kotlin_init屬性陷阱.html">
+            
+                    
+                    屬性初始化：init 區塊與屬性初始化的順序地雷
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2.7" data-path="../section03_kotlin/07_gradle_kotlin_plugins.html">
+            
+                <a href="../section03_kotlin/07_gradle_kotlin_plugins.html">
+            
+                    
+                    構建腳本：Gradle Plugin Management 中 apply false 的深層原因
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" >
+            
+                <span>
+            
+                    
+                    現代架構模式與依賴注入實戰
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.3.1" data-path="../section04_architecture/01_viewModelScope_vs_rememberCoroutineScope.html">
+            
+                <a href="../section04_architecture/01_viewModelScope_vs_rememberCoroutineScope.html">
+            
+                    
+                    職責劃分：viewModelScope 與 rememberCoroutineScope 的職責分離
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.2" data-path="../section04_architecture/02_SupervisorJob與viewModelScope.html">
+            
+                <a href="../section04_architecture/02_SupervisorJob與viewModelScope.html">
+            
+                    
+                    異常處理：SupervisorJob 與 viewModelScope 的生命週期綁定機制
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.3" data-path="../section04_architecture/03_Hilt指南組內分享.html">
+            
+                <a href="../section04_architecture/03_Hilt指南組內分享.html">
+            
+                    
+                    依賴注入：Hilt 實戰架構指南與工程實踐
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.4" data-path="../section04_architecture/04_ViewModelProviderFactory.html">
+            
+                <a href="../section04_architecture/04_ViewModelProviderFactory.html">
+            
+                    
+                    實例工廠：ViewModelProvider.Factory 的設計必要性與自訂實例化
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.5" data-path="../section04_architecture/05_預設參數注入陷阱.html">
+            
+                <a href="../section04_architecture/05_預設參數注入陷阱.html">
+            
+                    
+                    注入陷阱：Composable 預設參數直接實例化 ViewModel 的架構反模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.6" data-path="../section04_architecture/06_RepositoryScope架構邊界.html">
+            
+                <a href="../section04_architecture/06_RepositoryScope架構邊界.html">
+            
+                    
+                    架構邊界：超出 ComposableViewModel 生命週期的 Repository 任務邊界
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3.7" data-path="../section04_architecture/07_CreationExtras注入.html">
+            
+                <a href="../section04_architecture/07_CreationExtras注入.html">
+            
+                    
+                    動態參數：CreationExtras 與自訂 Application 依賴提取
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷三：系統核心機制、相機驅動與效能排障（25 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" >
+            
+                <span>
+            
+                    
+                    Android Framework 原理與執行緒池演進
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.1.1" data-path="01_ThreadPoolManager的原罪.html">
+            
+                <a href="01_ThreadPoolManager的原罪.html">
+            
+                    
+                    執行緒池演進：全域單例 ThreadPoolManager 的歷史原罪與現代化重構
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.2" data-path="02_Naming_threads_and_thread_pools.html">
+            
+                <a href="02_Naming_threads_and_thread_pools.html">
+            
+                    
+                    併發診斷：ExecutorService 執行緒與執行緒池的規範命名實踐
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.3" data-path="03_runtime_resource_overlay.html">
+            
+                <a href="03_runtime_resource_overlay.html">
+            
+                    
+                    系統自訂：Runtime Resource Overlay (RRO) 運行期資源替換原理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.4" data-path="04_datacontrol分離_createPackageContext.html">
+            
+                <a href="04_datacontrol分離_createPackageContext.html">
+            
+                    
+                    沙盒隔離：跨應用存取與資料隔離：createPackageContext() 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.5" data-path="05_home_screen_life_cycle.html">
+            
+                <a href="05_home_screen_life_cycle.html">
+            
+                    
+                    系統生命週期：Android Home Screen 與 Launcher 生命週期深度解析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.1.6" data-path="06_Java_reflection_dynamic_load.html">
+            
+                <a href="06_Java_reflection_dynamic_load.html">
+            
+                    
+                    動態載入：Java 反射黑魔法：FastScrollBar 動態載入外部 APK
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="5.1.7" data-path="07_Android_Nougat_introduction.html">
+            
+                <a href="07_Android_Nougat_introduction.html">
+            
+                    
+                    系統演進：Android Nougat (Android 7.0) 核心新特性與架構變革
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" >
+            
+                <span>
+            
+                    
+                    相機 HAL 與原生多媒體驅動框架
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.2.1" data-path="../section07_camera_multimedia/01_Camera1_Architecture.html">
+            
+                <a href="../section07_camera_multimedia/01_Camera1_Architecture.html">
+            
+                    
+                    Camera 架構（一）：Camera 1 經典架構與驅動層資料流
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.2" data-path="../section07_camera_multimedia/02_Camera2_Introduction.html">
+            
+                <a href="../section07_camera_multimedia/02_Camera2_Introduction.html">
+            
+                    
+                    Camera 架構（二）：Camera 2 HAL3 管道化模型與核心概念
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.3" data-path="../section07_camera_multimedia/03_How_to_create_Camera2.html">
+            
+                <a href="../section07_camera_multimedia/03_How_to_create_Camera2.html">
+            
+                    
+                    Camera 架構（三）：Camera 2 Session 建立與 CaptureRequest 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.4" data-path="../section07_camera_multimedia/04_FMRadio_概論.html">
+            
+                <a href="../section07_camera_multimedia/04_FMRadio_概論.html">
+            
+                    
+                    FMRadio 開發（一）：系統架構概論與硬體中介層通訊
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.5" data-path="../section07_camera_multimedia/05_FMRadio_FMRadioMain.html">
+            
+                <a href="../section07_camera_multimedia/05_FMRadio_FMRadioMain.html">
+            
+                    
+                    FMRadio 開發（二）：FMRadioMain 前端介面與硬體狀態同步
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.6" data-path="../section07_camera_multimedia/06_FMRadio_FMRadioService.html">
+            
+                <a href="../section07_camera_multimedia/06_FMRadio_FMRadioService.html">
+            
+                    
+                    FMRadio 開發（三）：FMRadioService 背景常駐服務與音訊焦點
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.7" data-path="../section07_camera_multimedia/07_FMRadio_AlterActivity.html">
+            
+                <a href="../section07_camera_multimedia/07_FMRadio_AlterActivity.html">
+            
+                    
+                    FMRadio 開發（四）：AlertActivity 系統中斷與彈出視窗處理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2.8" data-path="../section07_camera_multimedia/08_FMRadio_Other.html">
+            
+                <a href="../section07_camera_multimedia/08_FMRadio_Other.html">
+            
+                    
+                    FMRadio 開發（五）：特殊情境例外排障與全系列收官
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" >
+            
+                <span>
+            
+                    
+                    效能診斷、除錯工具與 UI 排障實錄
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.3.1" data-path="../section06_performance/01_Analyzing_UI_Performance_Systrace.html">
+            
+                <a href="../section06_performance/01_Analyzing_UI_Performance_Systrace.html">
+            
+                    
+                    卡頓診斷：使用 Systrace 深度分析 UI 幀率與掉幀瓶頸
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.2" data-path="../section06_performance/02_Chrome_dev_tool_stetho.html">
+            
+                <a href="../section06_performance/02_Chrome_dev_tool_stetho.html">
+            
+                    
+                    除錯工具：Facebook Stetho 結合 Chrome DevTools 實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.3" data-path="../section06_performance/03_Android_Intents_with_Chrome.html">
+            
+                <a href="../section06_performance/03_Android_Intents_with_Chrome.html">
+            
+                    
+                    跨進程通訊：Chrome 深度連結與 Android Intent 協議交互實作
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.4" data-path="../section06_performance/04_Communicate_with_fragments.html">
+            
+                <a href="../section06_performance/04_Communicate_with_fragments.html">
+            
+                    
+                    元件通訊：Fragment 之間高內聚、低耦合的通訊模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.5" data-path="../section06_performance/05_Avoid_non-default_constructors_fragments.html">
+            
+                <a href="../section06_performance/05_Avoid_non-default_constructors_fragments.html">
+            
+                    
+                    生命週期地雷：Fragment 為何絕對嚴禁非預設無參建構子？
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.6" data-path="../section06_performance/06_UI佈局被鍵盤擋住.html">
+            
+                <a href="../section06_performance/06_UI佈局被鍵盤擋住.html">
+            
+                    
+                    軟鍵盤遮擋：adjustResize、adjustPan 與沉浸式輸入框遮擋排障
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.7" data-path="../section06_performance/07_RecyclerView_inside_NestedScrollView.html">
+            
+                <a href="../section06_performance/07_RecyclerView_inside_NestedScrollView.html">
+            
+                    
+                    滾動衝突解決：NestedScrollView 內部巢狀 RecyclerView 的滑動與尺寸修復
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.8" data-path="../section06_performance/08_AppIntro_Proguard_issue.html">
+            
+                <a href="../section06_performance/08_AppIntro_Proguard_issue.html">
+            
+                    
+                    程式碼混淆：AppIntro 開源庫引發的 ProGuard 規則踩坑記錄
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.9" data-path="../section06_performance/09_Local_build_third_parity_lib.html">
+            
+                <a href="../section06_performance/09_Local_build_third_parity_lib.html">
+            
+                    
+                    模組化依賴：本機構建引入第三方二進制依賴庫的配置策略
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3.10" data-path="../section06_performance/10_Android_CTS_Fail.html">
+            
+                <a href="../section06_performance/10_Android_CTS_Fail.html">
+            
+                    
+                    CTS 認證排障：Android CTS 測試失敗 — 外部儲存目錄無法刪除診斷
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">卷四：工程專案實踐與生態拓荒史（16 篇）</li>
+        
+        
+    
+        <li class="chapter " data-level="6.1" >
+            
+                <span>
+            
+                    
+                    獨立產品實戰、機器人定位與跨平台
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.1.1" data-path="../section08_projects_iot/01_Funny_Vote_開發雜記.html">
+            
+                <a href="../section08_projects_iot/01_Funny_Vote_開發雜記.html">
+            
+                    
+                    獨立產品：Funny Vote 投票 App 從零架構與開發雜記
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.2" data-path="../section08_projects_iot/02_Funny_vote_MVP更新雜記.html">
+            
+                <a href="../section08_projects_iot/02_Funny_vote_MVP更新雜記.html">
+            
+                    
+                    架構演進：Funny Vote 引入 MVP 架構模式與模組化重構
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.3" data-path="../section08_projects_iot/03_Funny_vote_Kotlin改版雜記.html">
+            
+                <a href="../section08_projects_iot/03_Funny_vote_Kotlin改版雜記.html">
+            
+                    
+                    語言遷移：Funny Vote 全專案 Kotlin 改版遷移紀錄
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.4" data-path="../section08_projects_iot/04_SLAM_Note_NDT_TKU.html">
+            
+                <a href="../section08_projects_iot/04_SLAM_Note_NDT_TKU.html">
+            
+                    
+                    機器人定位：雷達 SLAM 演算法與 NDT 點雲匹配筆記
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.5" data-path="../section08_projects_iot/05_React_Native_學習筆記.html">
+            
+                <a href="../section08_projects_iot/05_React_Native_學習筆記.html">
+            
+                    
+                    跨平台技術：React Native 早期架構與混合開發實踐
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.1.6" data-path="../section08_projects_iot/06_React_native_Native_android_module.html">
+            
+                <a href="../section08_projects_iot/06_React_native_Native_android_module.html">
+            
+                    
+                    原生模組互通：React Native 與 Android 原生 Native Module 互通踩坑
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2" >
+            
+                <span>
+            
+                    
+                    經典網路庫、資料庫 ORM 與工具演進
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="6.2.1" data-path="../section09_orm_tools/01_Retrofit2_Upload_Files.html">
+            
+                <a href="../section09_orm_tools/01_Retrofit2_Upload_Files.html">
+            
+                    
+                    網路庫演進：Retrofit 2 檔案上傳與 Multipart 參數列表實戰
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.2" data-path="../section09_orm_tools/02_Volley_gzip_gson.html">
+            
+                <a href="../section09_orm_tools/02_Volley_gzip_gson.html">
+            
+                    
+                    網路庫演進：Google Volley 自訂 Request：整合 Gzip 壓縮與 Gson 解析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.3" data-path="../section09_orm_tools/03_GreenDao3_Introduction.html">
+            
+                <a href="../section09_orm_tools/03_GreenDao3_Introduction.html">
+            
+                    
+                    ORM 資料庫：GreenDAO 3 註解架構與效能機制入門
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.4" data-path="../section09_orm_tools/04_GreenDAO_introduction.html">
+            
+                <a href="../section09_orm_tools/04_GreenDAO_introduction.html">
+            
+                    
+                    ORM 資料庫：GreenDAO 核心架構、資料表關聯與 Session 管理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.5" data-path="../section09_orm_tools/05_GreenDAO_default_value.html">
+            
+                <a href="../section09_orm_tools/05_GreenDAO_default_value.html">
+            
+                    
+                    ORM 資料庫：GreenDAO 欄位預設值無效之底層原始碼追蹤
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.6" data-path="../section09_orm_tools/06_ButterKnife_introduction.html">
+            
+                <a href="../section09_orm_tools/06_ButterKnife_introduction.html">
+            
+                    
+                    視圖綁定：ButterKnife 註解綁定原理與 View 編譯期生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.7" data-path="../section09_orm_tools/07_Facebook_api_Login.html">
+            
+                <a href="../section09_orm_tools/07_Facebook_api_Login.html">
+            
+                    
+                    社群整合：Facebook SDK 登入授權與原生 App 交互接入
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.8" data-path="../section09_orm_tools/08_GAIQ_GET.html">
+            
+                <a href="../section09_orm_tools/08_GAIQ_GET.html">
+            
+                    
+                    數據分析認證：Google Analytics 個人認證（GAIQ）備考與技術心得
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.9" data-path="../section09_orm_tools/09_Google_Analytics_初始化.html">
+            
+                <a href="../section09_orm_tools/09_Google_Analytics_初始化.html">
+            
+                    
+                    數據埋點：Google Analytics for Android SDK 整合與初始化指南
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="6.2.10" data-path="../section09_orm_tools/10_Release_jar_by_gradle.html">
+            
+                <a href="../section09_orm_tools/10_Release_jar_by_gradle.html">
+            
+                    
+                    構建發布：使用 Gradle 腳本打包與發布獨立 JAR 庫
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            本書使用 HonKit 釋出
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../.." >系統演進：Android Nougat (Android 7.0) 核心新特性與架構變革</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="android-nougat-introduction-一">Android Nougat introduction (一)</h1>
+<blockquote>
+<p>原文網址：<a href="https://boochlin.com/?p=180" target="_blank">https://boochlin.com/?p=180</a>
+發布日期：2016-09-14
+文章編號：180</p>
+</blockquote>
+<hr></hr>
+<p><img src="../../assets/images/image09.png" alt="android_n"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/image09.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/image09.png</a></p>
+<p>雖然 Android N Preview 從 Google I/O 五月大會就釋放出來，但是一直找不到機子來玩(嗚呼我的 z3 不支援升級)，就一路拖阿托阿托，果然到了 8/22 正式版出來還是沒有機子玩，但是預先 Survey Android 新版的變動，幾乎是系統廠的功課，因為你永遠不知道接下來會不會有要求，要讓以前或是未來的手機通通升上去。因此團隊果然還是派人(Not me)出來研究研究啦，由於 google 的官方更新項目是不斷增長的，且不少東西也沒有詳細的實務經驗，我就只能看到哪寫到哪。以下是簡單介紹。</p>
+<p>看完的，有補充資料</p>
+<ol>
+<li><p><a href="https://developer.android.com/guide/topics/ui/multi-window.html" target="_blank">Multi-Window Support 多視窗支援</a></p>
+</li>
+<li><p><a href="https://android-developers.blogspot.tw/2016/06/notifications-in-android-n.html" target="_blank">Notification Enhancements 通知欄強化</a></p>
+</li>
+<li><p><a href="https://developer.android.com/guide/topics/resources/multilingual-support.html" target="_blank">Multi-locale Support, More Languages 多地區設定支援，更多語言</a></p>
+</li>
+<li><p><a href="https://developer.android.com/training/monitoring-device-state/doze-standby.htm" target="_blank">Doze on the Go 移動時休眠</a></p>
+</li>
+<li><p><a href="https://developer.android.com/topic/performance/background-optimization.html" target="_blank">Project Svelte: Background Optimizations 專案 Svelte：背景最佳化</a></p>
+</li>
+<li><p><a href="https://www.youtube.com/watch?v=H-9xKmuwawg" target="_blank">Data Saver</a></p>
+</li>
+<li><p><a href="https://developer.android.com/reference/android/service/quicksettings/Tile.html" target="_blank">Quick Settings Tile API 快速設定磚 API</a></p>
+</li>
+<li><p><a href="https://developer.android.com/training/tv/tif/content-recording.html" target="_blank">Android TV 錄製</a></p>
+</li>
+<li><p><a href="https://developer.android.com/training/articles/security-config.html" target="_blank">Network Security Configuration 網路安全性強化</a></p>
+</li>
+<li><p><a href="https://developer.android.com/training/articles/scoped-directory-access.html" target="_blank">Scoped Directory Access 限定範圍目錄存取</a></p>
+</li>
+<li><p><a href="https://developer.android.com/about/versions/nougat/android-7.0.html?hl=en" target="_blank">Virtual Files 虛擬檔案</a></p>
+</li>
+<li><p><a href="https://developer.android.com/training/articles/direct-boot.html" target="_blank">Supporting Direct Boot 直接開機</a></p>
+</li>
+<li><p><a href="https://www.android.com/work/" target="_blank">Android for Work Updates</a></p>
+</li>
+<li><p><a href="https://developer.android.com/guide/platform/j8-jack.html?hl=en" target="_blank">Java 8 Language features JAVA 8 支援</a></p>
+</li>
+<li><p>Profile-guided JIT/AOT Compilation 設定檔指引 JIT/AOT 編譯</p>
+</li>
+</ol>
+<p>底下是還沒細看的（待補充，我決定放到第二篇），一句話結論</p>
+<ol>
+<li><p><a href="https://developer.android.com/ndk/guides/graphics/index.html" target="_blank">Vulkan API</a> －新的 3D 渲染 api</p>
+</li>
+<li><p><a href="https://developer.android.com/reference/android/view/SurfaceView.html" target="_blank">SurfaceView</a> －請大家用 SurfaceView 取代 TextureView ，比較省電</p>
+</li>
+<li><p><a href="https://developer.android.com/about/versions/nougat/android-7.0.html?hl=en#print_svc" target="_blank">Number Blocking</a>－系統級的 who’s call</p>
+</li>
+<li><p><a href="https://developer.android.com/reference/android/telecom/CallScreeningService.html" target="_blank">Call Screening</a>－系統級的 who’ call</p>
+</li>
+<li><p><a href="http://unicode.org/emoji/charts/full-emoji-list.html" target="_blank">New Emojis</a>－更多 Emojis</p>
+</li>
+<li><p><a href="http://ICU4J APIs in Android" target="_blank">ICU4J APIs in Android</a> －更小的 size</p>
+</li>
+<li><p><a href="https://developer.android.com/about/versions/nougat/android-7.0.html?hl=en#webview" target="_blank">WebView</a>－Chrome + WebView, Together and Multiprocess</p>
+</li>
+<li><p><a href="https://developer.android.com/guide/topics/graphics/opengl.html" target="_blank">OpenGL™ ES 3.2 API</a>－更新</p>
+</li>
+<li><p><a href="https://developer.android.com/reference/android/accessibilityservice/AccessibilityService.html" target="_blank">Accessibility Enhancements</a> －nope</p>
+</li>
+<li><p><a href="https://developer.android.com/training/articles/security-key-attestation.html" target="_blank">Key Attestation</a> －nope</p>
+</li>
+<li><p><a href="https://developer.android.com/studio/build/build-variants.html#signing" target="_blank">APK Signature Scheme v2</a>－改善驗證速度並增強完整性保證</p>
+</li>
+<li><p><a href="http://www.androidpolice.com/2016/05/19/android-n-preview-3-introduces-a-new-shortcuts-helper-screen-for-physical-keyboards/" target="_blank">Keyboard Shortcuts Helper</a>－<strong>Meta（alt/command） + /</strong> to trigger a <em>Keyboard Shortcuts</em> screen</p>
+</li>
+<li><p><a href="https://developer.android.com/about/versions/nougat/android-7.0.html?hl=en#custom_pointer_api" target="_blank">Custom Pointer API</a>－自訂游標外觀</p>
+</li>
+<li><p><a href="https://developer.android.com/about/versions/nougat/android-7.0.html?hl=en#sustained_performance_api" target="_blank">Sustained Performance API</a>－用來測試 long-running apps</p>
+</li>
+<li><p><a href="https://developers.google.com/vr/android/" target="_blank">Print Service Enhancements</a>－nope</p>
+</li>
+<li><p><a href="https://developer.android.com/about/versions/nougat/android-7.0.html?hl=en#framemetrics_api" target="_blank">FrameMetricsListener API</a> －monitor its UI rendering performance，not limited to the past 120 frames.</p>
+</li>
+</ol>
+<h4 id="multi-window-support-多視窗支援"><a href="https://developer.android.com/guide/topics/ui/multi-window.html" target="_blank">Multi-Window Support 多視窗支援</a></h4>
+<p><img src="../../assets/images/mw-splitscreen.png" alt="mw-splitscreen"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/mw-splitscreen.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/mw-splitscreen.png</a></p>
+<p>Android N 新增一次顯示多個應用程式的支援。 在手持式裝置上，兩個應用程式可以在「分割畫面」模式中並排或上下排列。 在電視裝置上，應用程式能使用「子母畫面」模式，在使用者與另一個應用程式互動時持續播放影片。</p>
+<p>這功能其實之前就有其他大廠做過，我想主因其實很簡單，就是在大螢幕機器上，這樣的操作可以有效利用所有的畫面，是個非常直覺的功能。但是相對的對裝置效能更加要求，尤其是對 RAM，這樣的功能實在很難想像在 256 MB 的手機上可以使用。</p>
+<p>至於如何使用，官網是這樣說</p>
+<p>使用者可以透過下列方式來切換多視窗模式：</p>
+<ul>
+<li><p>如果使用者開啟<a href="https://developer.android.com/guide/components/recents.html?hl=zh-tw" target="_blank">總覽畫面</a>並長按活動標題，就可以將該標題拖曳到畫面醒目提示的部分，將活動放入多視窗模式。</p>
+</li>
+<li><p>如果使用者長按「總覽」按鈕，裝置會將目前的活動放入多視窗模式，並開啟總覽畫面，讓使用者選擇要分享螢幕的另一個活動。</p>
+</li>
+</ul>
+<p>使用者可以在活動分享螢幕時，將一個活動中的資料<a href="https://developer.android.com/guide/topics/ui/drag-drop.html?hl=zh-tw" target="_blank">拖放</a>到另一個活動。 (之前，使用者只能在單一活動內拖放資料)。</p>
+<p>ps. 總覽畫面就是 recent app 頁面，也就是大家手機按下右下或是左下的方塊按鈕會出現的畫面，老實說我覺得千言萬語比不上一段<a href="https://www.youtube.com/watch?v=laHfmVN01FQ" target="_blank">影片演示</a>。</p>
+<p>看到這邊注意到官網提到的</p>
+<p>『Manufacturers of larger devices can choose to enable freeform mode, in which the user can freely resize each activity. If the manufacturer enables this feature, the device offers freeform mode in addition to split-screen mode.』</p>
+<p>這個也是文字敘述並不太好理解，簡單來說就是可以像平常操作電腦，可以自由縮放視窗，尤其是在向電視這種超大型畫面上，個人覺得所有做 Android 電視棒的廠商都要好好注意這塊，不過也是需要 app vendor 去支援。</p>
+<p><img src="../../assets/images/ap_resize.png" alt="ap_resize"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/ap_resize.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/ap_resize.png</a></p>
+<p><a href="https://developer.android.com/guide/topics/ui/multi-window.html" target="_blank">開發方面就不多說，要注意的東西不少。</a>需要注意的是 multi-window activity 的生命週期基本上跟原本一樣，但是仔細想想就知道多視窗操作時就會有其中一個才是 focus 的 window，而沒有 focus 的 window activity 都是處在 onPause 階段，並非 onStop 階段，相對地拿到 focus 的 windows activity 會進入 onResume。</p>
+<p>另外就是我很好奇 home app 會是怎麼處理 multi-windows ，之後拿到機子一定要試試看。此外 task queue 的處理也是需要仔細研究。ps. multi-windows mode 下 Android N是可以支援兩個view (兩個Activities之間)交換資訊(<a href="https://developer.android.com/guide/topics/ui/multi-window.html" target="_blank">multi-window</a>);實作 <a href="https://developer.android.com/reference/android/view/View.OnDragListener.html" target="_blank">View.OnDragListener</a>，傳遞 <a href="https://developer.android.com/reference/android/content/ClipData.html" target="_blank">ClipData</a>。(<a href="https://developer.android.com/guide/topics/ui/drag-drop.html" target="_blank">Drag and Drap</a>)</p>
+<p><em>**</em><a href="https://boochlin.com/wp-content/uploads/2016/09/pip-active.png" target="_blank">而在此項目之下所衍生的就是『Picture in picture(子母畫面)』，</a><a href="https://www.youtube.com/watch?v=TxAbht2DkyU" target="_blank">影片演示</a> ，(TV only)</p>
+<blockquote>
+</blockquote>
+<p>當使用者從影片返回瀏覽其他內容，您的應用程式可以將影片移入 PIP 模式。</p>
+<p>當使用者觀看到影片內容的結尾時，您的應用程式可將影片切換到 PIP 模式。</p>
+<p>主畫面顯示系列中下一集的預告或摘要資訊時。您的應用程式可以為使用者提供一個觀賞影片時佇列其他內容的方式。 當主畫面顯示內容選擇活動時，影片繼續在 PIP 模式中播放。</p>
+<p>開發上需要注意的基本跟 multi-windows 是一樣的，生命週期，通常進入 onPause 後，影片就會停止播放，因此必須在 onPause 階段作一些處理，讓影片繼續播放，同樣的也必須在 onResume 階段作相對處理。另外需要注意的就是 pip mode 是 240×135 dp。（這很明顯是為了 tv 設計的，可是目前感覺市面上好像還沒有出旗艦款的電視，同時處理子母畫面感覺很吃資源）。</p>
+<p><img src="../../assets/images/pip-active.png" alt="pip-active"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/pip-active.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/pip-active.png</a></p>
+<h4 id=""> </h4>
+<h4 id="notification-enhancements-通知欄強化"><a href="https://android-developers.blogspot.tw/2016/06/notifications-in-android-n.html" target="_blank">Notification Enhancements 通知欄強化</a></h4>
+<p>這部份有以下五大改版</p>
+<p><strong>1. Template updates</strong>: We’re updating notification templates to put a new emphasis on hero image and avatar. Developers will be able to take advantage of the new templates with minimal adjustments in their code.</p>
+<p><img src="../../assets/images/new-style.png" alt="new-style"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/new-style.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/new-style.png</a></p>
+<p><strong>樣板更新</strong>，老實說我覺得沒啥好說，看上面圖最快。使用者可以更加簡單的換成新版的ui</p>
+<p><strong>2. Messaging style customization</strong>: You can customize more of the user interface labels associated with your notifications using the <code>MessagingStyle</code>class. You can configure the message, conversation title, and content view.</p>
+<p><img src="../../assets/images/MessagingStyle.png" alt="messagingstyle"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/MessagingStyle.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/MessagingStyle.png</a></p>
+<p><strong>訊息風格客製化</strong>，其實這個很方便，可以根據情況套入不同的 message style ，其實以前就可以用 客製化 notification ui 的方式達到，但這個很明顯 google 多個規範，讓大家更好做事。</p>
+<p><strong>3. <a href="https://www.youtube.com/watch?v=2ZQ1D003g14" target="_blank">Bundled notifications:</a></strong> The system can group messages together, for example by message topic, and display the group. A user can take actions, such as Dismiss or Archive, on them in place. If you’ve implemented notifications for Android Wear, you’ll already be familiar with this model.</p>
+<p><img src="../../assets/images/Ian_N.png" alt="ian_n"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/Ian_N.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/Ian_N.png</a></p>
+<p><strong>通知歸群</strong>，這個的中文實在不好翻，看了一下 i/o 影片介紹，個人覺得這個比較符合意義，過去在通知欄裡其實沒啥可以玩得，因為所有的通知都是照時間排序好，彼此之間都是獨立的。但也不是說一定不行，如果有開發 email 的人就會知道有個 style 叫做 inbox ，可以作到類似的事情但是處理實在麻煩。 現在多一個 setGroup() and setGroupSummary() 幫助各位更方便處理這件事情。此外在 api 24 以上 ，系統會自動把4條通知以上歸類成一組，如果怕被系統弄的不好看，請自己先處理吧。</p>
+<p><strong>4. <a href="https://www.youtube.com/watch?v=Zg4v9G-lku8" target="_blank">Direct reply:</a></strong> For real-time communication apps, the Android system supports inline replies so that users can quickly respond to an SMS or text message directly within the notification interface.</p>
+<p><img src="../../assets/images/MessagingStyle.png" alt="messagingstyle"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/MessagingStyle.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/MessagingStyle.png</a>直接回應，就我所知以往要回覆信件或是 sns， notification 最多能作到的就是利用 pendingIntent 去開啟 activity 進行回應。而這次多了一個新的 api 就是 RemoteInput，配合 message style 可以作到直接在 notificaion 上輸入文字，直接回覆，而不需要離開通知欄。感覺就是為了 Android wear 所設計的，實際上 Android wear 上早已經有了。</p>
+<p><strong>5. Custom views</strong>: Two new APIs enable you to leverage system decorations, such as notification headers and actions, when using custom views in notifications.</p>
+<p><strong>畫面客製化</strong>，主要就是多了兩個 api style，這一樣會需要搭配 message style 會更好。</p>
+<p><a href="https://developer.android.com/reference/android/app/Notification.DecoratedCustomViewStyle.html" target="_blank">Notification.DecoratedCustomViewStyle:</a> Notification style for custom views that are decorated by the system.</p>
+<p><a href="https://developer.android.com/reference/android/app/Notification.DecoratedMediaCustomViewStyle.html" target="_blank">Notification.DecoratedMediaCustomViewStyle</a>:Notification style for media custom views that are decorated by the system.</p>
+<p>總結:這次改動頗大，上次有比較大的改版感覺就是 notification service listener。而這次改版則是讓使用者可以有更多操作在 notification上面（受益最明顯的就是 email 這類 app (gmail)），其實這兩種改版都是為了讓 notification 不再像是潑出去的水一樣，就只是個通知，而是提高使用者，activity和 notification 之間的關聯性。ps.甚至在官方 blog 上提到 Android N 的 N 就是 notification。</p>
+<h4 id="multi-locale-support-more-languages-多地區設定支援，更多語言"><a href="https://developer.android.com/guide/topics/resources/multilingual-support.html" target="_blank">Multi-locale Support, More Languages 多地區設定支援，更多語言</a></h4>
+<p>Android N 現在可讓使用者在 [設定] 中選取<strong>多個地區設定</strong>，以便以更好的方式支援雙語言使用案例。應用程式可以使用新的 API 取得使用者選取的地區設定，然後為多地區設定使用者提供更精細的使用者體驗 — 例如以多語言顯示搜尋結果，以及不為使用者已經熟知語言的網頁提供翻譯。</p>
+<p>簡單來說，過去你只能選擇一種語言作為使用環境，假設是繁體中文，如果 App 並不支援繁體中文那就只能是預設英文，但現在你可以在『設定』裡選擇多個你最習慣的語言與優先權，假設是第一優先是法文（fr_cj），第二是義大利文(it_ch)，如果 App 沒有支援法文，那就會自動找義大利文，如果還是找不到，那才會跳到英文。</p>
+<p>對於國籍以及區碼的對應方式也改變。底下用幾張圖表示更加清楚</p>
+<p><img src="../../assets/images/android_n_locale_1.png" alt="android_n_locale_1"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/android_n_locale_1.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/android_n_locale_1.png</a></p>
+<p><strong>第一張圖：</strong>這是 Android N 之前的作法，當使用者只設定 fr_CH ，但 App Resources 只有 en , de_DE , es_ES , fr_FR , it_IT，那他的比對過程就會是</p>
+<ol>
+<li>先確認 fr_CH =&gt; 沒有   2. 接者對應國籍 fr =&gt; 沒有 3. 最後只好使用預設 en
+<a href="https://boochlin.com/wp-content/uploads/2016/09/android_n_locale_2.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/android_n_locale_2.png</a></li>
+</ol>
+<p><img src="../../assets/images/android_n_locale_2.png" alt="android_n_locale_2"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/android_n_locale_2.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/android_n_locale_2.png</a></p>
+<p><strong>第二張圖：</strong>這是 Android N 的作法，當使用者只設定 fr_CH ，但 App Resources 只有 en , de_DE , es_ES , fr_FR , it_IT（同上），那他的比對過程就會是</p>
+<ol>
+<li>先確認 fr_CH =&gt; 沒有    2. 接者對應國籍 fr =&gt; 也沒有   3.找找看有沒有 Child 區碼對應到，就是 fr_FR  4.  就決定是 fr_FR</li>
+</ol>
+<p><img src="../../assets/images/android_n_locale_3.png" alt="android_n_locale_3"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/android_n_locale_3.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/android_n_locale_3.png</a></p>
+<p>第三張圖：這是如果設定兩種以上預設語言 P1: fr_CH , P2: it_CH，但 App Resources 只有 en , de_DE , es_ES , it_IT，那他的比對過程就會是</p>
+<ol>
+<li>先確認第一優先 fr_CH =&gt; 沒有    2. 接者看國籍 fr =&gt; 也沒有    3. 找找看有沒有 Child 區碼對應到 =&gt; 還是沒有  4. 那開始找 P2:it_CH  =&gt; 依然沒有   5. 找國籍 it =&gt; 就是沒有   6. 那找找有沒有 Child 區碼對應到，就是 it_IT      7. 就決定是 it_IT</li>
+</ol>
+<p>總結：為了加快批配速度，開發者最好能更加精準的給予資源對應。對使用者也是一大方便，有人就是只看的懂 中文和日文，Android 每次沒中文就跳到英文，煩不煩阿</p>
+<h4 id="doze-on-the-go-移動時休眠"><a href="https://developer.android.com/training/monitoring-device-state/doze-standby.htm" target="_blank">Doze on the Go 移動時休眠</a></h4>
+<p><img src="../../assets/images/doze-diagram-1.png" alt="doze-diagram-1"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/doze-diagram-1.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/doze-diagram-1.png</a>Android 6.0 引進休眠功能，這是可節省電池電力的系統模式，它會在裝置閒置時 (例如放在桌子上或抽屜中) 延後應用程式的 CPU 與網路活動。</p>
+<p>現在 Android N 中的休眠功能更進一步進展，『可在移動時節省電池電力』。只要螢幕關閉一段時間且裝置拔除電源的情況下，休眠功能就會將熟悉的 CPU 與網路限制的子集套用到應用程式（Doze applies a subset of the familiar CPU and network restrictions to apps）。這表示即使使用者將裝置放在口袋內時也可以節省電池電力。</p>
+<p>原本Android M 的休眠情況只有以下</p>
+<ul>
+<li><p>裝置閒置（不包含移動）</p>
+</li>
+<li><p>螢幕關閉</p>
+</li>
+<li><p>裝置拔除電源</p>
+</li>
+</ul>
+<p>那麼『休眠功能就會將熟悉的 CPU 與網路限制的子集』這句是啥？看中英文都不好理解，再進一步就是底下這些情況</p>
+<ul>
+<li><p>Network access is suspended.</p>
+</li>
+<li><p>The system ignores <a href="https://developer.android.com/reference/android/os/PowerManager.WakeLock.html" target="_blank">wake locks</a>.</p>
+</li>
+<li><p>Standard <code>[AlarmManager](https://developer.android.com/reference/android/app/AlarmManager.html)</code> alarms (including <code>[setExact()](https://developer.android.com/reference/android/app/AlarmManager.html#setExact(int, long, android.app.PendingIntent))</code> and <code>[setWindow()](https://developer.android.com/reference/android/app/AlarmManager.html#setWindow(int, long, long, android.app.PendingIntent))</code>) are deferred to the next maintenance window.</p>
+</li>
+<li><ul>
+<li><p>If you need to set alarms that fire while in Doze, use <code>[setAndAllowWhileIdle()](https://developer.android.com/reference/android/app/AlarmManager.html#setAndAllowWhileIdle(int, long, android.app.PendingIntent))</code> or <code>[setExactAndAllowWhileIdle()](https://developer.android.com/reference/android/app/AlarmManager.html#setExactAndAllowWhileIdle(int, long, android.app.PendingIntent))</code>.</p>
+</li>
+<li><p>Alarms set with <code>[setAlarmClock()](https://developer.android.com/reference/android/app/AlarmManager.html#setAlarmClock(android.app.AlarmManager.AlarmClockInfo, android.app.PendingIntent))</code> continue to fire normally — the system exits Doze shortly before those alarms fire.</p>
+</li>
+</ul>
+</li>
+<li><p>The system does not perform Wi-Fi scans.</p>
+</li>
+<li><p>The system does not allow <a href="https://developer.android.com/reference/android/content/AbstractThreadedSyncAdapter.html" target="_blank">sync adapters</a> to run.</p>
+</li>
+<li><p>The system does not allow <code>[JobScheduler](https://developer.android.com/reference/android/app/job/JobScheduler.html)</code> to run</p>
+</li>
+</ul>
+<p>總結：一句話『就算是移動中，沒在用手機我一樣進入休眠模式』，這裡 google 有提供建議 『<a href="https://developer.android.com/training/monitoring-device-state/doze-standby.html#using_gcm" target="_blank">Using GCM to Interact with Your App While the Device is Idle</a>（we strongly recommend that you <strong>use GCM if possible</strong>, rather than maintaining your own persistent network connection.）』，對於 GCM 的通知，Android 會有系統級的對應，相對好很多。</p>
+<h4 id="project-svelte-background-optimizations-專案-svelte：背景最佳化"><a href="https://developer.android.com/topic/performance/background-optimization.html" target="_blank">Project Svelte: Background Optimizations 專案 Svelte：背景最佳化</a></h4>
+<p>專案 Svelte 一直努力在生態系統中讓各種 Android 裝置上系統與應用程式使用最少的 RAM。在 Android N 中，「專案 Svelte」專注於最佳化應用程式在背景執行的方式。</p>
+<p>上面就是一段廢話，重點就是 Android 7.0 we<a href="https://developer.android.com/reference/android/hardware/Camera.html" target="_blank">‘</a>re removing three commonly-used implicit broadcasts — <a href="https://developer.android.com/reference/android/net/ConnectivityManager.html" target="_blank">CONNECTIVITY_ACTION</a>, <a href="https://developer.android.com/reference/android/hardware/Camera.html" target="_blank">ACTION_NEW_PICTURE</a>, and <a href="https://developer.android.com/reference/android/hardware/Camera.html" target="_blank">ACTION_NEW_VIDEO</a>— since those can wake the background processes of multiple apps at once and strain memory and battery. If your app is receiving these, take advantage of the Android 7.0 to migrate to <strong>JobScheduler</strong> and related APIs instead.</p>
+<p>總結:『從 Android 5.0，我就一直拜託大家快使用 <strong>JobScheduler，可是你們好像又不太愛用，是不是做的不好阿？那我這次下大招了』google 如是說。</strong></p>
+<p>其實就是這三種 action 都有『thundering herd（驚群）』的問題，會造成 action 發出去的那一瞬間，一大堆 service 都醒來，讓 device 變得耗電，且浪費資源，所以這次配合上一段 Doze 來改善這問題。<a href="https://developer.android.com/reference/android/net/ConnectivityManager.html" target="_blank">CONNECTIVITY_ACTION</a>，在執行中的AP還是可以用<a href="https://developer.android.com/reference/android/content/BroadcastReceiver.html" target="_blank">BroadcastReceiver</a>向 <a href="https://developer.android.com/reference/android/content/Context.html" target="_blank">Context.registerReceiver()</a>註冊去聽 CONNECTIVITY_CHANGE。</p>
+<h4 id=""> </h4>
+<h4 id="data-saver"><a href="https://www.youtube.com/watch?v=H-9xKmuwawg" target="_blank">Data Saver</a></h4>
+<p><img src="../../assets/images/datasaver.png" alt="datasaver"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/datasaver.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/datasaver.png</a></p>
+<ul>
+<li><p>Android 7.0 introduces Data Saver mode, a new system service that helps reduce cellular data use by apps. Data Saver gives users control over how apps use cellular data and lets developers provide more efficient service when Data Saver is on.</p>
+</li>
+<li><p>When Data Saver is on, the system blocks background data usage and signals apps to use less data in the foreground wherever possible — such as by limiting bit rate for streaming, reducing image quality, deferring optimistic precaching, and so on.</p>
+</li>
+<li><p>Android N 擴充 <code>[ConnectivityManager](https://developer.android.com/reference/android/net/ConnectivityManager.html)</code> 為應用程式提供<a href="https://developer.android.com/preview/features/data-saver.html#status" target="_blank">擷取使用者的 Data Saver 喜好設定</a>與<a href="https://developer.android.com/preview/features/data-saver.html#monitor-changes" target="_blank">監視喜好設定變更</a>的方法。所有應用程式應該檢視使用者是否已啟用 Data Saver 並努力限制前景與背景的數據使用量（期許阿，希望大家能加入以下 code）。</p>
+</li>
+</ul>
+<pre><code>ConnectivityManager connMgr = (ConnectivityManager)
+        getSystemService(Context.CONNECTIVITY_SERVICE);
+// Checks if the device is on a metered network
+if (connMgr.isActiveNetworkMetered()) {
+  // Checks user’s Data Saver settings.
+  switch (connMgr.getRestrictBackgroundStatus()) {
+    case RESTRICT_BACKGROUND_STATUS_ENABLED:
+    // Background data usage is blocked for this app. Wherever possible,
+    // the app should also use less data in the foreground.
+
+    case RESTRICT_BACKGROUND_STATUS_WHITELISTED:
+    // The app is whitelisted. Wherever possible,
+    // the app should use less data in the foreground and background.
+
+    case RESTRICT_BACKGROUND_STATUS_DISABLED:
+    // Data Saver is disabled. Since the device is connected to a
+    // metered network, the app should use less data wherever possible.
+  }
+} else {
+  // The device is not on a metered network.
+  // Use data as required to perform syncs, downloads, and updates.
+}
+</code></pre><p>Data saver 對於 app 的處理流程</p>
+<p><img src="../../assets/images/datasaver_flow_chart.png" alt="datasaver_flow_chart"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/datasaver_flow_chart.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/datasaver_flow_chart.png</a></p>
+<p>總結：看完<a href="https://www.youtube.com/watch?v=H-9xKmuwawg" target="_blank">i/o 介紹影片</a>之後，又是一個拜託各位用 JobSchedule 的系統級限制（那女講者表情超有趣）。過去對於 Data usage 設定最多只有針對個別 App 的 cellular networks 開啟或關閉。如果有好心的 App (Google 自家 Youtube如下)，了不起在底下加個 APP SETTINGS 讓你開啟 activity 進行流量限制設定。</p>
+<p><img src="../../assets/images/datasaver_m_collection.jpg" alt="datasaver_m_collection"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/datasaver_m_collection.jpg" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/datasaver_m_collection.jpg</a></p>
+<p>如果是懶得做的 APP(Facebook 夠大廠了吧)，啥鬼設定都沒有。</p>
+<h4 id=""> </h4>
+<h4 id="quick-settings-tile-api-快速設定磚-api"><a href="https://developer.android.com/reference/android/service/quicksettings/Tile.html" target="_blank">Quick Settings Tile API 快速設定磚 API</a></h4>
+<p><img src="../../assets/images/quicksettings.png" alt="quicksettings"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/quicksettings.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/quicksettings.png</a></p>
+<p>快速設定是直接從通知欄顯示關鍵設定與動作的常用簡單方式。在 Android N 中，我們擴充了快速設定的範圍，讓它變得更實用、更便利。</p>
+<p>我們也為額外的快速設定磚增加了更多空間，使用者可以透過向左或向右撥動存取分頁顯示區域。我們也讓使用者能夠控制要顯示的快速設定磚與顯示位置 — 使用者只需拖放磚，即可新增或移除它們。</p>
+<p>對於開發人員，Android N 也加入了新的 API，讓您定義自己的快速設定磚，以便使用者輕鬆存取您應用程式中的關鍵控制項與動作。</p>
+<p>快速設定磚是專為急需或常用的控制項或動作而保留的，它不應該做為啟動應用程式的捷徑。</p>
+<p>定義磚之後，您即可將它們顯示給使用者，使用者只需拖放這些磚，即可將它們新增到快速設定中。</p>
+<p>如需建立應用程式磚的相關資訊，請參閱可下載之 <a href="https://developer.android.com/reference/android/service/quicksettings/package-summary.html" target="_blank">API 參考資料</a>中的<code>android.service.quicksettings.Tile</code>。</p>
+<p>總結：<a href="https://www.youtube.com/watch?v=vTwJNlKXuMI" target="_blank">直接看影片最清楚</a></p>
+<p>老實說這東西我開發上也沒有特別玩過，之前都要是裝置開發商才能用，現在終於釋放出來給一般APP 開發者玩 （這樣真的部會出現一大堆在 setting bar 上面嗎？之後可以實驗，一隻 app 到底可以放幾個 tile上去。主要做法須要實作 TileService 去聽 change 且有 permission “android.permission.BIND_QUICK_SETTINGS_TILE”）。（ps. 有機會的話，請我的好同事 J大來談一下這章節，來談談 api 24 之前的 quick settings 開發辛酸史，聽他轉述感覺 google 就是在做他之前的事情啊）</p>
+<p><img src="../../assets/images/螢幕快照-2016-09-14-上午11.12.46.png" alt="%e8%9e%a2%e5%b9%95%e5%bf%ab%e7%85%a7-2016-09-14-%e4%b8%8a%e5%8d%8811-12-46"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/螢幕快照-2016-09-14-上午11.12.46.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/螢幕快照-2016-09-14-上午11.12.46.png</a></p>
+<h4 id="android-tv-錄製"><a href="https://developer.android.com/training/tv/tif/content-recording.html" target="_blank">Android TV 錄製</a></h4>
+<p><img src="../../assets/images/gp-tv-quality.png" alt="gp-tv-quality"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/gp-tv-quality.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/gp-tv-quality.png</a></p>
+<p>Android N 透過新的錄製 API，新增了錄製和播放 Android TV 輸入服務內容的功能。以現有的時間位移 API 為建置基礎，TV 輸入服務可以控制要錄製哪個頻道的資料、如何儲存已錄製的時段，以及管理使用者與錄製內容的互動。</p>
+<p>如需詳細資訊，請參閱 <a href="https://developer.android.com/preview/features/tv-recording-api.html" target="_blank">Android TV 錄製 API</a>。</p>
+<p>總結：沒用過也沒玩過，但感覺很方便。歡迎大家提供看法。</p>
+<h4 id="network-security-configuration-網路安全性強化"><a href="https://developer.android.com/training/articles/security-config.html" target="_blank">Network Security Configuration 網路安全性強化</a></h4>
+<p>路安全性設定功能，讓應用程式在安全的宣告式設定檔中即可自訂網路安全性設定，而不必修改應用程式的程式碼。 這些設定可以針對特定網域以及針對特定應用程式來設定。主要有以下四點。</p>
+<p>這一段真的比較是屬於開發層面，目前還是比較少碰一塊，希望我的理解是對得，也歡迎各位指教</p>
+<p><strong>1. Custom trust anchors:</strong>Customize which Certificate Authorities (CA) are trusted for an app’s secure connections. For example, trusting particular self-signed certificates or restricting the set of public CAs that the app trusts.</p>
+<p>設定自憑證 ＆ 限止信任的 CA 組</p>
+<p><img src="../../assets/images/android_security_1.png" alt="android_security_1"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/android_security_1.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/android_security_1.png</a></p>
+<p>信任其他 CA</p>
+<p><img src="../../assets/images/android_security_2.png" alt="android_security_2"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/android_security_2.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/android_security_2.png</a></p>
+<p><strong>自訂信任錨點: </strong>其實只看上面的 xml code ，個人很直覺得就是把以前對 ssl(Secure Sockets Layer) 的處理由程式碼轉換到 google xml 的規範化，這確實可以有效降低開發者的苦工。以前的玩法就是在 Android 裡使用 HttpUrlConnection 使用 TrustManager 去處理。事實上大部分開發下不少開發者是不太處理這塊，主要是因為 Android 已經預先把合法發行單位（VeriSign）的憑證都拉進來。而比較特殊的情況則是開發者自己需要連線到自己的 server 作存取，然後又不想使用發行單位發行的憑證，原因其實蠻簡單，就是送去發行單位一年大概要繳費 100 – 500 美金，且大部分 app 會存取的 server 都蠻固定（股票:通常會要求使用個人 CA，信件:通常會自己 Import 公司的 CA….）。</p>
+<p>以下為過去的寫法，為了處理自發行憑證，不少 google c/p（就是我） 工程師就會犯一些錯誤，第一段程式碼會信任所有的 CA ，這樣搞的話有 SSL 跟沒 SSL 是一樣的。</p>
+<pre><code>import org.apache.http.conn.ssl.SSLSocketFactory;
+public class MySSLSocketFactory extends SSLSocketFactory {
+    SSLContext sslContext = SSLContext.getInstance("TLS");
+
+    public MySSLSocketFactory(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
+        super(truststore);
+
+        TrustManager tm = new X509TrustManager() {
+            public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+            }
+
+            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+            }
+
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+        };
+
+        sslContext.init(null, new TrustManager[] { tm }, null);
+   }
+
+    @Override
+    public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
+        return sslContext.getSocketFactory().createSocket(socket, host, port, autoClose);
+    }
+
+    @Override
+    public Socket createSocket() throws IOException {
+        return sslContext.getSocketFactory().createSocket();
+    }
+}
+</code></pre><p>而以下這段則是 買一套送全部的典型範例，當憑證接受其中一個網站的 server ，那麼其他的也統統都接受了</p>
+<pre><code>HostnameVerifier hostnameVerifier = org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
+
+DefaultHttpClient client = new DefaultHttpClient();
+
+SchemeRegistry registry = new SchemeRegistry();
+SSLSocketFactory socketFactory = SSLSocketFactory.getSocketFactory();
+socketFactory.setHostnameVerifier((X509HostnameVerifier) hostnameVerifier);
+registry.register(new Scheme("https", socketFactory, 443));
+SingleClientConnManager mgr = new SingleClientConnManager(client.getParams(), registry);
+DefaultHttpClient httpClient = new DefaultHttpClient(mgr, client.getParams());
+
+// Set verifier     
+HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier);
+
+// Example send http request
+final String url = "https://www.pchome.com”
+HttpPost httpPost = new HttpPost(url);
+HttpResponse response = httpClient.execute(httpPost);
+
+HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier);
+
+HostnameVerifier hostnameVerifier = org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
+</code></pre><p>扯的這邊有點遠了，主要是想把前因後果還有耍笨的故事寫一下。另外不知道有沒有人覺得 raw/my_ca 這樣寫會有問題，如果被反組譯，那這個 CA 憑證不是很危險嗎？根據小組討論，感覺這個 ca 應該單純只是個公鑰，或是只是單純為了範例簡單寫而已  ，歡迎有高手幫忙解答。</p>
+<p><strong>2. Debug-only overrides:</strong>Safely debug secure connections in an app without added risk to the installed base.</p>
+<p><img src="../../assets/images/android_security_debug.png" alt="android_security_debug"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/android_security_debug.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/android_security_debug.png</a></p>
+<p>設定 CA 進行偵錯：「只」有在 <a href="https://developer.android.com/guide/topics/manifest/application-element.html#debug" target="_blank">android:debuggable</a> 為 <code>true</code> 時才予以信任。就是實用測試功能，可以把在 code 裡面的 DEBUG 搬出來。因為 play store 採取的安全措施是，不接受標示為可偵錯的應用程式，所以這種方式會比條件式程式碼安全。</p>
+<p><strong>3. Cleartext**</strong> traffic opt-out:**Protect apps from accidental usage of cleartext traffic.</p>
+<p><img src="../../assets/images/android_security_cleartext.png" alt="android_security_cleartext"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/android_security_cleartext.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/android_security_cleartext.png</a></p>
+<p><strong>退出明碼流量</strong>：打算只使用安全連線連線至目的地的應用程式，可以針對那些目的地退出支援明碼 (使用未加密的 HTTP 通訊協定，而非 HTTPS)。 此選項有助於避免應用程式由於外部來源 (例如，後端伺服器) 提供的 URL 中發生變更，而造成意外回復。 如需更多詳細資料，請參閱 <code>[NetworkSecurityPolicy.isCleartextTrafficPermitted()](https://developer.android.com/reference/android/security/NetworkSecurityPolicy.html?hl=km#isCleartextTrafficPermitted())</code>。『</p>
+<p>This flag is honored on a best effort basis because it’s impossible to prevent all cleartext traffic from Android applications given the level of access provided to them. For example, there’s no expectation that the <code>[Socket](https://developer.android.com/reference/java/net/Socket.html?hl=km)</code> API will honor this flag because it cannot determine whether its traffic is in cleartext. However, most network traffic from applications is handled by higher-level network stacks/components which can honor this aspect of the policy.</p>
+<p>NOTE: <code>[WebView](https://developer.android.com/reference/android/webkit/WebView.html?hl=km)</code> does not honor this flag.』</p>
+<p>例如上面，應用程式想要確保 secure.example.com 的所有連線一律要透過 HTTPS 完成，以保護敏感流量不受惡意網路危害。</p>
+<p>補充：在 API level 23. 有加入這個 android:usesCleartextTraffic，但這個是所有網域都被限制住，預設值是 true (for example, HTTP and FTP stacks, <code>[DownloadManager](https://developer.android.com/reference/android/app/DownloadManager.html)</code>, <code>[MediaPlayer](https://developer.android.com/reference/android/media/MediaPlayer.html)</code>)</p>
+<p><strong>4. Certificate pinning:</strong>Restrict an app’s secure connection to particular certificates.</p>
+<p>**</p>
+<p><img src="../../assets/images/android_security_pin-1.png" alt="android_security_pin"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/android_security_pin-1.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/android_security_pin-1.png</a>關聯憑證：**</p>
+<p>應用程式一般會信任所有預先安裝的 CA。若這類的任何 CA 意在發行詐騙憑證，應用程式會有遭受 MiTM 攻擊的風險。 有些應用程式選擇透過限制所信任的 CA 組或關聯憑證，來限制可接受的憑證組。</p>
+<p>憑證關聯的方法是，透過公用金鑰的雜湊 (X.509 憑證的 SubjectPublicKeyInfo) 來提供一組憑證。 只有當憑證鏈至少包含一個關聯的公用金鑰時，才是有效的憑證鏈。</p>
+<p>請注意，使用憑證關聯時，您務必要包括備份金鑰，這樣萬一強制您切換到新的金鑰或變更 CA (關聯到 CA 憑證或該 CA 的中繼者) 時，您的應用程式連線才不會受到影響。 否則，您必須推出應用程式更新，才能還原連線。</p>
+<p>總結：這段我只有在開發 mail 時有稍微涉略。沒辦法給出更多實務上的感想。但看得出來 google 從 M 開始就非常注意，但是 M 所在意的則是 device 操作以及使用者資料的權限安全，而 N 則是更加強化網路安全這塊。看起來應該是發生過太多問題啦。</p>
+<h4 id="scoped-directory-access-限定範圍目錄存取"><a href="https://developer.android.com/training/articles/scoped-directory-access.html" target="_blank">Scoped Directory Access 限定範圍目錄存取</a></h4>
+<p>應用程式 (例如，相片應用程式) 通常只需要存取外部儲存空間中的特定目錄，例如 <code>Pictures</code> 目錄。 目前用來存取外部儲存空間的方式並非設計來輕鬆地為這些類型的應用程式提供已設定目標的目錄存取。 例如：</p>
+<ul>
+<li><p>在您的宣示說明中要求 <code>[READ_EXTERNAL_STORAGE](https://developer.android.com/reference/android/Manifest.permission.html#READ_EXTERNAL_STORAGE)</code> 或 <code>[WRITE_EXTERNAL_STORAGE](https://developer.android.com/reference/android/Manifest.permission.html#WRITE_EXTERNAL_STORAGE)</code> 可允許存取外部儲存空間ac上的所有公用目錄，但這可能超過您應用程式所需的存取權。</p>
+</li>
+<li><p>使用<a href="https://developer.android.com/guide/topics/providers/document-provider.html" target="_blank">儲存空間存取架構</a>通常會使得您的使用者透過系統 UI 挑選目錄，這在您的應用程式一律存取相同外部目錄的情況下是不必要的。</p>
+</li>
+</ul>
+<p>Android N 提供新的簡化 API，可用來存取常用外部儲存空間目錄。</p>
+<pre><code>// 開啟主要共用儲存空間中的 Pictures 目錄
+StorageManager sm = (StorageManager)getSystemService(Context.STORAGE_SERVICE);
+StorageVolume volume = sm.getPrimaryVolume();
+Intent intent = volume.createAccessIntent(Environment.DIRECTORY_PICTURES);
+startActivityForResult(intent, request_code);
+</code></pre><p>並向使用者確認權限</p>
+<p><img src="../../assets/images/螢幕快照-2016-09-12-下午4.57.59.png" alt="%e8%9e%a2%e5%b9%95%e5%bf%ab%e7%85%a7-2016-09-12-%e4%b8%8b%e5%8d%884-57-59"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/螢幕快照-2016-09-12-下午4.57.59.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/螢幕快照-2016-09-12-下午4.57.59.png</a></p>
+<p>存取外部空間則需要，另外宣告</p>
+<p><img src="../../assets/images/螢幕快照-2016-09-12-下午5.17.16.png" alt="%e8%9e%a2%e5%b9%95%e5%bf%ab%e7%85%a7-2016-09-12-%e4%b8%8b%e5%8d%885-17-16"></img></p>
+<p><a href="https://boochlin.com/wp-content/uploads/2016/09/螢幕快照-2016-09-12-下午5.17.16.png" target="_blank">https://boochlin.com/wp-content/uploads/2016/09/螢幕快照-2016-09-12-下午5.17.16.png</a></p>
+<pre><code>// BroadcastReceiver has already cached the MEDIA_MOUNTED
+// notification Intent in mediaMountedIntent
+StorageVolume volume = (StorageVolume)
+    mediaMountedIntent.getParcelableExtra(StorageVolume.EXTRA_STORAGE_VOLUME);
+volume.createAccessIntent(Environment.DIRECTORY_PICTURES);
+startActivityForResult(intent, request_code);
+</code></pre><p>總結：一直到目前，幾乎所有的 app 開發對於 store access 權限都是全有或是全無，這對使用者會在給予權限感到恐慌。google 也不是沒有想過這問題，就是在 kitkat 時加入的 <a href="https://developer.android.com/guide/topics/providers/document-provider.html" target="_blank">Storage Access Framework</a> 讓使用者自己挑選資料夾給予存取，但老實說我還真的很少看到會使用 SAF 的 app ，主要還是因為使用者會覺得太麻煩，總和『好麻煩』和『通天的權限』兩個問題， 就希望能取消兩大資料存取權限，然後針對固定通用型的系統資料夾做出簡化操作，改成發 intent 的方式去請系統幫忙保證資料的存取範圍。ps.取得對特定外部目錄的存取權也會取得對該目錄之子目錄的存取權。</p>
+<h4 id="virtual-files-虛擬檔案"><a href="https://developer.android.com/about/versions/nougat/android-7.0.html?hl=en" target="_blank">Virtual Files 虛擬檔案</a></h4>
+<p>In previous versions of Android, your app could use the Storage Access Framework to allow users to select files from their cloud storage accounts, such as Google Drive. However, there was no way to represent files that did not have a direct bytecode representation; every file was required to provide an input stream.</p>
+<p>Android 7.0 adds the concept of <em>virtual files</em> to the Storage Access Framework. The virtual files feature allows your <code>[DocumentsProvider](https://developer.android.com/reference/android/provider/DocumentsProvider.html)</code> to return document URIs that can be used with an <code>[ACTION_VIEW](https://developer.android.com/reference/android/content/Intent.html#ACTION_VIEW)</code> intent even if they don’t have a direct bytecode representation. Android 7.0 also allows you to provide alternate formats for user files, virtual or otherwise.</p>
+<p>To get a URI for a virtual document in your app, first you create an <code>[Intent](https://developer.android.com/reference/android/content/Intent.html)</code> to open the file picker UI. Since an app cannot directly open a virtual file by using the <code>[openInputStream()](https://developer.android.com/reference/android/content/ContentResolver.html#openInputStream(android.net.Uri))</code> method, your app does not receive any virtual files if you include the <code>[CATEGORY_OPENABLE](https://developer.android.com/reference/android/content/Intent.html#CATEGORY_OPENABLE)</code> category.</p>
+<p>After the user has made a selection, the system calls the <code>[onActivityResult()](https://developer.android.com/reference/android/app/Activity.html#onActivityResult(int, int, android.content.Intent))</code> method. Your app can retrieve the URI of the virtual file and get an input stream, as demonstrated in the code snippet below.</p>
+<p>師爺來說說這是啥，就是以前雖然可以利用 Storage Access Framework 拿到雲端空間的 URI，但是因為雲端文件沒有在本地端的直接 bytecode 那就無法被顯示出來讓使用者選擇（這段話超難理解，簡單來說就是 <code>[ACTION_VIEW](https://developer.android.com/reference/android/content/Intent.html#ACTION_VIEW)</code> intent 沒辦法找到這個雲端文間 URI 的檔案），那現在加入 virtual file 的概念，這東西可以被 <a href="https://developer.android.com/reference/android/provider/DocumentsProvider.html" target="_blank">DocumentsProvider</a> 找到，但是畢竟 virtual file 並不存在於 local ，所以就算現在可以用 <a href="https://developer.android.com/reference/android/content/Intent.html#ACTION_VIEW" target="_blank">ACTION_VIEW</a> 找到， <a href="https://developer.android.com/reference/android/content/ContentResolver.html#openInputStream(android.net.Uri" target="_blank">openInputStream</a>) 依然無法存取 byte code.那要怎麼辦呢，我給你 code 你參考參考。</p>
+<p>千言萬語不如來段 code</p>
+<pre><code>// Other Activity code ...
+
+  final static private int REQUEST_CODE = 64;
+
+  // We listen to the OnActivityResult event to respond to the user's selection.
+  @Override
+  public void onActivityResult(int requestCode, int resultCode,
+    Intent resultData) {
+      try {
+        if (requestCode == REQUEST_CODE &amp;&amp;
+            resultCode == Activity.RESULT_OK) {
+
+            Uri uri = null;
+
+            if (resultData != null) {
+                uri = resultData.getData();
+
+                ContentResolver resolver = getContentResolver();
+
+                // Before attempting to coerce a file into a MIME type,
+                // check to see what alternative MIME types are available to
+                // coerce this file into.
+                String[] streamTypes =
+                  resolver.getStreamTypes(uri, "*/*");
+
+                AssetFileDescriptor descriptor =
+                    resolver.openTypedAssetFileDescriptor(
+                        uri,
+                        streamTypes[0],
+                        null);
+
+                // Retrieve a stream to the virtual file.
+                InputStream inputStream = descriptor.createInputStream();
+            }
+        }
+      } catch (Exception ex) {
+        Log.e("EXCEPTION", "ERROR: ", ex);
+      }
+  }
+</code></pre><p>底下是一般情況，非 virtual file</p>
+<pre><code>@Override
+public void onActivityResult(int requestCode, int resultCode,
+        Intent resultData) {
+
+    // The ACTION_OPEN_DOCUMENT intent was sent with the request code
+    // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
+    // response to some other intent, and the code below shouldn't run at all.
+
+    if (requestCode == READ_REQUEST_CODE &amp;&amp; resultCode == Activity.RESULT_OK) {
+        // The document selected by the user won't be returned in the intent.
+        // Instead, a URI to that document will be contained in the return intent
+        // provided to this method as a parameter.
+        // Pull that URI using resultData.getData().
+        Uri uri = null;
+        if (resultData != null) {
+            uri = resultData.getData();
+            Log.i(TAG, "Uri: " + uri.toString());
+            showImage(uri);
+        }
+    }
+}
+</code></pre><p>總結：無感，因為我還是不太理解直接的應用點在哪？而且他的英文描述不太好懂，希望我沒有理解錯。歡迎大家指教。</p>
+<h4 id="supporting-direct-boot-直接開機"><a href="https://developer.android.com/training/articles/direct-boot.html" target="_blank">Supporting Direct Boot 直接開機</a></h4>
+<p>直接開機可加速裝置啟動時間，並讓已註冊的應用程式只能使用有限的功能 (即使在未預期的重新開機之後)。例如，如果一個加密裝置在使用者睡覺時重新開機，已註冊的鬧鐘、訊息與來電現在可以持續如常通知使用者。這也表示協助工具服務在重新啟動之後可立即使用。</p>
+<p>為了達到上述的目的，Android N 會在一個安全的 <em>直接開機</em> 模式下執行，這是裝置已經開啟電源但使用者尚未解鎖裝置的期間。 為了支援這種方式，系統為資料提供兩個儲存位置：</p>
+<ul>
+<li><p><em>認證加密的儲存空間</em>：這是預設的儲存位置，只有在使用者解鎖裝置之後才能使用。</p>
+</li>
+<li><p><em>裝置加密的儲存空間</em>：這是「直接開機」模式期間與使用者解鎖裝置之後都可以使用的儲存位置。</p>
+</li>
+</ul>
+<p>這個部分我認為應該和 <a href="http://file-based encryption (FBE" target="_blank">file-based encryption (FBE)</a>) 一起看，在 Android N 之前全部都是 full-disk encryption ，而這一版改成 FBE ，這直接受益部分就是直接開機。</p>
+<p>『File-based encryption enables a new feature introduced in Android 7.0 called <a href="https://developer.android.com/preview/features/direct-boot.html" target="_blank">Direct Boot</a>. Direct Boot allows encrypted devices to boot straight to the lock screen. Previously, on encrypted devices using <a href="https://source.android.com/security/encryption/full-disk.html" target="_blank">full disk encryption</a> (FDE), users needed to provided credentials before any data could be accessed, preventing the phone from performing all but the most basic of operations。』</p>
+<p>由於可以在兩種空間上進行切換，那對於開發者來說需要注意的是 切換點以及兩邊資料整合。先註冊 broadcastReceiver</p>
+<pre><code>android.intent.action.ACTION_LOCKED_BOOT_COMPLETED
+</code></pre><p>Getting Notified of User Unlock</p>
+<ul>
+<li><p>If your app has foreground processes that need immediate notification, listen for the <a href="https://developer.android.com/reference/android/content/Intent.html#ACTION_USER_UNLOCKED" target="_blank">ACTION_USER_UNLOCKED</a> message.</p>
+</li>
+<li><p>If your app only uses background processes that can act on a delayed notification, listen for the <a href="https://developer.android.com/reference/android/content/Intent.html#ACTION_BOOT_COMPLETED" target="_blank">ACTION_BOOT_COMPLETED</a> message.</p>
+</li>
+</ul>
+<p>Migrating Existing Data</p>
+<p>Use Context.moveSharedPreferencesFrom() and Context.moveDatabaseFrom() to migrate preference and database data between credential encrypted storage and device encrypted storage.</p>
+<pre><code>Context directBootContext = appContext.createDeviceProtectedStorageContext();
+// Access appDataFilename that lives in device encrypted storage
+FileInputStream inStream = directBootContext.openFileInput(appDataFilename);
+// Use inStream to read content...
+</code></pre><p>總結：我怎麼覺得 mtk 有個關機鬧鐘，那到底怎麼弄的。這次 Android N 在系統層面的安全性真的強化不少。</p>
+<h4 id="android-for-work-updates"><a href="https://www.android.com/work/" target="_blank">Android for Work Updates</a></h4>
+<p>來段廣告詞『Android for Work 是協助企業使用 Android 的方案，包括 Android 的產品功能、Google Play for Work 及其他生產力工具。Android for Work 主要透過 API 發佈，可讓企業行動管理服務 (EMM) 供應商和企業應用程式開發商為客戶員工提供安全、有效率而多元化的行動環境。</p>
+<ul>
+<li><p><strong>Work profile security challenge</strong></p>
+</li>
+<li><p>設定檔擁有者可以為以工作設定檔執行之應用程式指定個別的安全性查問。當使用者嘗試開啟任何工作應用程式時會顯示工作查問。成功完成安全性查問可將工作設定檔解鎖並在必要時將它解密。</p>
+</li>
+<li><p><strong>Toggle Work Mode</strong></p>
+</li>
+<li><p>在具有工作設定檔的裝置上，使用者可以切換工作模式。當工作模式關閉時，受管理的使用者會暫時關機，因此而停用工作設定檔應用程式、背景同步與通知。這也包括設定檔擁有者應用程式。當工作模式關閉時，系統會顯示持續的狀態圖示，提醒使用者他們無法啟動工作應用程式。啟動器會指出工作應用程式和小工具無法存取。</p>
+</li>
+<li><p><strong>Always-On VPN</strong></p>
+</li>
+<li><p>裝置擁有者和設定檔擁有者可確保工作應用程式一律透過指定的 VPN 連線。系統會自動在裝置開機時啟動該 VPN。新的 <code>DevicePolicyManager</code> 方法是 <code>setAlwaysOnVpnPackage()</code> 與 <code>getAlwaysOnVpnPackage()</code>。因為系統無需透過應用程式互動即可直接連結 VPN 服務，所以 VPN 用戶端需要為「一律開啟的 VPN」處理新的進入點。正如以往，透過符合動作<code>android.net.VpnService</code> 的意圖篩選器向系統指明服務。使用者也可以使用 [設定] &gt; [更多] &gt; [VPN] 手動設定「一律開啟的 VPN」用戶端，這些用戶端在主要使用者中實作 <code>VPNService</code> 方法。</p>
+</li>
+<li><p><strong>Customized provisioning</strong></p>
+</li>
+<li><p>An application can customize the profile owner and device owner provisioning flows with corporate colors and logos. <code>DevicePolicyManager.EXTRA_PROVISIONING_MAIN_COLOR</code> customizes flow color. <code>DevicePolicyManager.EXTRA_PROVISIONING_LOGO_URI</code>customizes the flow with a corporate logo.</p>
+</li>
+<li><p>使用者可以自己定義驗證流程的主要顏色，或是放置公司 logo 。。</p>
+</li>
+</ul>
+<p>總結：這個我真的連玩都沒玩過，更別說開發。感覺 always-on vpn 還蠻實用的。google 真的越來越重視 BYOD，除了區分工作與個人，安全性更是一大重點。我在看 api 時發現可以直接讀取公司的 calendar, email user contact。感覺很好用啊。</p>
+<h4 id="java-8-language-features-java-8-支援"><a href="https://developer.android.com/guide/platform/j8-jack.html?hl=en" target="_blank">Java 8 Language features JAVA 8 支援</a></h4>
+<p>Android does not currently support all Java 8 language features. However, the following features are now available when developing apps targeting the Android N Preview:</p>
+<p>須使用 Android Studio 2.1 (預覽版) 與 Android N Preview SDK，其中包括必要的 Jack tool chain 與適用於 Gradle 的已更新 Android 外掛程式。</p>
+<ul>
+<li><p><a href="https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html" target="_blank">Default and static interface methods</a></p>
+</li>
+<li><p><a href="https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html" target="_blank">Lambda expressions</a> (also available on API level 23 and lower)</p>
+</li>
+<li><p><a href="https://docs.oracle.com/javase/tutorial/java/annotations/repeating.html" target="_blank">Repeatable annotations</a></p>
+</li>
+<li><p><a href="https://docs.oracle.com/javase/tutorial/java/javaOO/methodreferences.html" target="_blank">Method References</a> (also available on API level 23 and lower)</p>
+</li>
+<li><p><a href="https://docs.oracle.com/javase/tutorial/java/annotations/type_annotations.html" target="_blank">Type Annotations</a> (also available on API level 23 and lower)</p>
+</li>
+</ul>
+<p>總結：千呼萬喚始出來，第二項的 Lambda 這東西從好久之前就不少人很想拉進 Android，還弄個 Retrolambda 來嚐鮮，不過我個人用的不太習慣啊。此外，都已經提到 Java 8 ，那怎麼可以不提 <a href="https://source.android.com/source/jack.html" target="_blank">Jack (Java Android Compiler Kit )</a>and Jill (Jack Intermediate Library Linker)，但目前看起來效能差異不大，最直接受益就是沒有 『65k method limit』 問題。</p>
+<ul>
+<li>Legacy javac toolchain:</li>
+</ul>
+<p><strong>javac</strong> (<code>.java</code> → <code>.class</code>) → <strong>dx</strong> (<code>.class</code> → <code>.dex</code>)</p>
+<ul>
+<li>New Jack toolchain:</li>
+</ul>
+<p><strong>Jack</strong> (<code>.java</code> → <code>.jack</code> → <code>.dex</code>)</p>
+<p>然後這裡有個大神寫得非常好，<a href="http://taobaofed.org/blog/2016/05/05/new-compiler-for-android/" target="_blank">Android 新一代编译 toolchain Jack &amp; Jill 简介</a></p>
+<h4 id=""> </h4>
+<h4 id="profile-guided-jitaot-compilation-設定檔指引-jitaot-編譯">Profile-guided JIT/AOT Compilation 設定檔指引 JIT/AOT 編譯</h4>
+<p>在 Android N 中，我們新增了 Just in Time (JIT) 編譯器搭配程式碼分析工具到 ART，讓 Android 應用程式在執行時能夠持續改善其效能。JIT 編譯器補充了 ART 目前的 Ahead of Time (AOT) 編譯器，協助改善執行階段效能、節省儲存空間以及加速應用程式更新和系統更新。</p>
+<p>設定檔指引編譯讓 ART 根據每個應用程式的實際用情形與裝置上的情況來管理其 AOT/JIT 編譯。例如，ART 會維護每個應用程式常用方法的設定檔，而且可以預先編譯和快取那些方法以獲得最佳效能。它不會編譯應用程式的其他部分，直到實際要使用這些部分時才會編譯。</p>
+<p>除了改善應用程式關鍵部分的效能以外，設定檔指引編譯還有助於降低應用程式的整體 RAM 使用量，包括關聯的二進位檔案。此功能對於低記憶體裝置特別重要。</p>
+<p>ART 透過對裝置電池產生最小影響的方式來管理設定檔指引編譯。它只會在裝置閒置和充電時預先編譯，這種預先工作的方式可以節省時間和電池電力。</p>
+<p>總結：Android M 的時候，只有在 apk 安裝時才會編譯。這個說來慚愧，敝司曾經出過一隻超低階手機（512mb 還是 256 mb），系統更新慢到以為當機，但是等個２０分鐘，還是成功了，但是好戲還在後頭，居然不能安裝 facebook app , 這還能賣嗎？就是因為安裝時編譯消耗大量 RAM ，但是手機太爛了，就當機了，就當機了，就當機了。我想可能就是上面這些問題，所以還是退回部分先編譯這樣折衷的方式。</p>
+<p>第一篇就到此為止，剩下的會在第二篇補完(希望)，如果有任何問題或是我寫錯的部分，歡迎底下回應。有興趣且有機子的人可以利用 <a href="https://developer.android.com/about/versions/nougat/android-7.0-samples.html" target="_blank">Google Sample</a>進行測試。</p>
+<p>reference:</p>
+<p><a href="https://developer.android.com/about/versions/nougat/android-7.0.html" target="_blank">官方</a></p>
+<p><a href="https://www.youtube.com/channel/UCVHFbqXqoYvEWM1Ddxl0QDg" target="_blank">官方影片</a></p>
+<p>FB 上的 <a href="https://www.facebook.com/scottt.tw" target="_blank">Scott Tsai</a> 的<a href="https://www.facebook.com/groups/system.software2016/permalink/1097245500354954/" target="_blank">感想</a></p>
+<p><a href="http://www.oschina.net/translate/android-security-implementation-of-self-signed-ssl" target="_blank">为你的安卓应用实现自签名的 SSL 证书</a></p>
+<p><a href="https://gank.io/post/56e0b83c67765963436fcb94" target="_blank">从开发者角度解析 Android N 新特性！</a></p>
+<p>Android M新特性Doze and App Standby模式详解 – 不能轉載</p>
+<p><a href="https://my.oschina.net/lorcan/blog/539208" target="_blank">Android 6.0电源管理方式</a></p>
+<p><a href="https://read01.com/RM3RQ0.html" target="_blank">Android N的五項全新功能（加上分屏）</a></p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="06_Java_reflection_dynamic_load.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: 動態載入：Java 反射黑魔法：FastScrollBar 動態載入外部 APK">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"系統演進：Android Nougat (Android 7.0) 核心新特性與架構變革","level":"5.1.7","depth":2,"next":{"title":"相機 HAL 與原生多媒體驅動框架","level":"5.2","depth":1,"ref":"","articles":[{"title":"Camera 架構（一）：Camera 1 經典架構與驅動層資料流","level":"5.2.1","depth":2,"path":"posts/section07_camera_multimedia/01_Camera1_Architecture.md","ref":"posts/section07_camera_multimedia/01_Camera1_Architecture.md","articles":[]},{"title":"Camera 架構（二）：Camera 2 HAL3 管道化模型與核心概念","level":"5.2.2","depth":2,"path":"posts/section07_camera_multimedia/02_Camera2_Introduction.md","ref":"posts/section07_camera_multimedia/02_Camera2_Introduction.md","articles":[]},{"title":"Camera 架構（三）：Camera 2 Session 建立與 CaptureRequest 實戰","level":"5.2.3","depth":2,"path":"posts/section07_camera_multimedia/03_How_to_create_Camera2.md","ref":"posts/section07_camera_multimedia/03_How_to_create_Camera2.md","articles":[]},{"title":"FMRadio 開發（一）：系統架構概論與硬體中介層通訊","level":"5.2.4","depth":2,"path":"posts/section07_camera_multimedia/04_FMRadio_概論.md","ref":"posts/section07_camera_multimedia/04_FMRadio_概論.md","articles":[]},{"title":"FMRadio 開發（二）：FMRadioMain 前端介面與硬體狀態同步","level":"5.2.5","depth":2,"path":"posts/section07_camera_multimedia/05_FMRadio_FMRadioMain.md","ref":"posts/section07_camera_multimedia/05_FMRadio_FMRadioMain.md","articles":[]},{"title":"FMRadio 開發（三）：FMRadioService 背景常駐服務與音訊焦點","level":"5.2.6","depth":2,"path":"posts/section07_camera_multimedia/06_FMRadio_FMRadioService.md","ref":"posts/section07_camera_multimedia/06_FMRadio_FMRadioService.md","articles":[]},{"title":"FMRadio 開發（四）：AlertActivity 系統中斷與彈出視窗處理","level":"5.2.7","depth":2,"path":"posts/section07_camera_multimedia/07_FMRadio_AlterActivity.md","ref":"posts/section07_camera_multimedia/07_FMRadio_AlterActivity.md","articles":[]},{"title":"FMRadio 開發（五）：特殊情境例外排障與全系列收官","level":"5.2.8","depth":2,"path":"posts/section07_camera_multimedia/08_FMRadio_Other.md","ref":"posts/section07_camera_multimedia/08_FMRadio_Other.md","articles":[]}]},"previous":{"title":"動態載入：Java 反射黑魔法：FastScrollBar 動態載入外部 APK","level":"5.1.6","depth":2,"path":"posts/section05_framework/06_Java_reflection_dynamic_load.md","ref":"posts/section05_framework/06_Java_reflection_dynamic_load.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing"],"styles":{"website":"styles/website.css"},"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"Boochlin","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Something Record - Boochlin's Tech Blog","language":"zh-tw","gitbook":"*","description":"Boochlin 個人技術部落格全集（2015-2026 十年技術隨筆與硬核破局實錄）"},"file":{"path":"posts/section05_framework/07_Android_Nougat_introduction.md","mtime":"2026-09-04T16:16:20.154Z","type":"markdown"},"gitbook":{"version":"6.2.2","time":"2026-09-05T08:58:32.284Z"},"basePath":"../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
+    <script src="../../gitbook/gitbook.js"></script>
+    <script src="../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../../gitbook/@honkit/honkit-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
