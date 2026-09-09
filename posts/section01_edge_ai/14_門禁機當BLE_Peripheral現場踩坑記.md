@@ -1,236 +1,199 @@
 # Android 爛裝置想跑人臉辨識14 – 門禁機當 BLE Peripheral 的現場踩坑記
 
-做邊緣工控或門禁設備，最讓人頭痛的往往不是演算法，而是現場環境：機器被四顆螺絲死死鎖在兩公尺高的金屬立柱上，沒有鍵盤、沒有滑鼠，很多室外機為了防暴甚至連觸控螢幕都沒有。就算螢幕能碰，叫工人站在鋁梯上頂著大太陽反光，用虛擬鍵盤慢慢戳 20 幾碼的 WiFi 密碼，戳錯一次就要摔手機。
+做邊緣工控或門禁設備，最讓人頭痛的往往不是演算法，而是現場環境：機器被四顆螺絲死死鎖在兩公尺高的金屬立柱上。更致命的是，工控設備存在**完全沒有螢幕、沒有鍵盤、全機身零實體按鍵的純金屬防暴室外機（Headless）版本**。
 
-最合理的人性化作法，就是工人掏出自己的手機 App，走過去點幾下，透過近場藍牙把網路帳密和 IP 直接灌進去。
+一旦現場更換路由器、變更 WiFi 密碼或需要設定固定 IP，設備連個按鍵都沒有，不可能叫維護人員搬梯子把整台金屬外殼拆開接串口。
 
-這篇就拿高通 QM215（4 顆弱雞 A53）門禁機為例，聊聊我們怎麼用最簡單粗暴的 **BLE Peripheral（GATT Server）** 把現場配網搞定，以及當初留下了哪些讓人哭笑不得的技術債。
+透過近場藍牙將門禁機設計為 **BLE Peripheral（GATT Server）**，由安裝工人的手機擔任 Central，是讓這類無螢幕純硬體設備具備現場配置與通訊能力的唯一工程解。
+
+這篇以高通 QM215（4 顆弱雞 A53）門禁機為例，直擊一套在工控現場能穩定交付的 BLE Peripheral 架構設計與真實權衡。
 
 ---
 
-## 先講結論：這套設計的五個核心決策
+## 先講結論：工控 BLE Peripheral 的五個核心架構決策
 
-面試或日後自己複盤，先看這五個核心取捨：
+在資源受限且無螢幕的邊緣設備上搞 GATT Server，核心在於極限避繁就簡：
 
-1. **門禁機當被動方（Peripheral / GATT Server）**：手機當主動發起方（Central）。廣播丟給藍牙晶片硬體自己去排程發射，主 CPU 負載直接是 0%，完全不搶相機人臉辨識的算力。
-2. **廣播封包拆兩層**：31 Byte 空間太擠塞不下 128-bit UUID。第一層只放短機號，長 UUID 丟到第二層（ScanResponse），等手機主動要才給。
-3. **老老實實切 20 Byte**：不搞動態 MTU 協商，自研極簡的 2-Byte 標頭狀態機和 7-Byte TLV，幾十行 code 搞定，任何爛手機都能通。
-4. **放棄推播，無腦輪詢**：Notification 太容易被手機廠牌的省電機制吃掉，直接讓手機每秒主動 Read 一次狀態，讀到 1 亮綠燈收工。
-5. **開機常駐永不關閉**：設備本來就是插市電的，哪天現場換路由器或改密碼，走過去隨時能重設，省得搬梯子拆外殼拔電源。
+1. **門禁機當被動方（Peripheral / GATT Server）**：開機在 `MainActivity.onCreate()` 中無條件啟動，強制開啟藍牙硬體並建立 GATT Server，7x24 常駐。手機當主動發起方（Central）。廣播直接交由藍牙晶片排程，主 CPU 負載為 0%，絕對不搶佔相機雙鏡頭採集與人臉辨識的算力。
+2. **31-Byte 雙層廣播拆分**：標準廣播封包只有 31 Bytes，扣除必要標頭根本塞不下專屬 128-bit Service UUID。將設備短序號留在第一層主廣播，長 UUID 丟到第二層（ScanResponse），手機點擊掃描時才回傳。
+3. **拒絕 MTU 協商，死守 20-Byte 最小公分母**：配網總資料量（WiFi 帳密、靜態 IP、後台網址）全部加起來連 100 Bytes 都不到，搞雙端非同步 `requestMtu()` 純屬過度設計。直接鎖死 BLE 預設的 20-Byte 物理基線，手機端零協商代碼、連線即發，半天完成雙端對接交付。
+4. **狀態反饋放棄 Notification，改走無狀態主動輪詢**：雖然設備端保留了 NOTIFY 特徵值與 0x2902 描述符，但手機端在配網這種只有幾十秒的流程中，為了避開非同步回調丟失，改用每秒主動 Read 一次 6-Byte 狀態，讀到 1 亮綠燈斷線收工。
+5. **程式碼開機常駐永不關閉**：全專案唯一呼叫 `stopBleService()` 只有在 App 銷毀時。設備插市電無功耗焦慮，為了免去半年後改密碼要爬梯拆外殼拉總閘斷電的運維噩夢，常駐廣播是現場必然代價。
 
-下圖是整套系統現場跑通的完整時序：
+下圖為現場跑通的完整時序與角色定義：
 
 ![現場配網時序與角色定義架構圖](../../assets/images/ble_provisioning_sequence_diagram_1788359237209.jpg)
 
 ---
 
-## 一、 通訊選型：為什麼不能只靠廣播，非要建 GATT 連線？
+## 一、 通訊選型：角色倒轉與 31-Byte 雙層廣播
 
-剛碰藍牙的人常有一種天真的想法：「既然只是傳幾十個字元的帳密，設備直接對外發廣播、或者手機大喇叭發廣播讓設備抓，不就省事了？」
+很多 Android 藍牙教學都預設以手機連接手環為場景，教你如何用 Android 當 Central 去掃描周邊。
 
-在實際工程上，這純屬幻想：
+但在工控閘機上，角色必須徹底倒轉：
+* **若門禁機當 Central（主動掃描）**：閘機每天幾百人進出，藍牙晶片一旦開啟 Scan，空中數百隻耳機、手環的廣播封包會持續引發晶片中斷，瘋狂搶佔 CPU 時槽，相機畫面瞬間掉幀卡頓。
+* **門禁機當 Peripheral（被動監聽）**：開機時將廣播封包註冊進底層藍牙控制器，主 CPU 完全放手，不產生任何排程負載；只有在手機真正發起 GATT 連線並寫入特徵值時，才會觸發 Binder 回調。
 
-* **純廣播（Advertising）**：這東西本質就像里長廣播器，單向喊話、**完全沒有收到確認（ACK）**，而且有效空間被死死卡在 31 Bytes。配網是一連串有先後順序的動作（送帳號 $\rightarrow$ 送密碼 $\rightarrow$ 設定固定 IP $\rightarrow$ 確認連上後台）。廣播在空中漏掉一個字你毫無感知，長一點的密碼根本塞不下。
-* **GATT Server 連線**：走點對點通道，每一次 Characteristic 寫入都有底層協議層的 ACK（Write with Response），收到就是收到，沒收到手機會重試，這才能保證資料不會缺角。
+### 1.1 一開機就啟動的常駐機制
 
-### 1.1 角色為什麼必須倒轉？
-很多安卓範例都在教你用手機去連手環，所以設備常常被寫成主動去掃描的手機端（Central）。
-但在工控機上千萬別這麼搞。現場大門每天幾百人進出，門禁機要是開掃描，藍牙晶片抓到幾百隻耳機手環的廣播，狂發中斷給 CPU，相機影像幀立刻掉得亂七八糟。
-讓門禁機乖乖當被動等待的 **Peripheral（GATT Server）**，開機把廣播資料丟給藍牙晶片後，主晶片完全不管它，CPU 開銷直接歸零。
+門禁終端採用專用 Kiosk 模式，開機進入桌面自動拉起 `MainActivity`，在 `onCreate()` 生命週期直接初始化：
 
-### 1.2 31-Byte 廣播太小怎麼破？
-傳統廣播封包物理極限只有 31 Bytes。扣掉藍牙規範必帶的標頭和發射功率，剩下的空間少得可憐。如果硬要把 18 Bytes 的專屬 128-bit Service UUID 塞進去，設備名稱只剩幾個字元能用，開廣播直接報錯。
+```java
+// File: MainActivity.java
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    ...
+    BleService.createInstance(this); // 開機無條件啟動，7x24 常駐
+    ...
+}
+```
 
-解法很單純，直接拆成雙層廣播：
-* **第一層主廣播**：只放裁剪後的短機號與發射功率，讓手機在列表裡一眼能認出來；
-* **第二層掃描回應（ScanResponse）**：把長長的一串 Service UUID 塞在這裡，等手機點擊掃描時才回傳。
+在 `BleService` 建構子內，若藍牙未開直接強制開啟，並透過 `bluetoothManager.openGattServer()` 完成服務註冊：
+
+```java
+// File: BleService.java (行 147-150, 231-233)
+BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
+    bluetoothAdapter.enable(); // 硬體保底強制啟動
+}
+...
+if (bluetoothManager != null)
+    mBluetoothGattServer = bluetoothManager.openGattServer(context, mBluetoothGattServerCallback);
+mBluetoothGattServer.addService(service);
+```
+
+### 1.2 31-Byte 雙層廣播拆分實作
+
+標準廣播物理淨載只有 31 Bytes。若將 16 Bytes 的專屬 128-bit Service UUID 塞入主廣播，設備名稱只剩幾個字元，甚至會直接拋出廣播資料超限錯誤。
+
+解法是將廣播拆為兩層：第一層只放發射功率與機號，長 UUID 移至第二層 ScanResponse：
 
 ```java
 // File: BleService.java
-// 裁剪固定前綴，保留唯一序號以符合長度限制
 uniqueSerial = DeviceCodeUtils.getSerialNum().substring(4);
 bluetoothAdapter.setName(deviceName + "-" + uniqueSerial);
 
-// 第一層：僅包含名稱與發射功率（31B 內）
+// 第一層主廣播：僅設備名稱與發射功率（嚴格控制在 31B 內）
 AdvertiseData advertiseData = new AdvertiseData.Builder()
-        .setIncludeDeviceName(true)
-        .setIncludeTxPowerLevel(true)
-        .build();
+        .setIncludeDeviceName(true).setIncludeTxPowerLevel(true).build();
 
-// 第二層：將 128-bit UUID 移至掃描回應
+// 第二層掃描回應：128-bit 專屬 Service UUID 丟在 ScanResponse
 AdvertiseData scanResponse = new AdvertiseData.Builder()
-        .addServiceUuid(new ParcelUuid(UUID_SERVICE))
-        .build();
+        .addServiceUuid(new ParcelUuid(UUID_SERVICE)).build();
 ```
 
 ---
 
-## 二、 預設 20-Byte 限制下的長資料分包實作
+## 二、 20-Byte 限制下的協議設計：拒絕 MTU 協商的實戰真相
 
-藍牙規範預設的單包淨載（Payload）只有 **20 Bytes**。
+BLE 規範中，預設的單包 ATT Payload 只有 **20 Bytes**（預設 ATT MTU 23 扣除 3 Bytes 的 ATT Opcode 與 Attribute Handle）。
 
-但我們配網要傳 60 幾 Byte 的加密設備序號、二三十 Byte 的 WiFi 帳密和一整組 IP 設定。面對超過 20 Bytes 的資料，我們沒有去搞什麼動態 MTU 協商（各家白牌手機對 MTU 回調的相容性極差），而是用最直接的二進制分包搞定：
+很多人會問：為什麼不調用 `requestMtu()` 擴展到 256 或 512 Bytes？
+
+實戰中放棄 MTU 協商的理由非常純粹：
+1. **資料量少到不配搞協商**：WiFi SSID、WiFi 密碼、靜態 IP、雲端管理後台網址，全部加起來連 100 Bytes 都不到，空中傳輸頂多幾十毫秒。為這點資料量在雙端寫非同步 `requestMtu()` 握手回調，純屬過度設計。
+2. **GATT 角色限制**：在 BLE 規範中，`requestMtu()` 是 Central（手機端）的專屬權限，門禁機作為 GATT Server 根本無權主動發起協商。
+3. **極限降低跨團隊對接成本**：現場配網的手機 App 往往是前端或外包工程師用 Flutter 或跨平台框架開發。直接定死 20-Byte 物理基線，手機端無腦寫個 `for` 迴圈分包發送，雙端完全不需要寫任何 MTU 協商代碼，連線即發，半天就能對接上線。
 
 ![BLE 三大二進制通訊封包佈局圖](../../assets/images/ble_binary_packet_layouts_1788423952069.jpg)
 
-### 2.1 讀取 Device ID：特徵值分片讀取
-設備序號太長，Server 就動態註冊多個虛擬特徵值，讓手機像翻書一樣一片一片讀走：
+### 2.1 WiFi 帳密與後台網址：2-Byte 標頭分包
 
-```java
-// File: BleService.java
-private final int DEVICE_ID_CHUNK_SIZE = 20;
+長字串封包格式定義為：`[Index(1B), TotalLength(1B), Payload(10B)]`。
 
-if (characteristic.getUuid().toString().startsWith(STR_CHAR_READ_DEVICE_ID_CHUNK_PREFIX)) {
-    char[] uuid = characteristic.getUuid().toString().toCharArray();
-    int shift = DEVICE_ID_CHUNK_SIZE * (uuid[uuid.length - 1] - '0');
-    mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0,
-        Arrays.copyOfRange(DeviceCodeUtils.getCode().getBytes(), shift, shift + DEVICE_ID_CHUNK_SIZE));
-    return;
-}
-```
-
-> **老代碼的技術債**：注意看這行 `uuid[uuid.length - 1] - '0'`。當初偷懶用單一字元減法算索引，代表這套寫法最多只能切 0 到 9 共 10 個分片（上限 200 Bytes）。如果未來憑證長度超過 200 Bytes，這段直接翻車。
-
-### 2.2 寫入 WiFi 帳密：2-Byte Header 分包
-手機寫入長字串時，封包帶上 `[Index(1B), TotalLength(1B), Payload(10B)]`：
+每次僅傳輸 10 Bytes 淨載，加上 2 Bytes 標頭僅 12 Bytes，遠小於 20-Byte 限制：
 
 ```java
 // File: BleUtils.java
 public static boolean multipleBytesToString(byte[] bytes, StringBuffer sb) {
-    // 前 2 bytes 為自定義協定標頭：byte[0]=分包序號, byte[1]=總預期長度
     int index = bytes[0] & 0xFF;
-    int length = bytes[1] & 0xFF;
+    int length = bytes[1] & 0xFF; // 無符號轉換，避免長度大於 127 溢位為負數
 
     int expectedLen = index * 10;
-    if (expectedLen < sb.length()) {
-        sb.delete(0, sb.length()); // 序號變小：代表重傳了，清空重收
-    } else if (expectedLen != sb.length()) {
-        return false;              // 掉包了：丟掉等待重傳
-    }
+    if (expectedLen < sb.length()) sb.delete(0, sb.length()); // 序號回退代表重傳，清空
+    else if (expectedLen != sb.length()) return false;        // 序號不符直接丟棄
 
-    // 從 byte[2] 開始才是實際的 payload 資料
     String payload = new String(bytes, 2, bytes.length - 2, StandardCharsets.UTF_8);
     sb.append(payload);
-    return length == sb.length();  // 收滿預期長度才算完工
+    return length == sb.length(); // 收滿預期總長度才返回 true
 }
 ```
 
+### 2.2 乙太網路靜態 IP：7-Byte 定長二進制控制幀
+
+工廠常走固定 IP。這套封包長度固定為 7 Bytes：
+`[Type(1B), Ver(1B), Key(1B), IPv4(4B)]`
+
+注意：這不是 TLV，因為它沒有 Length 欄位，而是純粹的定長二進制幀：
+- Type: `0x01 (ETH)`
+- Ver: `0x04 (IPv4)`
+- Key: `0x01=IP`, `0x02=Mask`, `0x03=Gateway`, `0x04=DNS1`, `0x05=DNS2`
+- IPv4: 4 個 Raw Bytes
+
 ```java
-// File: BleService.java
-@Override
-public void onCharacteristicWriteRequest(BluetoothDevice device, int requestId,
-                                        BluetoothGattCharacteristic characteristic,
-                                        boolean preparedWrite, boolean responseNeeded,
-                                        int offset, byte[] requestBytes) {
-    BleUUID bleUUID = BleUUID.getEnum(characteristic.getUuid());
-    if (bleUUID == BleUUID.CHAR_WRITE_WIFI_SSID) {
-        if (BleUtils.multipleBytesToString(requestBytes, sbWifiSsid)) {
-            wifiSSID = sbWifiSsid.toString();
-            if (!wifiSSID.isEmpty() && wifiPSW != null && !wifiPSW.isEmpty()) connectToWifi(wifiSSID, wifiPSW);
-        }
+// File: BleService.java (行 377-437 節選)
+byte type = requestBytes[0];
+if (type == ETH) {
+    byte key = requestBytes[2];
+    byte[] ipBytes = Arrays.copyOfRange(requestBytes, 3, requestBytes.length);
+    if (key == 0x01) staticIpConfig.ip = BleUtils.ipv4ToString(ipBytes);
+    else if (key == 0x05) { // 收到最後一個參數觸發生效
+        staticIpConfig.dns2 = BleUtils.ipv4ToString(ipBytes);
+        ethernetManager.setStaticIp(staticIpConfig);
     }
-    // 關鍵：只有當 BLE 規範要求回覆（Write Request）時才送 ACK
-    // Write Command (WRITE_TYPE_NO_RESPONSE) 不需回覆，強行回覆會導致協議棧狀態機錯亂
+}
+```
+
+---
+
+## 三、 狀態反饋：從 Notification 到主動輪詢的工程妥協
+
+照藍牙官方規範，連網狀態變更應透過 `notifyCharacteristicChanged` 推播給手機。
+
+在 `BleService.java` 中，特徵值確實宣告了 `PROPERTY_NOTIFY`，也老實掛上了 `0x2902` 描述符（`DESC_NOTIFY_KMS_CONNECTED`），甚至在 `onDescriptorWriteRequest` 中寫了線程推播的原型代碼。
+
+但實務上手機端最終選擇了**「每秒主動 Read 狀態」**的輪詢機制。
+
+這在消費級 BLE 開發中屬於反模式，但在配網這種僅維持幾十秒的流程中，卻是現場最穩的土砲解：
+- 手機端在跨平台框架下處理 0x2902 描述符寫入與非同步監聽時，回調丟失率偏高；
+- 門禁機插著市電無功耗顧慮，手機連上藍牙後，每秒發一次 `readCharacteristic` 讀取 6 個 Byte 狀態：
+  `[Status(1B), Reserved(1B), DeviceIPv4(4B)]`
+  Status: `0x01 (已連上雲端管理後台)`, `0x02 (正在連線)`, `0x03 (閒置/失敗)`
+- 手機只要讀到 `0x01`，當場亮綠燈並主動中斷藍牙。不依賴空中推播，現場狀態閉環收斂率 100%。
+
+---
+
+## 四、 7x24 常駐與維運的現場權衡
+
+檢視全專案代碼，`stopBleService()` 唯一的調用點只有在 `MainActivity.onDestroy()`。專案中**完全沒有**寫任何「開機 10 分鐘後自動關閉」或「連網成功後關閉藍牙」的邏輯。
+
+這不是疏忽，而是面對無螢幕工控機的現實考量：
+- 機器被螺絲鎖在兩米高處，機身無螢幕、無鍵盤、無實體重置鍵；
+- 若設定連線成功後自動關閉藍牙，半年後廠區更換路由器密碼或更換機房網段時，現場維護人員唯一能重新配網的手段，就是去拉總配電箱總閘斷電重啟；
+- 維持 7x24 常駐廣播，讓後續維護人員拿著手機隨時走過去就能重新配網，是用極低射頻開銷換取最低維護成本的現場最優解。
+
+---
+
+## 五、 現場排障速查清單 (Troubleshooting Cheat Sheet)
+
+在現場排查 BLE 通訊異常時，看這兩點：
+
+* **現象 1：手機搜得到廣播，但一發起寫入就卡死或逾時斷線**
+  * 排查點：確認 `onCharacteristicWriteRequest` 是否嚴格根據 `if (responseNeeded)` 回覆 ACK：
+    ```java
+    // 只有當協議要求回覆（Write Request）時才送 ACK
+    // 若對 Write Command (WRITE_TYPE_NO_RESPONSE) 強行 sendResponse，手機藍牙 Stack 會當場錯亂
     if (responseNeeded) {
         mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, requestBytes);
     }
-}
-```
-
-### 2.3 寫入乙太網路靜態 IP：7-Byte TLV 與隱式 Commit
-工廠大多走固定 IP。我們直接用 7 個 Byte 的二進制解決：`[Type(1B), Ver(1B), Key(1B), IPv4(4B)]`。
-
-手機依序寫入 IP、Mask、Gateway、DNS1、DNS2。我們把 DNS2 當成「隱式 Commit」——寫入最後一筆時，直接觸發網卡重啟生效，省去再來回確認一次：
-
-```java
-// File: BleService.java
-case 0x05: // Key=0x05 (DNS2) 觸發隱式 Commit
-    staticIpConfig.dns2 = BleUtils.ipv4ToString(Arrays.copyOfRange(requestBytes, 3, requestBytes.length));
-    if (ethernetManager == null) ethernetManager = new EthernetManager(context);
-    ethernetManager.setStaticIp(staticIpConfig); // 生效設定並重啟網卡
-    staticIpConfig = null; ethernetManager = null;
-    break;
-```
+    ```
+* **現象 2：手機端掃描清單中完全看不到設備，或開機時廣播拋錯**
+  * 排查點：檢查第一層主廣播數據長度。確認設備名稱加上發射功率長度是否超過 31 Bytes；確認 128-bit Service UUID 是否有正確放進第二層 ScanResponse。
 
 ---
 
-## 三、 狀態同步：放棄 Notification，無腦輪詢最穩
+## 結語
 
-照官方標準做法，連網成功應該用 GATT Notification 推播給手機。
+在有螢幕的裝置上，藍牙只是輔助；但對於**無螢幕、無鍵盤的純盲盒邊緣工控機**，BLE Peripheral 是它唯一的現場物理生命線。
 
-但在現場實測時，很多白牌手機寫入 CCCD（0x2902 描述符）常因自帶的省電策略或權限問題把回調吞掉，手機端永遠等不到「已連線」推播。
-
-門禁機本來就插著市電，根本沒差這點電。最穩的辦法，就是讓手機連上後，每秒主動發一次 Read 來問狀態特徵值（回傳 6 個 Byte）：
-
-```java
-// File: BleService.java
-case CHAR_READ_NOTIFY_SERVER_CONNECTED:
-    byte status = BleUtils.IDLE;
-    if (SyncDataService.getInstance().isConnected()) {
-        status = BleUtils.CONNECTED; // 0x01
-    } else if (SyncDataService.getInstance().getWebSocketConnecter().isConnecting()) {
-        status = BleUtils.CONNECTING; // 0x02
-    }
-    byte[] bytes = BleUtils.deviceIpv4ToBytes(status, DeviceServ.getDeviceDBItem().getIpAddress());
-    mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, bytes);
-```
-
-手機讀到 `status == 0x01` 亮綠燈，收工斷線。無狀態、不靠回調，現場 100% 穩定收斂。
-
----
-
-## 四、 程式碼裡的真實技術債
-
-回頭客觀審視這套代碼，裡面有兩個實打實的地雷：
-
-1. **資安裸奔**：WiFi 帳密跟後台網址在空中全是明文。在封閉的廠區還能勉強混過去，但只要面對正規資安稽核，這條絕對直接吃缺失；
-2. **JMM 跨執行緒可見性災難（現場偶發逾時的真兇）**：
-
-看這段代碼：
-```java
-// File: BleService.java
-private boolean serverHostDone; // 致命錯誤：缺少 volatile 修飾！
-
-ThreadPoolManager.getInstance().execute(() -> {
-    int count = 0;
-    while (count < 10) {
-        if (serverHostDone) { // 跨執行緒讀取，很容易一直讀到 CPU 快取舊值
-            String fullAddress = sbServerHost.toString().replaceFirst("^(http[s]?://)", "");
-            SettingServ.setSyncServerIp(fullAddress);
-            serverHostDone = false;
-            return;
-        }
-        Thread.sleep(2000);
-        count++;
-    }
-    // 20 秒一到直接退出，後台網址永遠沒寫進去
-});
-```
-
-變數 `serverHostDone` 是在 Binder 執行緒被修改，但輪詢是在執行緒池的另一條 Worker 執行緒。因為沒加 `volatile`，Worker 執行緒完全可能一直讀到舊的 `false`。20 秒盲等結束直接放棄，這正是現場偶發「明明配了網，機器卻死活連不上後台」的罪魁禍首。
-
----
-
-## 五、 現場排查速查清單 (Troubleshooting Cheat Sheet)
-
-日後維護或面試被問到現場排障，看這三點：
-
-* **現象 1：手機搜得到廣播，但連線時一直卡住或秒斷**
-  * 排查點：確認 `BleService.java` 的 `onCharacteristicWriteRequest` 結尾有沒有無條件呼叫 `sendResponse()` 回覆 ACK。漏掉這行，手機藍牙 Stack 會一直等直到逾時。
-* **現象 2：WiFi 配網成功，但一直顯示未連上後台**
-  * 排查點：檢查 `serverHostDone` 有沒有加 `volatile`；檢查那段 20 秒的盲等迴圈是不是比手機寫入網址的時間還早結束。
-* **現象 3：廣播名稱在手機列表被切斷，或廣播拋出 Code 1 錯誤**
-  * 排查點：第一層主廣播資料有沒有超過 31 Bytes；確認 128-bit Service UUID 有沒有乖乖待在第二層 ScanResponse。
-
----
-
-## 結語：為什麼連上網路後不把藍牙關掉？
-
-很多人第一反應都是：「既然 WiFi 都配好了，為什麼不呼叫 `stopBleService()` 關掉藍牙省電？」
-
-但你想想現場維護情境：
-* 門禁機插著電，待機功耗根本不用省；
-* 機器掛在兩公尺高處，哪天現場總務改了 WiFi 密碼或換了路由器，機器一斷線就失聯。如果藍牙被關了，工人就得搬鋁梯拆機拔插頭重開機；
-* **維持 7x24 常駐廣播**，後續維修人員隨時拿手機走過去，點一下就能重新配網。
-
-在工程現場，能活下來的往往不是教科書上最漂亮的架構，而是最懂現場限制、最省維護成本的土砲實作。
+拋開教科書上繁瑣的動態 MTU 協商，死守 20-Byte 最小公分母與無狀態主動輪詢，才是邊緣工控設備在真實環境中最務實的生存之道。
