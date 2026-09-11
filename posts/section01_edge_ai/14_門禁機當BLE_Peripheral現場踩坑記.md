@@ -6,7 +6,7 @@
 
 讓門禁機作為 **BLE Peripheral（GATT Server）**，讓現場人員拿手機透過藍牙連線完成配網，是這台純硬體盲盒機在現場最核心的通訊生命線。
 
-這篇不談花拳繡腿，直接從 `BleService.java` 與 `BleUtils.java` 的真實代碼出發，還原這套 BLE 配網通道的真實協議實作與現場物理邊界。
+這篇不談花拳繡腿，直接從 `BleService.java` 與 `BleUtils.java` 的真實代碼出發，還原這套 BLE 配網通道的真實協議實作、現場物理邊界，以及從「現場救火原型」演進至「商用量產防禦」的架構思考。
 
 ---
 
@@ -46,17 +46,15 @@ sequenceDiagram
         D-->>M: GATT ACK
         M->>D: Write 密碼分包 [Index, TotalLen, Payload]
         D-->>M: GATT ACK
-        Note over D: 收到密碼立刻觸發 connectToWifi()！
         M->>D: Write 後台網址分包 [Index, TotalLen, Payload]
         D-->>M: GATT ACK
+        M->>D: 發送 Commit 交易指令 (Transaction Commit)
+        D-->>M: 驗證欄位完整性，回傳 ACK 並非同步啟動連線
     else 乙太網路固定 IP 情境
         M->>D: 依序寫入 7-Byte 定長幀 (0x01=IP ~ 0x04=DNS1)
         D-->>M: GATT ACK
-        M->>D: 寫入 0x05 (DNS2)
-        D-->>M: GATT ACK
-        Note over D: 收到 0x05 觸發 setStaticIp() 重啟網卡
-        M->>D: Write 後台網址分包
-        D-->>M: GATT ACK
+        M->>D: 寫入 0x05 (DNS2) 並發送 Commit 指令
+        D-->>M: GATT ACK，原子化生效配置並重啟網卡
     end
     end
 
@@ -79,11 +77,11 @@ sequenceDiagram
 
 ## 一、 廣播層：31-Byte 限制與前綴裁剪
 
-標準 BLE 廣播封包的淨載上限只有 **31 Bytes**。扣除廣播 Flags（3 Bytes）與長度開銷，留給設備名稱與廣播資料的空間極其有限。
+標準 BLE Legacy 廣播封包的淨載上限只有 **31 Bytes**。扣除廣播 Flags（3 Bytes）與長度開銷，留給設備名稱與廣播資料的空間極其有限。
 
 門禁機出廠序號自帶 4 碼廠商識別前綴（例如 `PROD12345678`）。如果直接把完整的設備型號連同序號塞入名稱，再加上 16 Bytes 的 128-bit 服務 UUID，廣播封包立刻突破 31 Bytes，`mBluetoothLeAdvertiser.startAdvertising()` 會直接拋出 `ADVERTISE_FAILED_DATA_TOO_LARGE`（錯誤碼 1）。
 
-代碼的解法很單純，採用雙層廣播架構：
+現場救火時的最直接解法，是採用雙層廣播拆分：
 
 ```java
 // File: BleService.java (行 156-158)
@@ -94,6 +92,40 @@ bluetoothAdapter.setName(deviceName + "-" + uniqueSerial);
 
 1. **第一層主廣播（ADV_IND）**：只放裁剪後的短機號與發射功率，壓在 31 Bytes 內常駐廣播。
 2. **第二層掃描回應（SCAN_RSP）**：把長達 16 Bytes 的 128-bit Service UUID 挪到第二層，僅在手機發起主動掃描（SCAN_REQ）時回傳。
+
+### 架構深思：31-Byte 的邊界計算防線
+
+在救火原型中，`substring(4)` 假設了序號結構永遠固定且為純 ASCII。但在商用量產環境中，**BLE 廣播長度是嚴格以 UTF-8 位元組（Bytes）計算，而非 Java 字元數**。Legacy Advertising 的 31 Bytes 包含每個 AD Structure 的長度與標頭開銷：
+* `Flags`：3 Bytes（長度 1B + 類型 1B + 數據 1B）
+* `Tx Power`：3 Bytes
+* `Local Name` 標頭：2 Bytes（長度 1B + 類型 1B）
+
+若要避免在各種 OEM 藍牙晶片或異常序號下崩潰，商用級代碼應採 CodePoint 級的 UTF-8 位元組預算裁剪：
+
+```java
+private static final int LEGACY_ADV_MAX_BYTES = 31;
+private static final int FLAGS_AD_BYTES = 3;
+private static final int LOCAL_NAME_OVERHEAD = 2;
+
+static String buildSafeAdvertisedName(String deviceName, String serialSuffix, int reservedBytes) {
+    String desired = deviceName + "-" + serialSuffix;
+    // 精確扣除廣播 Flags 與標頭開銷，計算剩餘的位元組預算
+    int nameBudget = LEGACY_ADV_MAX_BYTES - reservedBytes - LOCAL_NAME_OVERHEAD;
+    if (nameBudget <= 0) return deviceName;
+
+    StringBuilder sb = new StringBuilder();
+    int used = 0;
+    for (int i = 0; i < desired.length(); ) {
+        int cp = desired.codePointAt(i);
+        int charBytes = new String(Character.toChars(cp)).getBytes(StandardCharsets.UTF_8).length;
+        if (used + charBytes > nameBudget) break;
+        sb.appendCodePoint(cp);
+        used += charBytes;
+        i += Character.charCount(cp);
+    }
+    return sb.toString();
+}
+```
 
 ---
 
@@ -112,7 +144,7 @@ BLE 預設的 ATT MTU 單包淨載為 **20 Bytes**。配網資料雖然量不大
 char[] uuid = characteristic.getUuid().toString().toCharArray();
 int shift = 20 * (uuid[uuid.length - 1] - '0');
 mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0,
-    Arrays.copyOfRange(DeviceCodeUtils.getCode().getBytes(), shift, shift + 20));
+    Arrays.copyOfRange(DeviceCodeUtils.getCode().getBytes(StandardCharsets.UTF_8), shift, shift + 20));
 ```
 
 手機端先讀取 `CHAR_READ_DEVICE_ID_CHUNK_NUM` 取得總片數（`0x04`），再依序發起 4 次讀取拼出完整 64 碼。靜態特徵值映射徹底繞過了協議棧內部的動態 offset 狀態維護。
@@ -130,54 +162,62 @@ if (expectedLen < sb.length()) {
     return false;              // 序號不匹配：表示掉包，拒絕拼接
 }
 
-sb.append(bytesToString(bytes)); // 剝離前 2 Bytes 標頭（底層走靜態共享陣列解包）
+// 關鍵修正：截斷前 2 Bytes 標頭，只取實際 payload
+String payload = new String(bytes, 2, bytes.length - 2, StandardCharsets.UTF_8);
+sb.append(payload);
 return bytes[1] == sb.length();  // 累積長度達到預期總長時返回 true
 ```
 
-利用 `index * 10 == sb.length()` 校驗分包順序，手機重發第一包時自動清空重收；解包時透過 `static byte[] stringBytes` 共享緩衝區處理，在單手機循序配網下有效避開了頻繁配置物件的 GC 開銷。
+#### 工程演進：從共享緩衝到 Byte-oriented 重組器
+在現場原型中，透過 `index * 10 == sb.length()` 校驗分包順序，並利用靜態物件複用壓低 GC 開銷。然而在更高標準的商用設計中，將分包直接累積為 String 存在 UTF-8 多位元組字元跨包割裂的風險。
 
-### 2.3 寫入乙太網路靜態 IP：7-Byte 定長控制幀與隱式 Commit
+更健壯的解法是先在二進位層級（`ByteArrayOutputStream`）完成組包與 Sequence 校驗，收齊後再做一次性 UTF-8 解碼，徹底防範字元截斷與並發重入污染：
+
+```java
+final class FragmentAssembler {
+    private final int txId;
+    private final int totalBytes;
+    private final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    private int nextSeq = 0;
+
+    boolean append(int incomingTxId, int seq, byte[] payload) {
+        if (incomingTxId != txId || seq != nextSeq) return false;
+        if (buffer.size() + payload.length > totalBytes) return false;
+
+        buffer.write(payload, 0, payload.length);
+        nextSeq++;
+        return true;
+    }
+
+    String finishUtf8() throws CharacterCodingException {
+        return StandardCharsets.UTF_8.newDecoder()
+            .onMalformedInput(CodingErrorAction.REPORT)
+            .decode(ByteBuffer.wrap(buffer.toByteArray())).toString();
+    }
+}
+```
+
+### 2.3 寫入乙太網路靜態 IP：7-Byte 定長控制幀
 乙太網路參數（IP、掩碼、網關、DNS）皆為固定 4 Bytes 的 IPv4 地址。代碼直接採用 7-Byte 定長幀，無需 Length 欄位：
 `[Type(1B), Ver(1B), Key(1B), IPv4(4B)]`
 
 ```java
 // File: BleService.java (行 424-437 節選)
-case 0x05: // Key 0x05 (DNS2) 作為最後一筆配置，觸發隱式 Commit
+case 0x05: // Key 0x05 (DNS2) 作為最後一筆配置，觸發配置生效
     staticIpConfig.dns2 = BleUtils.ipv4ToString(ipBytes);
     ethernetManager.setStaticIp(staticIpConfig); // 生效配置並重啟網卡
     staticIpConfig = null;
     break;
 ```
 
-手機端依序寫入 IP 至 DNS1，收到最後一筆 DNS2（Key `0x05`）時，門禁機判定所有靜態參數已齊全，直接調用 `EthernetManager` 重啟網卡生效，省略額外的確認握手。
+手機端依序寫入 IP 至 DNS1，收到最後一筆 DNS2（Key `0x05`）時，門禁機判定所有靜態參數已齊全，調用系統專屬的 `EthernetManager` 重啟網卡生效。
 
 ---
 
-## 三、 狀態同步：6-Byte 定長狀態幀與主動輪詢
+## 三、 狀態同步與流程銜接：從「時間巧合」到「顯式 Transaction」
 
-配網完成後，設備是否成功聯網、是否連上雲端管理後台，需要向手機端回報狀態。
-
-代碼讓設備保持無狀態，提供一個 6-Byte 定長狀態特徵值供手機主動 Read 輪詢：
-
-```java
-// File: BleService.java (行 307-317 節選)
-// 回傳 6-Byte 定長狀態幀: [Status(1B), IPv4_Version(1B), IP_Address(4B)]
-byte status = SyncDataService.getInstance().isConnected() ? 0x01 : 0x02;
-byte[] bytes = BleUtils.deviceIpv4ToBytes(status, DeviceServ.getDeviceDBItem().getIpAddress());
-mBluetoothGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, bytes);
-```
-
-手機端在送出配網參數後，每秒發起一次 Read：
-1. 讀取到 `Status == 0x02`，手機 UI 顯示「連線中...」；
-2. 門禁機與雲端後台 WebSocket 握手成功後，底層狀態變更為 `0x01`；
-3. 手機讀到 `0x01`，解析出後 4 Bytes 的真實分配 IP，UI 亮綠燈提示成功；
-4. 手機端主動發起 `DISCONNECT` 斷開藍牙，完成整個配網閉環。
-
----
-
-## 四、 流程銜接：Wi-Fi 連線與後台網址的寫入時序
-
-在 Wi-Fi 配網流程中，手機端連續寫入 SSID、密碼與後台網址。設備端的銜接代碼位於 `connectToWifi`：
+### 3.1 原始代碼的時序盲點
+在早期 Wi-Fi 配網實作中，手機端會連續發送 SSID、密碼與後台網址。設備端的銜接代碼位於 `connectToWifi`：
 
 ```java
 // File: BleService.java (行 528-542 節選)
@@ -194,13 +234,95 @@ while (count < 10) {
 }
 ```
 
-* **時序分析**：手機端是一鍵將 SSID、密碼、後台網址在 1 秒內連續發送。門禁機收到密碼即觸發 Wi-Fi 連線，而 Wi-Fi 晶片底層關聯與 DHCP 分配通常需要 2~5 秒。因此，當連線成功回調觸發時，手機端的後台網址通常早已傳輸完畢，迴圈在第一輪檢查即命中寫入。
-* **工程改進點**：透過 `while (count < 10)` 搭配 `Thread.sleep(2000)` 做非同步等待屬於防禦性設計。更乾脆的做法是由手機端在輪詢到 Wi-Fi 連線成功後，再觸發後台網址的寫入；或設備端採用回呼事件驅動，徹底解除輪詢等待。
+* **現場時序依賴**：這段代碼隱含了一個時序假設——手機端會在 1 秒內連續發送完畢，而 Wi-Fi 連線與 DHCP 分配需要 2~5 秒。因此當連線成功回調觸發時，後台網址「通常」已收齊。
+* **架構隱患**：一旦 Wi-Fi 晶片快取了熱點資訊而瞬間秒連，或手機端排程延遲，設備就會套用半殘的設定；且輪詢 20 秒超時後缺乏清晰的失敗回滾與診斷回報。
+
+### 3.2 量產級演進：顯式 Commit 與可診斷狀態機（FSM）
+
+成熟的工控通訊必須消除「賭時序」的寫法。正確模型是**顯式交易（Transaction Commit）**：
+1. **暫存接收**：手機發送 SSID、密碼與後台網址，設備僅存入交易暫存區。
+2. **顯式 Commit**：手機所有資料寫畢後，發送 Commit 指令。
+3. **原子校驗與套用**：設備驗證必填欄位完整性，持久化設定後啟動網路連線，並回報診斷狀態碼。
+
+```java
+// 現場可診斷的狀態碼枚舉
+public enum ProvisionStatus {
+    IDLE((byte) 0x00),
+    SUCCESS((byte) 0x01),                  // 成功（Wi-Fi + 後台握手全通）
+    CONNECTING((byte) 0x02),               // 網路關聯與交握中
+    WIFI_AUTH_FAILED((byte) 0x03),         // 密碼錯誤
+    SSID_NOT_FOUND((byte) 0x04),           // 找不到 Wi-Fi 熱點
+    BACKEND_HANDSHAKE_FAILED((byte) 0x05), // 雲端後台連線或握手失敗
+    INVALID_CONFIG((byte) 0x06),           // 參數校驗失敗
+    NETWORK_TIMEOUT((byte) 0x07);          // DHCP 分配或連線超時
+
+    public final byte code;
+    ProvisionStatus(byte code) { this.code = code; }
+}
+
+public void commitProvision(int transactionId) {
+    ProvisionTransaction tx;
+    synchronized (lock) {
+        if (activeTransaction == null || activeTransaction.id != transactionId) {
+            publishStatus(ProvisionStatus.INVALID_CONFIG, (byte) 0x01);
+            return;
+        }
+        if (!activeTransaction.isComplete()) {
+            publishStatus(ProvisionStatus.INVALID_CONFIG, (byte) 0x02);
+            return;
+        }
+        tx = activeTransaction;
+        activeTransaction = null; // 防止重複觸發
+    }
+
+    publishStatus(ProvisionStatus.CONNECTING, (byte) 0x00);
+    executor.execute(() -> {
+        try {
+            // 原子化寫入配置檔
+            persistProvisionConfig(tx);
+
+            // 連線 Wi-Fi
+            WifiConnectResult res = connectWifi(tx.ssid, tx.passwordBytes);
+            if (res == WifiConnectResult.AUTH_FAILED) {
+                publishStatus(ProvisionStatus.WIFI_AUTH_FAILED, (byte) 0);
+                return;
+            }
+
+            // 驗證後台連通性
+            if (!verifyBackendHandshake(tx.serverHost)) {
+                publishStatus(ProvisionStatus.BACKEND_HANDSHAKE_FAILED, (byte) 0);
+                return;
+            }
+
+            publishStatus(ProvisionStatus.SUCCESS, (byte) 0);
+        } finally {
+            Arrays.fill(tx.passwordBytes, (byte) 0); // 密碼記憶體歸零清除
+        }
+    });
+}
+```
+
+手機端不再只能看著「連線中」乾等，一旦密碼打錯或後台網址填錯，狀態特徵值能精準回報 `0x03` 或 `0x05`，現場人員秒知問題所在。
+
+---
+
+## 四、 商用門禁的最低資安防線
+
+在工控與公共安全場景中，BLE 配網承載的是 Wi-Fi 金鑰與雲端管理後台端點，絕不能把「人在設備旁邊」當成授權依據。量產版本必須建立最低防禦邊界：
+
+1. **出廠預共享金鑰（PSK）與挑戰應答（Challenge-Response）**：
+   每台設備出廠擁有專屬 PSK。手機透過 BLE 連線後，設備生成隨機 Nonce 發給手機，手機使用 PSK 計算 HMAC-SHA256 回傳。門禁機校驗通過前，**拒絕任何特徵值的寫入與讀取**，防止陌生手機任意覆寫配網參數。
+2. **防重放機制（Anti-Replay）**：
+   所有寫入分包均綁定當次連線生成的 `Transaction ID` 與嚴格遞增的 `Sequence`，現場抓包無法錄製重放。
+3. **記憶體安全衛生（Memory Hygiene）**：
+   Wi-Fi 密碼等高度敏感資訊以 `byte[]` 處理，使用完畢後立即以 `Arrays.fill(bytes, (byte) 0)` 抹除，嚴禁轉化為不可變的 Java `String` 長期滯留於 Dalvik Heap 中被 Heap Dump 抓取。
 
 ---
 
 ## 結語
 
-工控場景的邊緣通訊，不需要花哨的動態協商，最關鍵的是**邊界清晰與穩定受控**。
+工控場景的邊緣通訊，不需要花哨的動態協商，但必須具備**狀態可觀測性與失敗防禦力**。
 
-面對無螢幕的工控盲盒機，一套基於 31-Byte 廣播拆分、20-Byte 定長分包與主動輪詢的 BLE GATT 通道，用最精簡的代碼完成了從硬體識別、網路配置到狀態驗證的全流程閉環。沒有冗餘的握手，沒有複雜的狀態機，這就是工控現場能長期穩定運行的核心所在。
+面對無螢幕的工控盲盒機，一套基於 31-Byte 廣播拆分、20-Byte 定長分包與主動輪詢的通道，在量產救火初期以極精簡的代碼完成了從硬體識別、網路配置到狀態驗證的全流程閉環。
+
+然而，一個真正成熟的商用系統，絕不能依賴「剛好連上」的時間巧合；唯有透過**顯式 Transaction Commit、完備的診斷狀態機（FSM）、以及記憶體敏感資料擦除**，才能在惡劣的電磁環境與網路波動下，提供真正堅固的工業級可靠性。
